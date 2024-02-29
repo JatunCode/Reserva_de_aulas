@@ -17,7 +17,6 @@
     itaque
     optio corporis! Ea alias a eos soluta veritatis
     nobis id ex quis consequatur.
-</p>
 
 
 @endsection
