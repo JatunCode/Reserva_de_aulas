@@ -17,15 +17,7 @@
     itaque
     optio corporis! Ea alias a eos soluta veritatis
     nobis id ex quis consequatur.
-</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates sunt facere quasi officiis blanditiis aut ipsam
-    itaque
-    optio corporis! Ea alias a eos soluta veritatis
-    nobis id ex quis consequatur.
-</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates sunt facere quasi officiis blanditiis aut ipsam
-    itaque
-    optio corporis! Ea alias a eos soluta veritatis
-    nobis id ex quis consequatur.
-</p>
+
 @endsection
 
 @section('scripts')
