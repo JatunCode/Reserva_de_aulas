@@ -19,6 +19,7 @@
     nobis id ex quis consequatur.
 </p>
 
+
 @endsection
 
 @section('scripts')
