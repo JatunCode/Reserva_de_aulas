@@ -13,7 +13,7 @@
 .clearfix:before,
 .clearfix:after {
   display: table;
-  content: "";
+  content: '';
   line-height: 0;
 }
 .clearfix:after {
@@ -54,10 +54,18 @@
   -o-user-select: none;
   user-select: none;
   vertical-align: middle;
-  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  -moz-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  -webkit-transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+  -moz-transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+  -o-transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
+  transition:
+    border-color ease-in-out 0.15s,
+    box-shadow ease-in-out 0.15s;
 }
 .bootstrap-switch .bootstrap-switch-container {
   display: inline-block;
@@ -96,7 +104,13 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #005fcc;
   background-image: -moz-linear-gradient(top, #0044cc, #08c);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0044cc), to(#08c));
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 100%,
+    from(#0044cc),
+    to(#08c)
+  );
   background-image: -webkit-linear-gradient(top, #0044cc, #08c);
   background-image: -o-linear-gradient(top, #0044cc, #08c);
   background-image: linear-gradient(to bottom, #0044cc, #08c);
@@ -117,9 +131,12 @@
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary.active,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary.active,
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary.disabled,
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary.disabled,
-.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary[disabled],
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary[disabled] {
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-primary.disabled,
+.bootstrap-switch
+  .bootstrap-switch-handle-on.bootstrap-switch-primary[disabled],
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-primary[disabled] {
   color: #fff;
   background-color: #08c;
   *background-color: #0077b3;
@@ -136,7 +153,13 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #41a7c5;
   background-image: -moz-linear-gradient(top, #2f96b4, #5bc0de);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#2f96b4), to(#5bc0de));
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 100%,
+    from(#2f96b4),
+    to(#5bc0de)
+  );
   background-image: -webkit-linear-gradient(top, #2f96b4, #5bc0de);
   background-image: -o-linear-gradient(top, #2f96b4, #5bc0de);
   background-image: linear-gradient(to bottom, #2f96b4, #5bc0de);
@@ -176,7 +199,13 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #58b058;
   background-image: -moz-linear-gradient(top, #51a351, #62c462);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#51a351), to(#62c462));
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 100%,
+    from(#51a351),
+    to(#62c462)
+  );
   background-image: -webkit-linear-gradient(top, #51a351, #62c462);
   background-image: -o-linear-gradient(top, #51a351, #62c462);
   background-image: linear-gradient(to bottom, #51a351, #62c462);
@@ -197,9 +226,12 @@
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-success.active,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-success.active,
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-success.disabled,
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-success.disabled,
-.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-success[disabled],
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-success[disabled] {
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-success.disabled,
+.bootstrap-switch
+  .bootstrap-switch-handle-on.bootstrap-switch-success[disabled],
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-success[disabled] {
   color: #fff;
   background-color: #62c462;
   *background-color: #4fbd4f;
@@ -216,7 +248,13 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #f9a123;
   background-image: -moz-linear-gradient(top, #f89406, #fbb450);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f89406), to(#fbb450));
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 100%,
+    from(#f89406),
+    to(#fbb450)
+  );
   background-image: -webkit-linear-gradient(top, #f89406, #fbb450);
   background-image: -o-linear-gradient(top, #f89406, #fbb450);
   background-image: linear-gradient(to bottom, #f89406, #fbb450);
@@ -237,9 +275,12 @@
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-warning.active,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning.active,
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-warning.disabled,
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning.disabled,
-.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-warning[disabled],
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-warning[disabled] {
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-warning.disabled,
+.bootstrap-switch
+  .bootstrap-switch-handle-on.bootstrap-switch-warning[disabled],
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-warning[disabled] {
   color: #fff;
   background-color: #fbb450;
   *background-color: #faa937;
@@ -256,7 +297,13 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #d14641;
   background-image: -moz-linear-gradient(top, #bd362f, #ee5f5b);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#bd362f), to(#ee5f5b));
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 100%,
+    from(#bd362f),
+    to(#ee5f5b)
+  );
   background-image: -webkit-linear-gradient(top, #bd362f, #ee5f5b);
   background-image: -o-linear-gradient(top, #bd362f, #ee5f5b);
   background-image: linear-gradient(to bottom, #bd362f, #ee5f5b);
@@ -279,7 +326,8 @@
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-danger.disabled,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-danger.disabled,
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-danger[disabled],
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-danger[disabled] {
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-danger[disabled] {
   color: #fff;
   background-color: #ee5f5b;
   *background-color: #ec4844;
@@ -296,7 +344,13 @@
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
   background-color: #f0f0f0;
   background-image: -moz-linear-gradient(top, #e6e6e6, #fff);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#e6e6e6), to(#fff));
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 100%,
+    from(#e6e6e6),
+    to(#fff)
+  );
   background-image: -webkit-linear-gradient(top, #e6e6e6, #fff);
   background-image: -o-linear-gradient(top, #e6e6e6, #fff);
   background-image: linear-gradient(to bottom, #e6e6e6, #fff);
@@ -317,9 +371,12 @@
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default.active,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default.active,
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default.disabled,
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default.disabled,
-.bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default[disabled],
-.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default[disabled] {
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-default.disabled,
+.bootstrap-switch
+  .bootstrap-switch-handle-on.bootstrap-switch-default[disabled],
+.bootstrap-switch
+  .bootstrap-switch-handle-off.bootstrap-switch-default[disabled] {
   color: #333;
   background-color: #fff;
   *background-color: #f2f2f2;
@@ -341,7 +398,13 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #f5f5f5;
   background-image: -moz-linear-gradient(top, #fff, #e6e6e6);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#e6e6e6));
+  background-image: -webkit-gradient(
+    linear,
+    0 0,
+    0 100%,
+    from(#fff),
+    to(#e6e6e6)
+  );
   background-image: -webkit-linear-gradient(top, #fff, #e6e6e6);
   background-image: -o-linear-gradient(top, #fff, #e6e6e6);
   background-image: linear-gradient(to bottom, #fff, #e6e6e6);
@@ -368,7 +431,7 @@
   background-color: #cccccc \9;
 }
 .bootstrap-switch span::before {
-  content: "\200b";
+  content: '\200b';
 }
 .bootstrap-switch .bootstrap-switch-handle-on {
   -webkit-border-top-left-radius: 4px;
@@ -486,12 +549,19 @@
   border-color: rgba(82, 168, 236, 0.8);
   outline: 0;
   outline: thin dotted \9;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82, 168, 236, .6);
-  -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82, 168, 236, .6);
-  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82, 168, 236, .6);
+  -webkit-box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(82, 168, 236, 0.6);
+  -moz-box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(82, 168, 236, 0.6);
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(82, 168, 236, 0.6);
 }
 .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-label,
-.bootstrap-switch.bootstrap-switch-inverse.bootstrap-switch-off .bootstrap-switch-label {
+.bootstrap-switch.bootstrap-switch-inverse.bootstrap-switch-off
+  .bootstrap-switch-label {
   -webkit-border-top-right-radius: 4px;
   -moz-border-radius-topright: 4px;
   border-top-right-radius: 4px;
@@ -500,7 +570,8 @@
   border-bottom-right-radius: 4px;
 }
 .bootstrap-switch.bootstrap-switch-off .bootstrap-switch-label,
-.bootstrap-switch.bootstrap-switch-inverse.bootstrap-switch-on .bootstrap-switch-label {
+.bootstrap-switch.bootstrap-switch-inverse.bootstrap-switch-on
+  .bootstrap-switch-label {
   -webkit-border-top-left-radius: 4px;
   -moz-border-radius-topleft: 4px;
   border-top-left-radius: 4px;

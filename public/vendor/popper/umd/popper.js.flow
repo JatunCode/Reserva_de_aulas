@@ -1,6 +1,6 @@
 // @flow
 
-export type Position = 'top' | 'right' | 'bottom' | 'left';
+export type Position = 'top' | 'right' | 'bottom' | 'left'
 
 export type Placement =
   | 'auto-start'
@@ -17,7 +17,7 @@ export type Placement =
   | 'bottom-start'
   | 'left-end'
   | 'left'
-  | 'left-start';
+  | 'left-start'
 
 export type Offset = {
   top: number,
@@ -25,11 +25,11 @@ export type Offset = {
   width: number,
   height: number,
   position: Position,
-};
+}
 
-export type Boundary = 'scrollParent' | 'viewport' | 'window';
+export type Boundary = 'scrollParent' | 'viewport' | 'window'
 
-export type Behavior = 'flip' | 'clockwise' | 'counterclockwise';
+export type Behavior = 'flip' | 'clockwise' | 'counterclockwise'
 
 export type Data = {
   instance: Popper,
@@ -49,22 +49,22 @@ export type Data = {
       left: number,
     },
   },
-};
+}
 
-export type ModifierFn = (data: Data, options: Object) => Data;
+export type ModifierFn = (data: Data, options: Object) => Data
 
 export type Padding = {
   top?: number,
   bottom?: number,
   left?: number,
   right?: number,
-};
+}
 
 export type BaseModifier = {
   order?: number,
   enabled?: boolean,
   fn?: ModifierFn,
-};
+}
 
 export type Modifiers = {
   shift?: BaseModifier,
@@ -101,7 +101,7 @@ export type Modifiers = {
   },
 
   [name: string]: (BaseModifier & { [string]: * }) | null,
-};
+}
 
 export type Options = {
   placement?: Placement,
@@ -113,7 +113,7 @@ export type Options = {
   onCreate?: (data: Data) => void,
 
   onUpdate?: (data: Data) => void,
-};
+}
 
 export type ReferenceObject = {
   +clientHeight: number,
@@ -130,7 +130,7 @@ export type ReferenceObject = {
         bottom: number,
         left: number,
       },
-};
+}
 
 export type Instance = {
   destroy: () => void,
@@ -138,7 +138,7 @@ export type Instance = {
   update: () => void,
   enableEventListeners: () => void,
   disableEventListeners: () => void,
-};
+}
 
 declare class Popper {
   static placements: Placement;
@@ -149,8 +149,8 @@ declare class Popper {
   constructor(
     reference: Element | ReferenceObject,
     popper: Element,
-    options?: Options
+    options?: Options,
   ): Instance;
 }
 
-declare export default typeof Popper;
+declare export default typeof Popper

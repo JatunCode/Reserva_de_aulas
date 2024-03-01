@@ -17,7 +17,6 @@
     <!-- Navbar -->
     @include('layouts.user.components.navbar')
 
-
     <!-- Contenido -->
     <div class="flex-grow-1">
         <div class="container text-center">
