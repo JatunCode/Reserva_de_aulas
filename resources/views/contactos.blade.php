@@ -1,7 +1,7 @@
 @extends('layouts.user.index')
 
 <!-- Titulo específicos de la vista específica -->
-@section('title', 'Home')
+@section('title', 'Contactos')
 <!-- CSS específicos de la vista específica -->
 @section('css')
 <link rel="stylesheet" href="#">
@@ -9,18 +9,15 @@
 <!-- Contenido específicos de la vista específica -->
 
 <!-- //* Simple comentario
-// ! Comentario importante
-
-//? Pregunta: ¿Este código es necesario?
+            // ! Comentario importante
+asdada
+                  //? Pregunta: ¿Este código es necesario?
 // TODO: Tarea pendiente para completar
 -->
 
-@section('content')
+                        @section('content')
 <p>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates sunt facere quasi officiis blanditiis aut ipsam
-    itaque
-    optio corporis! Ea alias a eos soluta veritatis
-    nobis id ex quis consequatur.
+    Contactos
 
 </p>
 

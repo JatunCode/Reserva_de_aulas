@@ -1,0 +1,21 @@
+.icono-personalizado {
+	font-size: 54px; /* Ajusta el tamaño según tus necesidades */
+}
+.input-group-append {
+    cursor: pointer;
+  }
+  .bootstrap-tagsinput .tag {
+    background-color: rgb(6, 145, 29);
+    color: white;
+    border-radius: 20px;
+    padding: 3px 8px 2px , 2px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Añade una sombra sutil */
+}
+
+/* Estilo para los tags de error */
+.bootstrap-tagsinput .tag.error {
+    background-color: #dc3545; /* Rojo, ajusta según tu preferencia */
+}
+
