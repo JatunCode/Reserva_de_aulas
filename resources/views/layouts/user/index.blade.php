@@ -25,7 +25,7 @@
     </div>
 
     <!-- Footer -->
-    @include('layouts.user.components.footer') </footer>
+    @include('layouts.user.components.footer')
 
     <!-- Scripts -->
     @yield('scripts')
