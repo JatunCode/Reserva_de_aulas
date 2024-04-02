@@ -22,7 +22,7 @@
                     <th style="width: 10px">#</th>
                     <th>Aula</th>
                     <th>Horario</th>
-                    <th>Fecha</th>
+                    <th>Fecha </th>
                     <th style="width: 40px">Acciones</th>
                 </tr>
             </thead>
@@ -58,12 +58,15 @@
     </div>
 </div>
 
-@include('admin.components.formularioSolicitud')
+
+@include('docente.components.formularioSolicitud')
+
+
 
 @stop
 
 @section('css')
-<link rel="stylesheet" href="/css/admin/home.css">
+<link rel="stylesheet" href="/css/docente/reservas.css">
 <!-- CSS de Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -72,11 +75,9 @@
 @stop
 
 @section('js')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Obtener los botones de solicitud
@@ -96,96 +97,11 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+</script>
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Por defecto, ocultar los comentarios
-    var comentarios = document.querySelector(".comentarios");
-    comentarios.style.display = "none";
 
-    // Por defecto, establecer el modo "Normal"
-    var modoSelect = document.getElementById("modo");
-    modoSelect.value = "1";
 
-    // Función para alternar la visibilidad de los comentarios
-    function toggleComentarios() {
-        if (modoSelect.value === "2") {
-            comentarios.style.display = "block";
-            fecha.removeAttribute("disabled");
-            fecha.removeAttribute("disabled");
-        } else {
-            comentarios.style.display = "none";
-            fecha.setAttribute("disabled", true);
-        }
-    }
-
-    // Escuchar cambios en el motivo y modo, y actualizar los comentarios en consecuencia
-    var motivoSelect = document.getElementById("motivo");
-    motivoSelect.addEventListener("change", toggleComentarios);
-    modoSelect.addEventListener("change", toggleComentarios);
-
-    // Verificar el valor inicial del motivo y modo, y actualizar los comentarios
-    toggleComentarios();
-});
-
-var contadorNombres = 1; // Inicializar el contador de nombres
-
-function agregarCampoNombre() {
-    console.log("SCRIPT AGREGAR")
-    if (contadorNombres <= 5) { // Verificar si no se han agregado más de 5 nombres
-        var nuevoCampoNombre = `
-                    <div class="col-md-12 mb-3">
-                        <label for="nombre" class="form-label">Nombre (${contadorNombres}):</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre">
-                            <button class="btn btn-danger eliminar-nombre" type="button"><i class="bi bi-x"></i></button>
-                        </div>
-                    </div>
-                `;
-        $('#nombres-container').append(nuevoCampoNombre);
-        contadorNombres++; // Incrementar el contador de nombres
-    } else {
-        alert("Solo se permiten 5 nombres.");
-    }
-}
-
-// Manejar clic en el botón de agregar nombre
-$('#agregar-nombre').on('click', function() {
-    agregarCampoNombre();
-});
-
-// Manejar clic en el botón de eliminar nombre (delegación de eventos)
-$('#nombres-container').on('click', '.eliminar-nombre', function() {
-    $(this).closest('.col-md-12').remove();
-    contadorNombres--; // Decrementar el contador de nombres al eliminar un campo
-});
-
-$(document).ready(function() {
-    $('#grupo').tagsinput({
-        allowDuplicates: false,
-        trimValue: false,
-        confirmKeys: [44], // Coma (,)
-    });
-
-    $('#grupo').on('beforeItemAdd', function(event) {
-        if (event.item === ',') {
-            var items = $('#grupo').tagsinput('items');
-            var previousNumber = items[items.length - 2];
-            $('#grupo').tagsinput('remove', previousNumber);
-            $('#grupo').tagsinput('refresh');
-        }
-    });
-
-    $('#grupo').on('itemAdded', function(event) {
-        // Añadir clase 'error' a los tags que contienen caracteres no numéricos
-        var tag = $('.bootstrap-tagsinput').find('.tag').last();
-        if (isNaN(event.item)) {
-            tag.addClass('error');
-        } else {
-            tag.removeClass('error');
-        }
-    });
-});
-
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('solicitudForm').addEventListener('submit', function(event) {
         document.getElementById('aula').removeAttribute('disabled');
@@ -245,4 +161,85 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js">
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js">
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const grupoInput = document.getElementById('grupo');
+
+    grupoInput.addEventListener('input', function(event) {
+        let inputValue = grupoInput.value;
+
+        // Mantener solo números, comas y guiones
+        inputValue = inputValue.replace(/[^0-9,\-]/g, '');
+
+        // Actualizar el valor del campo de entrada con la entrada filtrada
+        grupoInput.value = inputValue;
+    });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modoSelect = document.getElementById('modo');
+    const campoRazon = document.getElementById('campoRazon');
+    const campoRazonInput = document.querySelector('.comentarios textarea');
+
+    modoSelect.addEventListener('change', function() {
+        if (modoSelect.value === 'Urgencia') {
+            campoRazon.style.display = 'block';
+            campoRazonInput.required = true;
+        } else {
+            campoRazon.style.display = 'none';
+            campoRazonInput.required = false;
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('container');
+    const addButton = container.querySelector('.agregar-nombre');
+
+    addButton.addEventListener('click', function() {
+        const inputs = container.querySelectorAll('.nombre-input');
+        let lastVisibleIndex = -1;
+
+        inputs.forEach((input, index) => {
+            if (!input.classList.contains('invisible')) {
+                lastVisibleIndex = index;
+            }
+        });
+
+        if (lastVisibleIndex < 4) {
+            const nextIndex = lastVisibleIndex + 1;
+            const newInput = document.createElement('div');
+            newInput.classList.add('input-group', 'mb-2');
+            newInput.innerHTML = `
+                <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre${nextIndex}" id="nombre${nextIndex}">
+                <button class="btn btn-danger eliminar-nombre" type="button">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            insertAfter(newInput, inputs[lastVisibleIndex].parentNode);
+
+            // Agregar event listener al botón de eliminar
+            const deleteButton = newInput.querySelector('.eliminar-nombre');
+            deleteButton.addEventListener('click', function() {
+                newInput.remove();
+            });
+        }
+    });
+});
+
+function insertAfter(newNode, referenceNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+</script>
+
 @stop

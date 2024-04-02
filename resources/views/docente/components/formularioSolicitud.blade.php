@@ -5,21 +5,15 @@
     </div>
     <div class="offcanvas-body">
         <form action="{{ route('solicitud.store') }}" method="POST" class="row g-3" id="solicitudForm">
-
             @csrf
-
-
-
-            <div class="row" id="nombres-container">
-                <div class="col-md-12">
-                    <label for="nombre" class="form-label">Docente(s)</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre"
-                            name="nombre">
-                        <button id="agregar-nombre" class="btn btn-success" type="button">
-                            <i class="bi bi-person-plus"></i>
-                        </button>
-                    </div>
+            <div class="col-md-12" id="container">
+                <label for="nombre" class="form-label">Docente(s)</label>
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre"
+                        id="nombre">
+                    <button class=" btn btn-success agregar-nombre" type="button">
+                        <i class="bi bi-person-plus"></i>
+                    </button>
                 </div>
             </div>
 
@@ -29,17 +23,18 @@
                 <select class="form-select" id="materia" aria-label="Floating label select example" required
                     name="materia">
                     <option selected disabled value=""></option>
-                    <option value="1">Introducción a la programación</option>
-                    <option value="2">Física</option>
-                    <option value="3">Elementos</option>
+                    <option value="Introducción a la programación">Introducción a la programación</option>
+                    <option value="Física">Física</option>
+                    <option value="Elementos">Elementos</option>
                 </select>
             </div>
 
             <div class="col-6">
                 <label for="grupo" class="form-label">Grupo(s):</label>
-                <input type="text" class="form-control" id="grupo" name="grupo" style="width: 20%;"
-                    placeholder="Ejm: 1,2,3" required>
+                <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3" required>
             </div>
+
+
 
 
             <div class="col-md-6">
@@ -51,23 +46,24 @@
                 <label for="motivo" class="form-label">Motivo:</label>
                 <select class="form-select" id="motivo" required name="motivo">
                     <option selected disabled value=""></option>
-                    <option value="1">Examen parcial</option>
-                    <option value="2">Examen de mesa</option>
-                    <option value="3">Examen final</option>
-                    <option value="4">Examen 2da instancia</option>
-                    <option value="5">Evento</option>
-                    <option value="6">Clase regular</option>
-                    <option value="7">Otro</option>
+                    <option value="Examen parcial">Examen parcial</option>
+                    <option value="Examen de mesa">Examen de mesa</option>
+                    <option value="Examen final">Examen final</option>
+                    <option value="Examen 2da instancia">Examen 2da instancia</option>
+                    <option value="Evento">Evento</option>
+                    <option value="Clase regular">Clase regular</option>
+                    <option value="Otro">Otro</option>
                 </select>
             </div>
             <div class="col-md-6">
                 <label for="modo" class="form-label">Modo:</label>
                 <select class="form-select" id="modo" required name="modo">
-                    <option value="1">Normal</option>
-                    <option value="2">Urgencia</option>
+                    <option value="Normal" selected>Normal</option>
+                    <option value="Urgencia">Urgencia</option>
                 </select>
             </div>
-            <div class="form-floating comentarios" style="display: none;">
+
+            <div class="form-floating comentarios" id="campoRazon" style="display: none;">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
                     style="height: 100px" name="razon"></textarea>
                 <label for="floatingTextarea2">Razon:</label>
