@@ -25,7 +25,7 @@ class SolicitudController extends Controller
         ];
 
         // Envía los datos a la vista 'home'
-        return view('docente.home', ['solicitudes' => $solicitudes]);
+        return view('docente.reserva', ['solicitudes' => $solicitudes]);
     }
 
     /**
@@ -40,6 +40,11 @@ class SolicitudController extends Controller
          // Validar los datos del formulario
          $request->validate([
              'nombre' => 'required|string',
+             'nombre1' => 'nullable|string',
+             'nombre2' => 'nullable|string',
+             'nombre3' => 'nullable|string',
+             'nombre4' => 'nullable|string',
+             'nombre5' => 'nullable|string',
              'materia' => 'required|string',
              'grupo' => 'required|string',
              'cantidad_estudiantes' => 'required|integer',
@@ -48,23 +53,29 @@ class SolicitudController extends Controller
              'aula' => 'required|string',
              'fecha' => 'required|date',
              'horario' => 'required|string',
+
          ]);
 
          try {
              // Crear una nueva instancia de la solicitud
              $solicitud = new Solicitudes;
              $solicitud->nombre = $request->input('nombre');
+             $solicitud->nombre1 = $request->input('nombre1');
+             $solicitud->nombre2 = $request->input('nombre2');
+             $solicitud->nombre3 = $request->input('nombre3');
+             $solicitud->nombre4 = $request->input('nombre4');
+             $solicitud->nombre5 = $request->input('nombre5');
              $solicitud->materia = $request->input('materia');
              $solicitud->grupo = $request->input('grupo');
              $solicitud->cantidad_estudiantes = $request->input('cantidad_estudiantes');
              $solicitud->motivo = $request->input('motivo');
-             $modo = $request->input('modo') == 1 ? 'Normal' : 'Urgente';
-             $solicitud->modo = $modo;
+             $solicitud->modo = $request->input('modo');
              $solicitud->razon = $request->input('razon');
              $solicitud->aula = $request->input('aula');
              $solicitud->horario = $request->input('horario');
              $solicitud->fecha = $request->input('fecha'); // Asegúrate de obtener correctamente el valor de 'fecha'
-
+             $solicitud->estado = $request->input('fecha');
+             $solicitud->estado = 'Solicitando';
              // Guardar la solicitud en la base de datos
              $solicitud->save();
 
