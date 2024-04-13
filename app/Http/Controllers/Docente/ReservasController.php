@@ -19,9 +19,22 @@ class ReservasController extends Controller
         $solicitudes = Solicitudes::paginate(10);
 
         // Envía los datos a la vista 'home'
-        return view('docente.registro.reservas', ['solicitudes' => $solicitudes]);
+        return "Hola";
     }
+    public function normal()
+    {
+        // Filtrar solo las solicitudes que son normales
+        $solicitudes = Solicitudes::where('modo', 'Normal')->paginate(10);
 
+        return view('docente.solicitud.filtrar.llegada', ['solicitudes' => $solicitudes]);
+    }
+public function urgencia()
+{
+
+    $solicitudes = Solicitudes::where('modo', 'Urgencia')->paginate(10);
+
+    return view('docente.solicitud.filtrar.urgente', ['solicitudes' => $solicitudes]);
+}
 
     /**
      * Store a newly created resource in storage.
@@ -139,19 +152,26 @@ public function store(Request $request){
         $solicitudes = Solicitudes::where('modo', 'Urgente')->paginate(10);
 
         // Retornar la vista con las solicitudes filtradas y paginadas
-        return view('docente.registro.reservas', ['solicitudes' => $solicitudes]);
+        return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes]);
         // return "Hola";
     }
     public function filtrar_llegada()
     {
         // // Filtrar las solicitudes por modo "Urgente" y paginar el resultado
-        $solicitudes = Solicitudes::paginate(10);
+        $solicitudes = Solicitudes::where('modo', 'Normal')->paginate(10);
 
         // Retornar la vista con las solicitudes filtradas y paginadas
-        return view('docente.registro.reservas', ['solicitudes' => $solicitudes]);
+        return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes]);
         // return "Hola";
     }
+    public function filtrar()
+    {
+        // Filtrar las solicitudes por estado diferente de "cancelado" y paginar el resultado
+        $solicitudes = Solicitudes::where('estado', '!=', 'cancelado')->paginate(10);
 
+        // Retornar la vista con las solicitudes filtradas y paginadas
+        return view('docente.listar.cancelar', ['solicitudes' => $solicitudes]);
+    }
 
 
 }

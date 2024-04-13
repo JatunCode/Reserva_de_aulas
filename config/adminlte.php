@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'JatunCode',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -314,8 +314,11 @@ return [
         [
             'text'       => 'inicio',
             'icon_color' => 'fas fa fa-home',
-            'route'        => 'docente.home',
+            'route'        => 'docente.solicitudes.disponibles',
         ],
+
+
+
         // [
         //     'text'    => 'multilevel',
         //     'icon'    => 'fas fa-fw fa-share',
@@ -357,12 +360,38 @@ return [
         //     ],
 
         // ],
-        ['header' => 'Registro'],
+        ['header' => 'Realizar solicitud'],
         [
-            'text'       => 'Reservas',
+            'text'       => 'Solicitud Normal',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
-            'route'      => 'docente.reservas',
+            'route'      => 'docente.solicitud.normal',
+        ],
+        [
+            'text'       => 'Solicitud de Urgencia',
+            'icon'       => 'fas fa-exclamation-circle',
+            'icon_color' => 'yellow',
+            'route'      => 'docente.solicitud.urgente',
+        ],
+
+        ['header' => ' Listar'],
+        [
+            'text'       => 'Listar Solicitudes Normales',
+            'icon'       => 'fas fa-list',
+            'icon_color' => 'green',
+            'route'      => 'docente.solicitud.filtrar.llegada',
+        ],
+        [
+            'text'       => 'Listar Solicitudes Urgencia',
+            'icon'       => 'fas fa-table',
+            'icon_color' => 'yellow',
+            'route'      => 'docente.solicitud.filtrar.urgente',
+        ],
+        [
+            'text'       => 'Cancelar Solicitud',
+            'icon'       => 'fas fa-solid fa-ban',
+            'icon_color' => 'red',
+            'route'      => 'docente.solicitud.cancelar',
         ],
     ],
 

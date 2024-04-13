@@ -37,11 +37,15 @@ Route::prefix('admin')->group(function () {
 });
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')->group(function () {
-    Route::get('/', [SolicitudController::class, 'index'])->name('docente.home');
-    Route::get('/reservas/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.reservas.filtrar.modo');
-    Route::get('/reservas/llegada', [ReservasController::class, 'filtrar_llegada'])->name('docente.reservas.filtrar.llegada');
+    Route::get('/', [SolicitudController::class, 'index'])->name('docente.solicitudes.disponibles');
+    Route::get('/solicitud/normal/hola', [SolicitudController::class, 'fecha'])->name('docente.solicitud.fecha');
+    Route::get('/solicitud/normal/', [SolicitudController::class, 'normal'])->name('docente.solicitud.normal');
+    Route::get('/solicitud/urgente', [SolicitudController::class, 'urgente'])->name('docente.solicitud.urgente');
+    Route::get('/solicitudes/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.solicitud.filtrar.urgente');
+    Route::get('/solicitudes/llegada', [ReservasController::class, 'filtrar_llegada'])->name('docente.solicitud.filtrar.llegada');
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     Route::get('/reservas', [ReservasController::class, 'index'])->name('docente.reservas');
     Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
+    Route::get('/solicitudes/cancelar', [ReservasController::class, 'filtrar'])->name('docente.solicitud.cancelar');
     Route::put('/solicitudes/{solicitud}/cancelar', [ReservasController::class, 'cancelar'])->name('docente.reservas.cancelar');
 });

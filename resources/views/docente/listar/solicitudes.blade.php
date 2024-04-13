@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-<h1>Estado de Reservas</h1>
+<h1>Lista de Solicitudes </h1>
 @stop
 
 @section('content')
@@ -15,19 +15,7 @@
         <h3 class="card-title"></h3>
     </div>
 
-    <div class="d-flex justify-content-start">
-        <div class="form-check ml-3">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="porLlegada" checked
-                onclick="filtrarPorllegada()">
-            <label class="form-check-label" for="flexRadioDefault1">Por llegada</label>
-        </div>
 
-        <div class="form-check ml-3">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="porUrgencia"
-                onclick="filtrarPorUrgencia()">
-            <label class="form-check-label" for="flexRadioDefault2">Por urgencia</label>
-        </div>
-    </div>
 
     <div class="card-body table-responsive">
         <table class="table table-bordered">
@@ -39,14 +27,17 @@
                     <th>Fecha </th>
                     <th style="width: 40px">Modo</th>
                     <th style="width: 40px">Estado</th>
-                    <th style="width: 40px">Acciones</th>
+                    <th style="width: 10px">Detalles</th>
                 </tr>
             </thead>
             <tbody>
+                @php
+                $contador = 1;
+                @endphp
                 @foreach($solicitudes as $solicitud)
                 <tr style="@if($solicitud->estado == 'cancelado') background-color: #E8E8E8; color: black; @endif">
 
-                    <td>{{ $solicitud->id }}</td>
+                    <td>{{ $contador++ }}</td>
                     <td>{{ $solicitud->aula }}</td>
                     <td>{{ $solicitud->materia }}</td>
                     <td>{{ $solicitud->fecha }}</td>
@@ -89,13 +80,7 @@ background-color: #FFC0B7;btn btn-outline-secondary
                                 <i class="bi bi-eye"></i> <!-- Icono "eye" de Bootstrap Icons -->
                             </span>
                         </button>
-                        <button
-                            class="btn eliminar-btn mx-1 cancelarBtn @if($solicitud->estado == 'cancelado') d-none @endif"
-                            type="button" data-id="{{ $solicitud->id }}">
-                            <span class="text-danger">
-                                <i class="fa fa-ban" aria-hidden="true"></i>
-                            </span>
-                        </button>
+
                     </td>
                 </tr>
                 @endforeach
@@ -305,18 +290,8 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-<script>
-function filtrarPorUrgencia() {
-    // Redirigir a la ruta deseada
-    window.location.href = "{{ route('docente.reservas.filtrar.modo') }}";
-}
-</script>
-<script>
-function filtrarPorllegada() {
-    // Redirigir a la ruta deseada
-    window.location.href = "{{ route('docente.reservas.filtrar.llegada') }}";
-}
-</script>
+
+
 
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">
