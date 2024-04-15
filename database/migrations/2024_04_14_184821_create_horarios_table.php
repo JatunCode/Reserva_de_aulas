@@ -32,3 +32,7 @@ class CreateHorariosTable extends Migration
         Schema::dropIfExists('horario');
     }
 }
+
+
+
+

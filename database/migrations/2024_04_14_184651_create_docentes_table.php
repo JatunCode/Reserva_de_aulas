@@ -33,3 +33,7 @@ class CreateDocentesTable extends Migration
         Schema::dropIfExists('docente');
     }
 }
+
+
+
+

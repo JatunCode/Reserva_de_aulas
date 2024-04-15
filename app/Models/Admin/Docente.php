@@ -11,4 +11,11 @@ class Docente extends Model
     protected $table = 'docente';
     protected $fillable = ['ID_DOCENTE', 'NOMBRE', 'GRUPO', 'CELULAR', 'EMAIL'];
     
+    public function notificaion_relacion_docente(){
+        return $this->belongsTo(Notificacion::class, 'ID_DOCENTE', 'ID_DOCENTE');
+    }
 }
+
+
+
+

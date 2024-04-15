@@ -35,3 +35,7 @@ class CreateAmbientesTable extends Migration
         Schema::dropIfExists('ambiente');
     }
 }
+
+
+
+

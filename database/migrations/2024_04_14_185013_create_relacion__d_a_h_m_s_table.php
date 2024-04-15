@@ -33,3 +33,6 @@ class CreateRelacionDAHMSTable extends Migration
         Schema::dropIfExists('relacion_dahm');
     }
 }
+
+
+

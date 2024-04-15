@@ -31,3 +31,7 @@ class CreateNotificacionsTable extends Migration
         Schema::dropIfExists('notificacion');
     }
 }
+
+
+
+

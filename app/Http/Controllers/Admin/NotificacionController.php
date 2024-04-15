@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Notificacion;
 use Illuminate\Http\Request;
 
 class NotificacionController extends Controller
@@ -14,7 +15,8 @@ class NotificacionController extends Controller
      */
     public function index()
     {
-        //
+        $notificaciones = Notificacion::all();
+        return view('admin.notificaiones', ['notificaciones'=>$notificaciones]);
     }
 
     /**

@@ -16,7 +16,7 @@ class CreateReservasTable extends Migration
         Schema::create('reserva', function (Blueprint $table) {
             $table->uuid('ID_RESERVA')->primary()->unique();
             $table->foreignUuid('ID_SOLICITUD')->constrained('solicitud','ID_SOLICITUD'); //procedural store
-            $table->dateTime('FECHAHORA')->nullable(false); //procedural stores
+            $table->dateTime('FECHAHORA_RESER')->nullable(false); //procedural stores
             $table->timestamps();
         });
     }

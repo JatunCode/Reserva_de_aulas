@@ -15,3 +15,6 @@ class Horario extends Model
         return $this->hasOne(Relacion_DAHM::class, 'ID_HORARIO', 'ID_HORARIO');
     }
 }
+
+
+

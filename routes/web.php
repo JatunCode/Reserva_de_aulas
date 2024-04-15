@@ -44,6 +44,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/hola',  function () {
         return 'Hola :v';
     });
+
 });
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')->group(function () {
@@ -55,3 +56,6 @@ Route::prefix('docente')->group(function () {
     Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
     Route::put('/solicitudes/{solicitud}/cancelar', [ReservasController::class, 'cancelar'])->name('docente.reservas.cancelar');
 });
+
+
+

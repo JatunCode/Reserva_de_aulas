@@ -27,3 +27,6 @@ class Relacion_DAHM extends Model
         return $this->hasOne(Docente::class, 'ID_DOCENTE', 'ID_DOCENTE');
     }
 }
+
+
+

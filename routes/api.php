@@ -28,3 +28,6 @@ Route::controller(HorarioController::class)->group(
         // Route::post('/putambiente', 'show');
     }
 );
+
+
+

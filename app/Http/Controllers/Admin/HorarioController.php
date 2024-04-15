@@ -34,6 +34,7 @@ class HorarioController extends Controller
     public function store(Request $request)
     {
         
+        
     }
 
     /**
