@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\HorarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SolicitudController;
+use App\Models\Admin\Horario;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,3 +20,11 @@ use App\Http\Controllers\Admin\SolicitudController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::controller(HorarioController::class)->group(
+    function(){
+        Route::get('/horarios', 'index');
+        // Route::post('/postambiente', 'store');
+        // Route::post('/putambiente', 'show');
+    }
+);

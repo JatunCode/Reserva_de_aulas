@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\AmbienteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\ReservasController;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,7 +34,13 @@ Route::prefix('admin')->group(function () {
     // Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
     // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     // Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
-
+    Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes');
+    Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
+    Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
+    Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios');
+    Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
+    Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
+    Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
     Route::get('/hola',  function () {
         return 'Hola :v';
     });
