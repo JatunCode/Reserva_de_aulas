@@ -74,7 +74,7 @@ public function store(Request $request){
     $solicitud->save();
 
     // Redirigir a la página de inicio del administrador
-    return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
+    return redirect()->route('docente.solicitud.normal')->with('success', 'Solicitud creada exitosamente');
 
 }
 
