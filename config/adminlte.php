@@ -304,18 +304,18 @@ return [
         // Sidebar items:
 
 
-        ['header' => 'Inicio'],
-        [
-            'text' => 'Perfil',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-            'can'  => ['admin'],
-        ],
-        [
-            'text'       => 'inicio',
-            'icon_color' => 'fas fa fa-home',
-            'route'        => 'docente.solicitudes.disponibles',
-        ],
+       // ['header' => 'Inicio'],
+       // [
+          //  'text' => 'Perfil',
+         //   'url'  => 'admin/settings',
+         //   'icon' => 'fas fa-fw fa-user',
+         //   'can'  => ['admin'],
+        //],
+       // [
+         //   'text'       => 'inicio',
+         //   'icon_color' => 'fas fa fa-home',
+         //   'route'        => 'docente.solicitudes.disponibles',
+       // ],
 
 
 
