@@ -41,9 +41,9 @@
                         <td>{{ $horario->DIA }}</td>
                         <td>{{ $horario->INICIO }}</td>
                         <td>{{ $horario->FIN }}</td>
-                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_materia']['NOMBRE'] }}</td>
-                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'] }}</td>
-                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_docente']['NOMBRE'] }}</td>
+                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
+                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>
+                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -72,13 +72,16 @@
     var i = 1
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
-            var container =  document.getElementById('container')
+            var container_main =  document.getElementById('container-main')
+
+            var container = document.createElement('div')
+            container.classList.add('row')
 
             var dia = document.createElement('div')
             dia.classList.add('col-md-10')
             dia.innerHTML = "<label for='nombre' class='form-label'>Seleccione el dia de clases</label>"
                 +"<div class='input-group mb-2'>"+
-                    "<select class='form-select' name='opcion' required name='opcion'>"+
+                    '<select class="form-select" name="dia" required>'+
                         "<option value='Lunes' selected>Lunes</option>"+
                         "<option value='Martes'>Martes</option>"+
                         "<option value='Miercoles'>Miercoles</option>"+
@@ -88,20 +91,16 @@
                     "</select>"+"</div>"
 
             var inicio = document.createElement('div')
-            inicio.classList.add('col-md-6')
+            inicio.classList.add('col-md-4')
             inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" required>'
 
             var fin = document.createElement('div')
-            fin.classList.add('col-md-6')
+            fin.classList.add('col-md-4')
             fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" required>'
 
             var ambiente = document.createElement('div')
-            ambiente.classList.add('col-md-6')
+            ambiente.classList.add('col-md-4')
             ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" required>'
-
-            var materia = document.createElement('div')
-            materia.classList.add('col-md-6')
-            materia.innerHTML = '<label for="materia" class="form-label">Materia</label><input type="text" class="form-control" name="materia" required>'
             // errordiv.innerHTML = '@error("REFERENCIAS")
             //         <div class="text-danger">{{ $message }}</div>
             //     @enderror'
@@ -110,7 +109,7 @@
                 container.appendChild(inicio)
                 container.appendChild(fin)
                 container.appendChild(ambiente)
-                container.appendChild(materia)
+                container_main.appendChild(container)
                 i++
             }
             console.log("Contador de inputs: ", i)
@@ -132,30 +131,60 @@
     }
     function obtainValues(){
         //event.preventDefault()
-        var dia = document.querySelectorAll('[name="dia"]')
-        var inicio = document.querySelectorAll('[name="inicio"]')
-        var fin = document.querySelectorAll('[name="fin"]')
-        var materia = document.querySelectorAll('[name="materia"]')
-        var ambiente = document.querySelectorAll('[name="ambiente"]')
-        var json_list = []
-        list.forEach(element => {
-            json_list.push(element.value)
-        })
+        var docente = document.querySelector('[name="docente"]')
+        var materia = document.querySelector('[name="materia"]')
+        var dias = document.querySelectorAll('[name="dia"]')
+        var inicios = document.querySelectorAll('[name="inicio"]')
+        var fins = document.querySelectorAll('[name="fin"]')
+        var ambientes = document.querySelectorAll('[name="ambiente"]')
+
+        console.log("Tamaño de arreglo dias: ", dias.length)
+        console.log("Tamaño de arreglo inicio: ", inicios.length)
+        console.log("Tamaño de arreglo fin: ", fins.length)
+        console.log("Tamaño de arreglo ambiente: ", ambientes.length)
+
+        var list_dia = []
+        var list_horaini = []
+        var list_horafin = []
+        var list_ambiente = []
+
+        dias.forEach(dia => {
+            var index = dia.selectedIndex
+            var dia_select = dia.options[index]
+            list_dia.push(dia_select.value)
+        });
+        
+        inicios.forEach(inicio => {
+            list_horaini.push(inicio.value)
+        });
+
+        fins.forEach(fin => {
+            list_horafin.push(fin.value)
+        });
+
+        ambientes.forEach(ambiente => {
+            list_ambiente.push(ambiente.value)
+        });
+
+        var json_list = {
+            'LIST_DIA': list_dia,
+            'LIST_HORAINI': list_horaini,
+            'LIST_HORAFIN': list_horafin,
+            'LIST_AMBIENTE': list_ambiente
+        }
         //Enviar datos de los campos
         var json_json = JSON.stringify(json_list)
 
         var form = JSON.stringify({
-                    TIPO: opcion_select.value,
-                    NOMBRE: nombre.value,
-                    REFERENCIAS: json_json,
-                    CAPACIDAD: capac.value,
-                    DATA: checked
+                    NOMBRE_DOCENTE: docente.value,
+                    MATERIA: materia.value,
+                    LISTAS: json_json
                 })
 
         console.log("Formulario con datos: ",form)
         var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
-        fetch('/admin/ambientes/store', 
+        fetch('horarios/store', 
             {
                 method: 'POST',
                 headers: {
@@ -180,7 +209,7 @@
     }
 
     document.getElementById('ref-add').addEventListener('click',agregarCampos)
-    document.getElementById('formHorario').addEventListener('submit', obtainValues)
+    document.getElementById('boton-sub').addEventListener('click', obtainValues)
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

@@ -40,7 +40,7 @@
                     <tr>
                         <td style="width: 40px">{{ $ambiente->NOMBRE }}</td>
                         <td style="width: 40px">{{ $ambiente->TIPO }}</td>
-                        <td>{{ $ambiente->REFERENCIAS }}</td>
+                        <td style="width: 150px">{{ $ambiente->REFERENCIAS }}</td>
                         <td style="width: 40px">{{ $ambiente->CAPACIDAD }}</td>
                         <td style="width: 40px">{{ $ambiente->DATA }}</td>
                         <td>{{ $ambiente->ESTADO }}</td>
@@ -107,17 +107,17 @@
     }
     function obtainValues(){
         //event.preventDefault()
-        var tipo_ambiente = document.getElementById('opcion')
-        var nombre = document.getElementById('nombre')
+        var tipo_ambiente = document.querySelector('[name="opcion"]')
+        var nombre = document.querySelector('[name="nombre"]')
         var index = tipo_ambiente.selectedIndex
         var opcion_select = tipo_ambiente.options[index]
         var referencias = document.querySelectorAll('[name="refers"]')
         var json_list = []
-        list.forEach(element => {
+        referencias.forEach(element => {
             json_list.push(element.value)
         })
-        var capac = document.getElementById('capacidad')
-        var data = document.getElementById('si')
+        var capac = document.querySelector('[name="capacidad"]')
+        var data = document.querySelector('[name="data"]')
         var checked = data.checked ? "SI" : "NO"
 
         //Enviar datos de los campos
@@ -139,7 +139,7 @@
         console.log("Formulario con datos: ",form)
         var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
-        fetch('/admin/ambientes/store', 
+        fetch('ambientes/store', 
             {
                 method: 'POST',
                 headers: {

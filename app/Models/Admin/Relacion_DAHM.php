@@ -9,7 +9,7 @@ class Relacion_DAHM extends Model
 {
     use HasFactory;
     protected $table = "relacion_dahm";
-    protected $fillable = ['ID_RELACION'. 'ID_DOCENTE', 'ID_AMBIENTE', 'ID_HORARIO', 'ID_MATERIA'];
+    protected $fillable = ['ID_RELACION', 'ID_DOCENTE', 'ID_AMBIENTE', 'ID_HORARIO', 'ID_MATERIA'];
 
     public function dahm_relacion_horario(){
         return $this->belongsTo(Horario::class, 'ID_HORARIO', 'ID_HORARIO');
