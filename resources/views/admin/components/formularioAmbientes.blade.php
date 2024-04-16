@@ -9,7 +9,7 @@
             <div class="col-md-10" id="container">
                 <label for="nombre" class="form-label">Seleccione el tipo de ambiente</label>
                 <div class="input-group mb-2">
-                    <select class="form-select" name="opcion" required name="opcion">
+                    <select class="form-select" name="opcion" required >
                         <option value="Aula comun" selected>Aula comun</option>
                         <option value="Auditorio">Auditorio</option>
                     </select>

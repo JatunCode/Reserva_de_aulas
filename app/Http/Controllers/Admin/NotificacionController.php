@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Docente;
 use App\Models\Admin\Notificacion;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Uuid;
 
 class NotificacionController extends Controller
 {
@@ -15,8 +17,9 @@ class NotificacionController extends Controller
      */
     public function index()
     {
-        $notificaciones = Notificacion::all();
-        return view('admin.notificaiones', ['notificaciones'=>$notificaciones]);
+        $notificaciones = Notificacion::with('docente_relacion_notificacion.notificaion_relacion_docente')->get();
+        //return view('admin.notificaiones', ['notificaciones'=>$notificaciones]);
+        return $notificaciones;
     }
 
     /**
@@ -27,7 +30,13 @@ class NotificacionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Notificacion::create([
+            'ID_NOTIFICACION' => Uuid::uuid4(),
+            'CUERPO' => $request->cuerpo,
+            'ID_DOCENTE' => Docente::where('NOMBRE', $request->docente)->ID_DOCENTE
+        ]);
+
+
     }
 
     /**
