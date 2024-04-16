@@ -393,6 +393,21 @@ return [
             'icon_color' => 'red',
             'route'      => 'docente.solicitud.cancelar',
         ],
+
+        ['header' => 'Razon no asignacion'],
+        [
+            'text'       => 'Razon',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'docente.registroRazonDenoAsignacion',
+        ],
+        ['header' => 'Registro de Reservas'],
+        [
+            'text'       => 'Reservas',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'docente.registroReservas',
+        ],
     ],
 
     /*

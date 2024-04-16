@@ -172,6 +172,59 @@ public function store(Request $request){
         // Retornar la vista con las solicitudes filtradas y paginadas
         return view('docente.listar.cancelar', ['solicitudes' => $solicitudes]);
     }
+//Hu registro reservas
+public function registroReservas()
+{
+    $nombreDocente = "Gelania";
+
+    $solicitudes = Solicitudes::where('nombre', $nombreDocente)
+        ->leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
+        ->select('solicitudes.*', 'razones.razon')
+        ->paginate(10);
+     $razon = Razones::paginate(10);
+    // Retornar la vista con ambas variables
+    return view('docente.registro.registroreservas', ['solicitudes' => $solicitudes, 'razon' => $razon]);
+}
+
+public function showReservas($id)
+{
+
+    $solicitud = Solicitudes::leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
+    ->where('solicitudes.id', $id)
+    ->select('solicitudes.*', 'razones.razon')
+    ->firstOrFail();
+
+
+    return response()->json(['solicitud' => $solicitud]);
+}
+
+
+
+
+///registro de RazonDenoAsignacion
+
+
+public function registroRazonDenoAsignacion()
+{
+    // Filtrar las solicitudes por el nombre del docente y paginar el resultado
+    $solicitudes = Razones::paginate(10);
+
+    // Envía los datos a la vista 'home'
+    return view('docente.registro.registroRazonDenoAsignacion', ['solicitudes' => $solicitudes]);
+}
+
+
+
+public function  borrarRazon($id)
+{
+    dd($id);
+
+    Razones::destroy($id);
+
+ // Devuelve un mensaje de éxito como JSON
+ return response()->json(['message' => 'Razón eliminada exitosamente']);
+    }
+
 
 
 }
