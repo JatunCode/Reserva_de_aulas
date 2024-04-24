@@ -5,7 +5,13 @@
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
     <h1>Registro de razones de no asignacion de ambientes</h1>
-    <button class="btn btn-primary" id="agregarBtn">+</button>
+    <button class="btn btn-primary" id="agregarBtn" type="button" data-bs-toggle="offcanvas"
+    data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+<i class="bi bi-plus"></i> <!-- Icono "plus" de Bootstrap Icons -->
+</button>
+<!-- docente/components/formularioRegistroRazon.blade.php -->
+
+
 
 
 </div>
@@ -86,7 +92,7 @@
             Página {{ $solicitudes->currentPage() }} de {{ $solicitudes->lastPage() }}
         </div>
 
-        <form id="deleteForm" action="{{ route('borrar_razon', ['id' => ':id']) }}" method="POST" style="display: none;">
+        <form id="deleteForm" method="POST" style="display: none;">
             @csrf
             @method('DELETE')
         </form>
@@ -95,9 +101,8 @@
     </div>
 
 </div>
+@include('docente.components.formularioRegistroRazon')
 
-
-@include('docente.components.formularioRegistroreserva')
 
 @stop
 
@@ -115,25 +120,21 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
 
+
+
 <script>
-function obtenerDatosSolicitud(button) {
-    var id = button.getAttribute("data-id");
-    document.getElementById("solicitudId").value = id;
-    fetch('{{ route("docente.reservas.show", ["id" => ":id"]) }}'.replace(':id', id))
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            llenarFormulario(data.solicitud);
-        })
-        .catch(error => {
-            console.error('Error al obtener los datos:', error);
+
+document.addEventListener("DOMContentLoaded", function() {
+        var agregarBtn = document.getElementById('agregarBtn');
+        var formulario = document.getElementById('formularioRegistroRazon');
+
+        agregarBtn.addEventListener('click', function() {
+            formulario.style.display = 'block';
         });
-}
+    });
 
 
-</script>
 
-<script>
     document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM cargado");
     var cancelarBtns = document.querySelectorAll('.cancelarBtn');
@@ -147,12 +148,28 @@ function obtenerDatosSolicitud(button) {
 });
 
 
+//borrar datos
+document.addEventListener("DOMContentLoaded", function() {
+    var cancelarBtns = document.querySelectorAll('.cancelarBtn');
+    cancelarBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (confirm('¿Estás seguro de querer cancelar este registro?')) {
+                var id = this.getAttribute('data-id');
+                var form = document.getElementById('deleteForm');
+                form.action = '{{ route("razones.destroy", ["id" => ":id"]) }}'.replace(':id', id);
+                form.submit();
+            }
+        });
+    });
+});
+
+
 
 
 function obtenerDatosSolicitud(button) {
     var id = button.getAttribute("data-id");
     document.getElementById("solicitudId").value = id;
-    fetch('{{ route("docente.reservas.show", ["id" => ":id"]) }}'.replace(':id', id))
+    fetch('{{ route("docente.reservas.showReservas", ["id" => ":id"]) }}'.replace(':id', id))
         .then(response => response.json())
         .then(data => {
             console.log(data);

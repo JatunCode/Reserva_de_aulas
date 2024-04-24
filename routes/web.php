@@ -1,9 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\AmbienteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\ReservasController;
+use App\Http\Controllers\RazonesController;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,10 +35,17 @@ Route::prefix('admin')->group(function () {
     // Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
     // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     // Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
-
+    Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes');
+    Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
+    Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
+    Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios');
+    Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
+    Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
+    Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
     Route::get('/hola',  function () {
         return 'Hola :v';
     });
+
 });
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')->group(function () {
@@ -48,8 +60,18 @@ Route::prefix('docente')->group(function () {
     Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
     Route::get('/solicitudes/cancelar', [ReservasController::class, 'filtrar'])->name('docente.solicitud.cancelar');
     Route::put('/solicitudes/{solicitud}/cancelar', [ReservasController::class, 'cancelar'])->name('docente.reservas.cancelar');
- //Hu registro reservas
+
+
+    Route::put('/registroReservas/{solicitud}/aceptar', [ReservasController::class, 'registroaceptar'])->name('docente.Registroreservas.aceptar');
+    Route::put('/registroReservas/{solicitud}/cancelar',[ReservasController::class, 'registrocancelar'])->name('docente.Registroreservas.cancelar');
+    //Hu registro reservas
  Route::get('/registroReservas', [ReservasController::class, 'registroReservas'])->name('docente.registroReservas');
- Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
- Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
+ Route::get('/registroReservas/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
+
+ Route::get('/registroRazonDenoAsignacion', [RazonesController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
+ Route::delete('/registroRazonDenoAsignacion/{id}', [RazonesController::class, 'destroy'])->name('razones.destroy');
+ Route::post('/guardarRazon', [RazonesController::class, 'guardar'])->name('razones.guardar');
 });
+
+
+

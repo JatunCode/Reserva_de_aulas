@@ -10,9 +10,10 @@ class Razones extends Model
     use HasFactory;
 
     protected $table = 'razones';
-
+    public $timestamps = false;
+    protected $primaryKey = 'id_razones';
     protected $fillable = [
-        'id_razones',
         'razon',
     ];
+
 }

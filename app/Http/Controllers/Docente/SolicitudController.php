@@ -221,7 +221,6 @@ public function urgente()
         ]);
 
         $solicitud->update($request->all());
-
         return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
     }
 

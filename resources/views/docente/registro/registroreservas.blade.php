@@ -65,13 +65,14 @@ background-color: #FFC0B7;btn btn-outline-secondary
                                 <i class="bi bi-eye"></i> <!-- Icono "eye" de Bootstrap Icons -->
                             </span>
                         </button>
-                        <button
-                            class="btn eliminar-btn mx-1 cancelarBtn"
-                            type="button" data-id="{{ $solicitud->id }}">
-                            <span class="text-danger">
-                                <i class="fa fa-ban" aria-hidden="true"></i>
-                            </span>
-                        </button>
+
+                        <button class="btn eliminar-btn mx-1" id="cancelarBtn" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasLeft"  data-id="{{ $solicitud->id }}" onclick="obt2(this)" aria-controls="offcanvasLeft">
+                        <span class="text-danger">
+                            <i class="fa fa-ban" aria-hidden="true"></i>
+                        </span>
+                    </button>
+
                     </td>
                 </tr>
                 @endforeach
@@ -115,6 +116,7 @@ background-color: #FFC0B7;btn btn-outline-secondary
 
 
 @include('docente.components.formularioRegistroreserva')
+@include('docente.components.formularioCancelarreserva')
 
 @stop
 
@@ -135,6 +137,7 @@ background-color: #FFC0B7;btn btn-outline-secondary
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
 <script>
+
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("aceptarBtn").addEventListener('click', function() {
         var id = document.getElementById("solicitudId").value; // Obtener el ID del input hidden
@@ -149,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
             confirmButtonText: 'Sí, aceptar'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch("{{ url('docente/solicitudes') }}/" + id + "/aceptar", {
+                fetch("{{ url('docente/registroReservas') }}/" + id + "/aceptar", {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -187,11 +190,106 @@ document.addEventListener("DOMContentLoaded", function() {
         })
     });
 });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var radioButtons = document.querySelectorAll('.form-check-input');
+    radioButtons.forEach(function(radioButton) {
+        radioButton.addEventListener('click', function() {
+            // Remover el atributo 'checked' de todos los botones de radio
+            radioButtons.forEach(function(rb) {
+                rb.removeAttribute('checked');
+            });
+            // Agregar el atributo 'checked' al botón de radio seleccionado
+            this.setAttribute('checked', 'checked');
+        });
+    });
+});
+
+
+//camcelar
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("elimBtn").addEventListener('click', function() {
+        var id = document.getElementById("solicitudId2").value; // Obtener el ID del input hidden
+        var razonSeleccionada = document.querySelector('input[name="razon"]:checked'); // Obtener el radio button seleccionado
+            var razonId = razonSeleccionada ? razonSeleccionada.value : null; // Obtener el valor del radio button seleccionado
+        console.log("ID en cancelar:", id);
+        console.log("Razón seleccionada:", razonId);
+
+        if (!razonId) {
+                // Si no se ha seleccionado ninguna razón, muestra un mensaje de error y no realiza ninguna acción
+                Swal.fire(
+                    '¡Error!',
+                    'Debes seleccionar una razón para cancelar la reserva.',
+                    'error'
+                );
+                return;
+            }
+
+
+        Swal.fire({
+            title: '¿Estás seguro de cancelar su reserva?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Atras',
+            confirmButtonText: 'Aceptar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("{{ url('docente/registroReservas') }}/" + id + "/cancelar", {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ razon_id: razonId }) // Enviar el ID de la razón seleccionada
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(
+                                'Error al cancelar la solicitud');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        Swal.fire(
+                            '¡Cancelado!',
+                            'La solicitud ha sido cancelada exitosamente.',
+                            'success'
+                        ).then(() => {
+                            // Recarga la página para reflejar los cambios en la tabla
+                            location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error al cancelar la solicitud:',
+                            error);
+                        // Muestra un mensaje de error al usuario
+                        Swal.fire(
+                            '¡Error!',
+                            'Ocurrió un error al cancelar la solicitud.',
+                            'error'
+                        );
+                    });
+            }
+        })
+    });
+});
 </script>
 <script>
+
+
+function obt2(button){
+
+    var id = button.getAttribute("data-id");
+    document.getElementById("solicitudId2").value = id;
+}
+
 function obtenerDatosSolicitud(button) {
     var id = button.getAttribute("data-id");
     document.getElementById("solicitudId").value = id;
+
     fetch('{{ route("docente.reservas.showReservas", ["id" => ":id"]) }}'.replace(':id', id))
         .then(response => response.json())
         .then(data => {
@@ -229,61 +327,7 @@ function llenarFormulario(solicitud) {
 }
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var cancelarBtns = document.querySelectorAll('.cancelarBtn');
-    cancelarBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var id = this.getAttribute('data-id');
-            console.log("ID:", id);
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¡No podrás revertir esto!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch("{{ url('docente/solicitudes') }}/" + id + "/cancelar", {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(
-                                    'Error al cancelar la solicitud');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            Swal.fire(
-                                '¡Cancelado!',
-                                'La solicitud ha sido cancelada exitosamente.',
-                                'success'
-                            ).then(() => {
-                                // Recarga la página para reflejar los cambios en la tabla
-                                location.reload();
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error al cancelar la solicitud:',
-                                error);
-                            // Muestra un mensaje de error al usuario
-                            Swal.fire(
-                                '¡Error!',
-                                'Ocurrió un error al cancelar la solicitud.',
-                                'error'
-                            );
-                        });
-                }
-            })
-        });
-    });
-});
+
 </script>
 
 

@@ -266,7 +266,6 @@ document.addEventListener("DOMContentLoaded", function() {
             tablaSolicitudes.innerHTML = tablaHTML;
         }
     });
-
     // Función para escuchar eventos en botones de solicitud (si es necesario)
     tablaSolicitudes.addEventListener('click', function(event) {
         if (event.target.classList.contains('solicitar-btn')) {
@@ -275,7 +274,6 @@ document.addEventListener("DOMContentLoaded", function() {
             const horario = button.getAttribute('data-horario');
             const fecha = button.getAttribute('data-fecha');
             console.log(aula);
-
             document.getElementById("aula").value = aula;
             document.getElementById("horario").value = horario;
             document.getElementById("fecha").value = fecha;

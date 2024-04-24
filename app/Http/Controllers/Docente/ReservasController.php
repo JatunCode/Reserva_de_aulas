@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Docente;
 
 use App\Http\Controllers\Controller;
 use App\Models\Docente\Solicitudes;
+use App\Models\Docente\Razones;
 use Illuminate\Http\Request;
 
 class ReservasController extends Controller
@@ -74,7 +75,7 @@ public function store(Request $request){
     $solicitud->save();
 
     // Redirigir a la página de inicio del administrador
-    return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
+    return redirect()->route('docente.solicitud.normal')->with('success', 'Solicitud creada exitosamente');
 
 }
 
@@ -172,6 +173,7 @@ public function store(Request $request){
         // Retornar la vista con las solicitudes filtradas y paginadas
         return view('docente.listar.cancelar', ['solicitudes' => $solicitudes]);
     }
+
 //Hu registro reservas
 public function registroReservas()
 {
@@ -186,45 +188,53 @@ public function registroReservas()
     return view('docente.registro.registroreservas', ['solicitudes' => $solicitudes, 'razon' => $razon]);
 }
 
-public function showReservas($id)
-{
+     public function showReservas($id)
+    {
 
-    $solicitud = Solicitudes::leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
-    ->where('solicitudes.id', $id)
-    ->select('solicitudes.*', 'razones.razon')
-    ->firstOrFail();
-
-
-    return response()->json(['solicitud' => $solicitud]);
-}
+        $solicitud = Solicitudes::leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
+        ->where('solicitudes.id', $id)
+        ->select('solicitudes.*', 'razones.razon')
+        ->firstOrFail();
 
 
-
-
-///registro de RazonDenoAsignacion
-
-
-public function registroRazonDenoAsignacion()
-{
-    // Filtrar las solicitudes por el nombre del docente y paginar el resultado
-    $solicitudes = Razones::paginate(10);
-
-    // Envía los datos a la vista 'home'
-    return view('docente.registro.registroRazonDenoAsignacion', ['solicitudes' => $solicitudes]);
-}
-
-
-
-public function  borrarRazon($id)
-{
-    dd($id);
-
-    Razones::destroy($id);
-
- // Devuelve un mensaje de éxito como JSON
- return response()->json(['message' => 'Razón eliminada exitosamente']);
+        return response()->json(['solicitud' => $solicitud]);
     }
 
 
+
+    public function registroaceptar($id)
+    {
+        // Encuentra la solicitud por su ID
+        $solicitud = Solicitudes::findOrFail($id);
+
+        // Asigna el estado "aceptado" a la solicitud
+        $solicitud->estado = 'Reservado';
+
+        // Guarda los cambios en la base de datos
+        $solicitud->save();
+
+        // Devuelve la solicitud cancelada como JSON
+        return response()->json(['solicitud' => $solicitud, 'message' => 'Solicitud aceptado exitosamente']);
+    }
+
+    public function registrocancelar($id , Request $request)
+    {
+        // Encuentra la solicitud por su ID
+        $solicitud = Solicitudes::findOrFail($id);
+
+        // Obtén el ID de la razón seleccionada desde la solicitud
+        $idRazon = $request->input('razon_id');
+
+        // Asigna el ID de la razón seleccionada al campo id_razon de la solicitud
+        $solicitud->id_razon = $idRazon;
+        // Asigna el estado "aceptado" a la solicitud
+        $solicitud->estado = 'cancelado';
+
+        // Guarda los cambios en la base de datos
+        $solicitud->save();
+
+        // Devuelve la solicitud cancelada como JSON
+        return response()->json(['solicitud' => $solicitud, 'message' => 'Solicitud aceptado exitosamente']);
+    }
 
 }
