@@ -40,7 +40,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($horarios_no_reg as $horario)
+                        @foreach($horarios as $horario)
                             <tr>
                                 <td>{{ $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>   
                                 <td>{{ $horario->INICIO }}</td>

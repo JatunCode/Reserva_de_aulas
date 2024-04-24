@@ -12,16 +12,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title"></h3>
-        <button class="btn btn-sm btn-success open-btn" 
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasRight" 
-            aria-controls="offcanvasRight"
-            id="showform"
-            >
-            Registrar ambiente
-        </button>
+        <h3 class="card-title">Ambientes registrados</h3>
     </div>
     <div class="card-body table-responsive">
         <table class="table table-bordered">
@@ -65,7 +56,10 @@
 @stop
 
 @section('js')
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/raul2
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>

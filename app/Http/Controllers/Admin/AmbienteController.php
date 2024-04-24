@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Ambiente;
+use App\Models\Admin\Horario;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Ramsey\Uuid\Uuid;
@@ -29,7 +30,7 @@ class AmbienteController extends Controller
      */
     public function store(Request $request)
     {
-        $ambientes_no_reg = Ambiente::all();
+        $ambientes = Ambiente::all();
         if($request->isMethod('post')){
             $uuid = Uuid::uuid4();
             $request->validate([
@@ -54,9 +55,9 @@ class AmbienteController extends Controller
                 'DATA' => $request->DATA,
                 'ESTADO' => 'HABILITADO'
             ]);
-            return redirect()->route('admin.ambientes', ['ambientes_no_reg' => $ambientes_no_reg])->with('success', 'Ambiente creado exitosamente');
+            return redirect()->route('admin.viewFormAmbientes', ['ambientes' => $ambientes])->with('success', 'Ambiente creado exitosamente');
         }
-        return view('admin.viewFormAmbiente', ['ambientes_no_reg' => $ambientes_no_reg]);
+        return view('admin.viewFormAmbientes', ['ambientes' => $ambientes]);
     }
 
     /**

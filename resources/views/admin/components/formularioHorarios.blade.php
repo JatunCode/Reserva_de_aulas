@@ -47,13 +47,10 @@
             </div>
         </div>
     </div>
-
     
     <div class="col-md-12 mt-3 text-center">
         <button type="submit" class="btn btn-primary d-inline-block w-75" id="boton-sub">Registrar horario</button>
         <button type="reset" class="btn btn-primary d-inline-block w-75">Cancelar registro</button>
     </div>
 </form>
-
-
 

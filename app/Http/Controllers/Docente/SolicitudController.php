@@ -242,6 +242,7 @@ public function urgente()
         return response()->json(['message' => 'Solicitud eliminada exitosamente']);
     }
 
+<<<<<<< HEAD
     /**
      * Encuentra el id y grupos del docente si es uno
      * else
@@ -285,3 +286,7 @@ public function urgente()
         return $horarios_habilitados;
     }
 }
+=======
+    
+}
+>>>>>>> origin/raul2
