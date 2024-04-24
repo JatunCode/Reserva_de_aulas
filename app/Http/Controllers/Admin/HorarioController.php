@@ -38,7 +38,8 @@ class HorarioController extends Controller
      */
     public function store(Request $request)
     {
-        $horarios = Horario::all();
+        $horarios = null;
+        
         if($request->isMethod('post')){
             $request->validate([
                 'NOMBRE_DOCENTE' => ['required','string', function($attribute, $value, $fail){
