@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\AmbienteController;
+use App\Http\Controllers\Admin\DocenteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\ReservasController;
+use App\Models\Admin\Docente;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -35,12 +37,15 @@ Route::prefix('admin')->group(function () {
     // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     // Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes');
+    Route::get('/ambientes/registro', [AmbienteController::class, 'store'])->name('ambiente.list');
     Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
     Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
     Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios');
+    Route::get('/horarios/registro', [HorarioController::class, 'store'])->name('horario.list');
     Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
     Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
     Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
+    Route::put('/docentes/show/{caracter}', [DocenteController::class, 'show'])->name('docente.put');
     Route::get('/hola',  function () {
         return 'Hola :v';
     });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Docente;
 use Illuminate\Http\Request;
 
 class DocenteController extends Controller
@@ -34,9 +35,10 @@ class DocenteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($caracter)
     {
-        //
+        $docente = Docente::where('NOMBRE', 'LIKE', "%$caracter%")->get();
+        return $docente;
     }
 
     /**

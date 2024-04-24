@@ -132,4 +132,6 @@ class SolicitudController extends Controller
 
         return response()->json(['message' => 'Solicitud eliminada exitosamente']);
     }
+
+    
 }
