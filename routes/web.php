@@ -6,7 +6,10 @@ use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\ReservasController;
+
 use App\Http\Controllers\RazonesController;
+
+
 use Illuminate\Support\Facades\Auth;
 
 /*

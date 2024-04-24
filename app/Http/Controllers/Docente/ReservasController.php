@@ -236,5 +236,4 @@ public function registroReservas()
         // Devuelve la solicitud cancelada como JSON
         return response()->json(['solicitud' => $solicitud, 'message' => 'Solicitud aceptado exitosamente']);
     }
-
 }
