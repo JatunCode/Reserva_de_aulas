@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Horarios Facultadivo')
+@section('title', 'Ambientes de la facultad')
 
 @section('content_header')
 <h1>Ambientes registrados</h1>
@@ -33,6 +33,7 @@
                     <th style="width: 40px">Capacidad</th>
                     <th style="width: 40px">Data</th>
                     <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,9 +53,6 @@
     
 </div>
 
-
-@include('admin.components.formularioAmbientes')
-
 @stop
 
 @section('css')
@@ -67,105 +65,6 @@
 @stop
 
 @section('js')
-
-<script>
-    var i = 1
-    function agregarCampos(){
-        document.getElementById('ref-add').addEventListener('click', function(){
-            var container =  document.getElementById('referencias')
-            container.classList.add('col-md-10')
-
-            var refer = document.createElement('input')
-            refer.classList.add('form-control')
-            refer.type = 'text'
-            refer.name = 'refers'
-            refer.placeholder = 'Bliblioteca FCyT/Area verde'
-            refer.isrequired = true
-            // errordiv.innerHTML = '@error("REFERENCIAS")
-            //         <div class="text-danger">{{ $message }}</div>
-            //     @enderror'
-            if(i < 4){
-                container.appendChild(refer)
-                i++
-            }
-            console.log("Contador de inputs: ", i)
-        })
-        
-    }
-
-    function eliminarCampos(){
-        var string = document.getElementById('nombre').value
-        var j = 0;
-        if(string === ""){
-            while(j < i+1){
-                var campo = document.getElementById('ref'+j)
-                campo.parentNode.remove()
-                j++
-            }
-            i = 0
-        }
-    }
-    function obtainValues(){
-        //event.preventDefault()
-        var tipo_ambiente = document.querySelector('[name="opcion"]')
-        var nombre = document.querySelector('[name="nombre"]')
-        var index = tipo_ambiente.selectedIndex
-        var opcion_select = tipo_ambiente.options[index]
-        var referencias = document.querySelectorAll('[name="refers"]')
-        var json_list = []
-        referencias.forEach(element => {
-            json_list.push(element.value)
-        })
-        var capac = document.querySelector('[name="capacidad"]')
-        var data = document.querySelector('[name="data"]')
-        var checked = data.checked ? "SI" : "NO"
-
-        //Enviar datos de los campos
-        var json_json = JSON.stringify(json_list)
-        
-        console.log("Seleccionado: "+opcion_select.value)
-        console.log("Nombre: "+nombre.value)
-        console.log("Lista de referencias: "+json_json)
-        console.log("Checked: ", checked)
-
-        var form = JSON.stringify({
-                    TIPO: opcion_select.value,
-                    NOMBRE: nombre.value,
-                    REFERENCIAS: json_json,
-                    CAPACIDAD: capac.value,
-                    DATA: checked
-                })
-
-        console.log("Formulario con datos: ",form)
-        var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
-
-        fetch('ambientes/store', 
-            {
-                method: 'POST',
-                headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRF-TOKEN': token
-                },
-                body: form
-            })
-            .then(
-                response => {
-                    if (!response.ok) {
-                        throw new Error('La respuesta al servidor no es correcta')
-                    }
-                    return response.json()
-                }
-            )
-            .then(data=>{
-                console.log('Contendido del form guardado: ', data)
-            }).catch(error => {
-                console.log('Error encontrador al enviar: ', error)
-            })
-    }
-
-    document.getElementById('ref-add').addEventListener('click',agregarCampos)
-    document.getElementById('formAmbiente').addEventListener('submit', obtainValues)
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">

@@ -44,7 +44,6 @@
                             </tr>
                         </thead>
                         <tbody id="tablaSolicitudes">
-                            <!-- Aquí se mostrarán las solicitudes según la fecha seleccionada -->
                         </tbody>
                     </table>
                 </div>

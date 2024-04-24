@@ -29,30 +29,34 @@ class AmbienteController extends Controller
      */
     public function store(Request $request)
     {
-        $uuid = Uuid::uuid4();
-        $request->validate([
-            'TIPO' => 'required|string|max:10',
-            'NOMBRE' => 'required|string|max:50',
-            'REFERENCIAS' => ['required', function($attribute, $value, $fail){
-                $decoder = json_decode($value, true);
-                if(!is_array($decoder) || count($decoder) < 1 || count($decoder) > 4){
-                    $fail($attribute.' debe contener entre 1 y 4 referencias.');
-                }
-            }],
-            'CAPACIDAD' => 'required|integer',
-            'DATA' => ['required', 'string', Rule::in(['SI', 'NO'])]
-        ]);
-        
-        Ambiente::create([
-            'ID_AMBIENTE' => $uuid->toString(),
-            'TIPO' => $request->TIPO,
-            'NOMBRE' => $request->NOMBRE,
-            'REFERENCIAS' => json_encode($request->REFERENCIAS),
-            'CAPACIDAD' => $request->CAPACIDAD,
-            'DATA' => $request->DATA,
-            'ESTADO' => 'HABILITADO'
-        ]);
-        return redirect()->route('admin.ambientes')->with('success', 'Ambiente creado exitosamente');
+        $ambientes_no_reg = Ambiente::all();
+        if($request->isMethod('post')){
+            $uuid = Uuid::uuid4();
+            $request->validate([
+                'TIPO' => 'required|string|max:10',
+                'NOMBRE' => 'required|string|max:50',
+                'REFERENCIAS' => ['required', function($attribute, $value, $fail){
+                    $decoder = json_decode($value, true);
+                    if(!is_array($decoder) || count($decoder) < 1 || count($decoder) > 4){
+                        $fail($attribute.' debe contener entre 1 y 4 referencias.');
+                    }
+                }],
+                'CAPACIDAD' => 'required|integer',
+                'DATA' => ['required', 'string', Rule::in(['SI', 'NO'])]
+            ]);
+            
+            Ambiente::create([
+                'ID_AMBIENTE' => $uuid->toString(),
+                'TIPO' => $request->TIPO,
+                'NOMBRE' => $request->NOMBRE,
+                'REFERENCIAS' => json_encode($request->REFERENCIAS),
+                'CAPACIDAD' => $request->CAPACIDAD,
+                'DATA' => $request->DATA,
+                'ESTADO' => 'HABILITADO'
+            ]);
+            return redirect()->route('admin.ambientes', ['ambientes_no_reg' => $ambientes_no_reg])->with('success', 'Ambiente creado exitosamente');
+        }
+        return view('admin.viewFormAmbiente', ['ambientes_no_reg' => $ambientes_no_reg]);
     }
 
     /**

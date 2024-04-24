@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AmbienteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\HorarioController;
+use App\Http\Controllers\Admin\NotificacionController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\ReservasController;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,9 @@ use Illuminate\Support\Facades\Auth;
 
 
 Route::group(['prefix' => '/'], function () {
+    Route::get('/auth/login', function () {
+        return view('auth.login');
+    });
     Route::get('/', function () {
         return view('welcome');
     });
@@ -35,17 +39,20 @@ Route::prefix('admin')->group(function () {
     // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     // Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes');
+    Route::get('/ambientes/registro', [AmbienteController::class, 'store'])->name('admin.ambientes.form');
     Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
     Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
     Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios');
+    Route::get('/horarios/registro', [HorarioController::class, 'store'])->name('admin.horarios.form');
     Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
     Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
     Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
+    Route::get('/mail', [NotificacionController::class, 'index'])->name('admin.mail');
     Route::get('/hola',  function () {
         return 'Hola :v';
     });
-
 });
+
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('docente.solicitudes.disponibles');
@@ -64,6 +71,5 @@ Route::prefix('docente')->group(function () {
  Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
  Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
 });
-
 
 

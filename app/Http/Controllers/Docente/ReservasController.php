@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Docente;
 
 use App\Http\Controllers\Controller;
 use App\Models\Docente\Solicitudes;
+use App\Models\Models\Docente\Razones;
 use Illuminate\Http\Request;
 
 class ReservasController extends Controller

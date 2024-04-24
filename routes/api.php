@@ -5,7 +5,8 @@ use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Admin\NotificacionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\SolicitudController;
+use App\Http\Controllers\Docente\SolicitudController;
+use App\Models\Docente\Solicitud;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,3 +48,10 @@ Route::controller(NotificacionController::class)->group(
     }
 );
 
+Route::controller(SolicitudController::class)->group(
+    function(){
+        Route::get('/normal', 'normal');
+        //Route::post('/horarios/store', 'store');
+        // Route::post('/putambiente', 'show');
+    }
+);
