@@ -39,16 +39,8 @@
                             <th style="width: 40px">Docente</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach($horarios as $horario)
-                            <tr>
-                                <td>{{ $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>   
-                                <td>{{ $horario->INICIO }}</td>
-                                <td>{{ $horario->FIN }}</td>
-                                <td>{{ $horario['relacion_materia_horario']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
-                                <td>{{ $horario['relacion_materia_horario']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
-                            </tr>
-                        @endforeach
+                    <tbody id="tableHorarios">
+
                     </tbody>
                 </table>
             </div>
@@ -70,15 +62,15 @@
 @section('js')
 
 <script>
-    var i = 1
+    let i = 1
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
-            var container_main =  document.getElementById('container-main')
+            let container_main =  document.getElementById('container-main')
 
-            var container = document.createElement('div')
+            let container = document.createElement('div')
             container.classList.add('row')
 
-            var dia = document.createElement('div')
+            let dia = document.createElement('div')
             dia.classList.add('col-md-10')
             dia.innerHTML = "<label for='nombre' class='form-label'>Seleccione el dia de clases</label>"
                 +"<div class='input-group mb-2'>"+
@@ -91,17 +83,17 @@
                         "<option value='Sabado'>Sabado</option>"+
                     "</select>"+"</div>"
 
-            var inicio = document.createElement('div')
+            let inicio = document.createElement('div')
             inicio.classList.add('col-md-4')
-            inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" required>'
+            inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" value="08:15:00" min="06:45:00" max="20:15:00" step="5400" onchange="bloquearHoras(this)" required>'
 
-            var fin = document.createElement('div')
+            let fin = document.createElement('div')
             fin.classList.add('col-md-4')
-            fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" required>'
+            fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" value="08:15:00" min="08:15:00" max="21:45:00" step="5400" onchange="bloquearHoras(this)" required>'
 
-            var ambiente = document.createElement('div')
+            let ambiente = document.createElement('div')
             ambiente.classList.add('col-md-4')
-            ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" required>'
+            ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)" required>'
             // errordiv.innerHTML = '@error("REFERENCIAS")
             //         <div class="text-danger">{{ $message }}</div>
             //     @enderror'
@@ -118,40 +110,153 @@
         
     }
 
+    function agregarTabla(text) {
+        let tabla = document.getElementById("tableHorarios")
+        //Agregar horarios ocupados en la tabla de informacion
+        fetch('http://127.0.0.1:8000/api/horarios/'+text).then(
+            response => response.json()
+        ).then(
+            data => {
+                data.forEach(horario => 
+                    {
+                        tabla.innerHTML +=`<h6 style="color: red">Horarios ocupados para el aula ${text} </h6>
+                                    <tr>
+                                        <td> ${horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']} ?? ''</td>   
+                                        <td> ${horario['INICIO']}</td>
+                                        <td> ${horario['FIN']}</td>
+                                        <td> ${horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? ''}</td>
+                                        <td> ${horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}</td>
+                                    </tr>`
+                    }
+                )
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )
+        //Agregar horarios libres en la tabla de informacion
+        fetch('http://127.0.0.1:8000/api/horarios/libres/'+text).then(
+            response => response.json()
+        ).then(
+            data => {
+                data.forEach(horario => 
+                    {
+                        tabla.innerHTML +=
+                            `<h6 style="color: green">Horarios libres para el aula ${text} </h6>
+                            <tr>
+                                <td> ${horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']} ?? ''</td>   
+                                <td> ${horario['INICIO']}</td>
+                                <td> ${horario['FIN']}</td>
+                                <td> ${horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? ''}</td>
+                                <td> ${horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}</td>
+                            </tr>`
+                    }
+                )
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )
+    }
+
+    function bloquearHoras(hora){
+        let list = horas.split()
+        let segundos = parseInt(list[0], 10)*3600 + parseInt(list[1], 10)*60
+        let message = document.getElementById("messageErrorHora")
+        if(segundos <= 78300 && segundos >= 24300){
+            message.style.color = "red"
+            message.style.display = "block"
+        }else{
+            message.style.display = "none"
+        }
+    }
+
+    function findDocente(text) {
+        let message = document.getElementById("messageErrorDocente")
+        let docentes = null
+        fetch('http://127.0.0.1:8000/api/docentes').then(
+            response => response.json()
+        ).then(
+            data => {
+                docentes = data
+                if(!docentes.find((docente) => docente['NOMBRE'] == text.value.toUpperCase())){
+                    message.style.color = "red"
+                    message.style.display = "block" 
+                }else{
+                    message.style.display = "none" 
+                }
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )        
+    }
+
+    function findAmbiente(text){
+        let message = document.getElementById("messageErrorAmbiente")
+        let ambientes = null
+        fetch('http://127.0.0.1:8000/api/ambientes').then(
+            response => response.json()
+        ).then(
+            data => {
+                ambientes = data
+                if(!ambientes.find((ambiente) => ambiente['NOMBRE'] == text.value.toUpperCase())){
+                    message.style.color = "red"
+                    message.style.display = "block" 
+                }else{
+                    message.style.display = "none" 
+                }
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )
+    }
+
     function eliminarCampos(){
-        var string = document.getElementById('nombre').value
-        var j = 0;
+        let string = document.getElementById('nombre').value
+        let j = 0;
         if(string === ""){
             while(j < i+1){
-                var campo = document.getElementById('ref'+j)
+                let campo = document.getElementById('ref'+j)
                 campo.parentNode.remove()
                 j++
             }
             i = 0
         }
     }
+
+    function eliminarTabla() {
+        
+    }
+
     function obtainValues(){
-        //event.preventDefault()
-        var docente = document.querySelector('[name="docente"]')
-        var materia = document.querySelector('[name="materia"]')
-        var dias = document.querySelectorAll('[name="dia"]')
-        var inicios = document.querySelectorAll('[name="inicio"]')
-        var fins = document.querySelectorAll('[name="fin"]')
-        var ambientes = document.querySelectorAll('[name="ambiente"]')
+        event.preventDefault()
+
+        let docente = document.querySelector('[name="docente"]')
+        let materia = document.querySelector('[name="materia"]')
+        let dias = document.querySelectorAll('[name="dia"]')
+        let inicios = document.querySelectorAll('[name="inicio"]')
+        let fins = document.querySelectorAll('[name="fin"]')
+        let ambientes = document.querySelectorAll('[name="ambiente"]')
 
         console.log("Tamaño de arreglo dias: ", dias.length)
         console.log("Tamaño de arreglo inicio: ", inicios.length)
         console.log("Tamaño de arreglo fin: ", fins.length)
         console.log("Tamaño de arreglo ambiente: ", ambientes.length)
-
-        var list_dia = []
-        var list_horaini = []
-        var list_horafin = []
-        var list_ambiente = []
+        
+        let list_dia = []
+        let list_horaini = []
+        let list_horafin = []
+        let list_ambiente = []
 
         dias.forEach(dia => {
-            var index = dia.selectedIndex
-            var dia_select = dia.options[index]
+            let index = dia.selectedIndex
+            let dia_select = dia.options[index]
             list_dia.push(dia_select.value)
         });
         
@@ -167,23 +272,23 @@
             list_ambiente.push(ambiente.value)
         });
 
-        var json_list = {
+        let json_list = {
             'LIST_DIA': list_dia,
             'LIST_HORAINI': list_horaini,
             'LIST_HORAFIN': list_horafin,
             'LIST_AMBIENTE': list_ambiente
         }
         //Enviar datos de los campos
-        var json_json = JSON.stringify(json_list)
+        let json_json = JSON.stringify(json_list)
 
-        var form = JSON.stringify({
+        let form = JSON.stringify({
                     NOMBRE_DOCENTE: docente.value,
                     MATERIA: materia.value,
                     LISTAS: json_json
                 })
 
         console.log("Formulario con datos: ",form)
-        var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
+        let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
         fetch('horarios/store', 
             {

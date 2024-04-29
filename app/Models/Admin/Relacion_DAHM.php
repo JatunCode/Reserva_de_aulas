@@ -16,15 +16,15 @@ class Relacion_DAHM extends Model
     }
 
     public function dahm_relacion_ambiente(){
-        return $this->hasOne(Ambiente::class, 'ID_AMBIENTE', 'ID_AMBIENTE');
+        return $this->belongsTo(Ambiente::class, 'ID_AMBIENTE', 'ID_AMBIENTE');
     }
 
     public function dahm_relacion_materia(){
-        return $this->hasOne(Materia::class, 'ID_MATERIA', 'ID_MATERIA');
+        return $this->hasMany(Materia::class, 'ID_MATERIA', 'ID_MATERIA');
     }
 
     public function dahm_relacion_docente(){
-        return $this->hasOne(Docente::class, 'ID_DOCENTE', 'ID_DOCENTE');
+        return $this->hasMany(Docente::class, 'ID_DOCENTE', 'ID_DOCENTE');
     }
 }
 
