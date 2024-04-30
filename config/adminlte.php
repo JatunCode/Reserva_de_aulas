@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'JatunCode',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -304,18 +304,21 @@ return [
         // Sidebar items:
 
 
-        ['header' => 'Inicio'],
-        [
-            'text' => 'Perfil',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-            'can'  => ['admin'],
-        ],
-        [
-            'text'       => 'inicio',
-            'icon_color' => 'fas fa fa-home',
-            'route'        => 'docente.home',
-        ],
+       // ['header' => 'Inicio'],
+       // [
+          //  'text' => 'Perfil',
+         //   'url'  => 'admin/settings',
+         //   'icon' => 'fas fa-fw fa-user',
+         //   'can'  => ['admin'],
+        //],
+       // [
+         //   'text'       => 'inicio',
+         //   'icon_color' => 'fas fa fa-home',
+         //   'route'        => 'docente.solicitudes.disponibles',
+       // ],
+
+
+
         // [
         //     'text'    => 'multilevel',
         //     'icon'    => 'fas fa-fw fa-share',
@@ -357,12 +360,53 @@ return [
         //     ],
 
         // ],
-        ['header' => 'Registro'],
+        ['header' => 'Realizar solicitud'],
+        [
+            'text'       => 'Solicitud Normal',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'docente.solicitud.normal',
+        ],
+        [
+            'text'       => 'Solicitud de Urgencia',
+            'icon'       => 'fas fa-exclamation-circle',
+            'icon_color' => 'yellow',
+            'route'      => 'docente.solicitud.urgente',
+        ],
+
+        ['header' => ' Listar'],
+        [
+            'text'       => 'Listar Solicitudes Normales',
+            'icon'       => 'fas fa-list',
+            'icon_color' => 'green',
+            'route'      => 'docente.solicitud.filtrar.llegada',
+        ],
+        [
+            'text'       => 'Listar Solicitudes Urgencia',
+            'icon'       => 'fas fa-table',
+            'icon_color' => 'yellow',
+            'route'      => 'docente.solicitud.filtrar.urgente',
+        ],
+        [
+            'text'       => 'Cancelar Solicitud',
+            'icon'       => 'fas fa-solid fa-ban',
+            'icon_color' => 'red',
+            'route'      => 'docente.solicitud.cancelar',
+        ],
+
+        ['header' => 'Razon no asignacion'],
+        [
+            'text'       => 'Razon',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'docente.registroRazonDenoAsignacion',
+        ],
+        ['header' => 'Registro de Reservas'],
         [
             'text'       => 'Reservas',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
-            'route'      => 'docente.reservas',
+            'route'      => 'docente.registroReservas',
         ],
     ],
 

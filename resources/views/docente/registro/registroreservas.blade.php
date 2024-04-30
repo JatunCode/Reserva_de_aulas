@@ -15,19 +15,6 @@
         <h3 class="card-title"></h3>
     </div>
 
-    <div class="d-flex justify-content-start">
-        <div class="form-check ml-3">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="porLlegada" checked
-                onclick="filtrarPorllegada()">
-            <label class="form-check-label" for="flexRadioDefault1">Por llegada</label>
-        </div>
-
-        <div class="form-check ml-3">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="porUrgencia"
-                onclick="filtrarPorUrgencia()">
-            <label class="form-check-label" for="flexRadioDefault2">Por urgencia</label>
-        </div>
-    </div>
 
     <div class="card-body table-responsive">
         <table class="table table-bordered">
@@ -37,7 +24,8 @@
                     <th>Aula</th>
                     <th>materia</th>
                     <th>Fecha </th>
-                    <th style="width: 40px">Modo</th>
+                    <th>Horario </th>
+
                     <th style="width: 40px">Estado</th>
                     <th style="width: 40px">Acciones</th>
                 </tr>
@@ -50,21 +38,9 @@
                     <td>{{ $solicitud->aula }}</td>
                     <td>{{ $solicitud->materia }}</td>
                     <td>{{ $solicitud->fecha }}</td>
+                    <td>{{ $solicitud->horario }}</td>
 
-                    <td class="modo">
-                        <span class="btn  btn-sm btn-block
-@if($solicitud->estado == 'cancelado')
-background-color: #FFC0B7;btn btn-outline-secondary ;
-@elseif($solicitud->modo == 'Normal')
-;
-btn-success
-@else
-   btn-danger
-@endif
-" aria-controls="offcanvasRight">
-                            {{ $solicitud->modo }}
-                        </span>
-                    </td>
+
                     <td>
                         <span class="btn btn-sm btn-block
 @if($solicitud->estado == 'cancelado')
@@ -90,7 +66,7 @@ background-color: #FFC0B7;btn btn-outline-secondary
                             </span>
                         </button>
                         <button
-                            class="btn eliminar-btn mx-1 cancelarBtn @if($solicitud->estado == 'cancelado') d-none @endif"
+                            class="btn eliminar-btn mx-1 cancelarBtn"
                             type="button" data-id="{{ $solicitud->id }}">
                             <span class="text-danger">
                                 <i class="fa fa-ban" aria-hidden="true"></i>
@@ -138,9 +114,12 @@ background-color: #FFC0B7;btn btn-outline-secondary
 </div>
 
 
-@include('docente.components.formularioReserva')
+@include('docente.components.formularioRegistroreserva')
 
 @stop
+
+
+
 
 @section('css')
 <link rel="stylesheet" href="/css/admin/home.css">
@@ -157,7 +136,7 @@ background-color: #FFC0B7;btn btn-outline-secondary
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("cancelarBtn").addEventListener('click', function() {
+    document.getElementById("aceptarBtn").addEventListener('click', function() {
         var id = document.getElementById("solicitudId").value; // Obtener el ID del input hidden
         console.log("ID en cancelar:", id);
         Swal.fire({
@@ -167,10 +146,10 @@ document.addEventListener("DOMContentLoaded", function() {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, cancelar'
+            confirmButtonText: 'Sí, aceptar'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch("{{ url('docente/solicitudes') }}/" + id + "/cancelar", {
+                fetch("{{ url('docente/solicitudes') }}/" + id + "/aceptar", {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -180,14 +159,14 @@ document.addEventListener("DOMContentLoaded", function() {
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(
-                                'Error al cancelar la solicitud');
+                                'Error al aceptar la solicitud');
                         }
                         return response.json();
                     })
                     .then(data => {
                         Swal.fire(
-                            '¡Cancelado!',
-                            'La solicitud ha sido cancelada exitosamente.',
+                            '¡Aceptado!',
+                            'La solicitud ha sido aceptada exitosamente.',
                             'success'
                         ).then(() => {
                             // Recarga la página para reflejar los cambios en la tabla
@@ -195,12 +174,12 @@ document.addEventListener("DOMContentLoaded", function() {
                         });
                     })
                     .catch(error => {
-                        console.error('Error al cancelar la solicitud:',
+                        console.error('Error al aceptar la solicitud:',
                             error);
                         // Muestra un mensaje de error al usuario
                         Swal.fire(
                             '¡Error!',
-                            'Ocurrió un error al cancelar la solicitud.',
+                            'Ocurrió un error al aceptar la solicitud.',
                             'error'
                         );
                     });
@@ -213,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function obtenerDatosSolicitud(button) {
     var id = button.getAttribute("data-id");
     document.getElementById("solicitudId").value = id;
-    fetch('{{ route("docente.reservas.show", ["id" => ":id"]) }}'.replace(':id', id))
+    fetch('{{ route("docente.reservas.showReservas", ["id" => ":id"]) }}'.replace(':id', id))
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -226,16 +205,17 @@ function obtenerDatosSolicitud(button) {
 
 function llenarFormulario(solicitud) {
     // Llenar los campos del formulario con los datos de la solicitud
+    console.log("EL ID ESS");
+    console.log(solicitud);
     document.getElementById("nombre").value = solicitud.nombre;
-    document.getElementById("materia").value = solicitud.materia;
+    document.getElementById("ID").value = solicitud.id;
     document.getElementById("grupo").value = solicitud.grupo;
     document.getElementById("cantidad_estudiantes").value = solicitud.cantidad_estudiantes;
-    document.getElementById("motivo").value = solicitud.motivo;
-    document.getElementById("modo").value = solicitud.modo;
     document.getElementById("razon").value = solicitud.razon;
-    document.getElementById("aula").value = solicitud.aula;
-    document.getElementById("fecha").value = solicitud.fecha;
     document.getElementById("horario").value = solicitud.horario;
+
+
+
 
     // Mostrar el campo de comentarios si la razón no está vacía
     if (solicitud.modo === 'Urgente') {
@@ -305,18 +285,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-<script>
-function filtrarPorUrgencia() {
-    // Redirigir a la ruta deseada
-    window.location.href = "{{ route('docente.reservas.filtrar.modo') }}";
-}
-</script>
-<script>
-function filtrarPorllegada() {
-    // Redirigir a la ruta deseada
-    window.location.href = "{{ route('docente.reservas.filtrar.llegada') }}";
-}
-</script>
+
 
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">

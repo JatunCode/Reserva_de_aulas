@@ -19,9 +19,22 @@ class ReservasController extends Controller
         $solicitudes = Solicitudes::paginate(10);
 
         // Envía los datos a la vista 'home'
-        return view('docente.registro.reservas', ['solicitudes' => $solicitudes]);
+        return "Hola";
     }
+    public function normal()
+    {
+        // Filtrar solo las solicitudes que son normales
+        $solicitudes = Solicitudes::where('modo', 'Normal')->paginate(10);
 
+        return view('docente.solicitud.filtrar.llegada', ['solicitudes' => $solicitudes]);
+    }
+public function urgencia()
+{
+
+    $solicitudes = Solicitudes::where('modo', 'Urgencia')->paginate(10);
+
+    return view('docente.solicitud.filtrar.urgente', ['solicitudes' => $solicitudes]);
+}
 
     /**
      * Store a newly created resource in storage.
@@ -61,7 +74,7 @@ public function store(Request $request){
     $solicitud->save();
 
     // Redirigir a la página de inicio del administrador
-    return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
+    return redirect()->route('docente.solicitud.normal')->with('success', 'Solicitud creada exitosamente');
 
 }
 
@@ -139,17 +152,77 @@ public function store(Request $request){
         $solicitudes = Solicitudes::where('modo', 'Urgente')->paginate(10);
 
         // Retornar la vista con las solicitudes filtradas y paginadas
-        return view('docente.registro.reservas', ['solicitudes' => $solicitudes]);
+        return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes]);
         // return "Hola";
     }
     public function filtrar_llegada()
     {
         // // Filtrar las solicitudes por modo "Urgente" y paginar el resultado
-        $solicitudes = Solicitudes::paginate(10);
+        $solicitudes = Solicitudes::where('modo', 'Normal')->paginate(10);
 
         // Retornar la vista con las solicitudes filtradas y paginadas
-        return view('docente.registro.reservas', ['solicitudes' => $solicitudes]);
+        return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes]);
         // return "Hola";
+    }
+    public function filtrar()
+    {
+        // Filtrar las solicitudes por estado diferente de "cancelado" y paginar el resultado
+        $solicitudes = Solicitudes::where('estado', '!=', 'cancelado')->paginate(10);
+
+        // Retornar la vista con las solicitudes filtradas y paginadas
+        return view('docente.listar.cancelar', ['solicitudes' => $solicitudes]);
+    }
+//Hu registro reservas
+public function registroReservas()
+{
+    $nombreDocente = "Gelania";
+
+    $solicitudes = Solicitudes::where('nombre', $nombreDocente)
+        ->leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
+        ->select('solicitudes.*', 'razones.razon')
+        ->paginate(10);
+     $razon = Razones::paginate(10);
+    // Retornar la vista con ambas variables
+    return view('docente.registro.registroreservas', ['solicitudes' => $solicitudes, 'razon' => $razon]);
+}
+
+public function showReservas($id)
+{
+
+    $solicitud = Solicitudes::leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
+    ->where('solicitudes.id', $id)
+    ->select('solicitudes.*', 'razones.razon')
+    ->firstOrFail();
+
+
+    return response()->json(['solicitud' => $solicitud]);
+}
+
+
+
+
+///registro de RazonDenoAsignacion
+
+
+public function registroRazonDenoAsignacion()
+{
+    // Filtrar las solicitudes por el nombre del docente y paginar el resultado
+    $solicitudes = Razones::paginate(10);
+
+    // Envía los datos a la vista 'home'
+    return view('docente.registro.registroRazonDenoAsignacion', ['solicitudes' => $solicitudes]);
+}
+
+
+
+public function  borrarRazon($id)
+{
+    dd($id);
+
+    Razones::destroy($id);
+
+ // Devuelve un mensaje de éxito como JSON
+ return response()->json(['message' => 'Razón eliminada exitosamente']);
     }
 
 
