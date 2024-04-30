@@ -11,7 +11,7 @@ class Horario extends Model
     protected $table = 'horario';
     protected $fillable = ['ID_HORARIO', 'INICIO', 'FIN', 'DIA'];
 
-    function relacion_materia_horario(){
+    function horario_relacion_dahm(){
         return $this->hasOne(Relacion_DAHM::class, 'ID_HORARIO', 'ID_HORARIO');
     }
 }

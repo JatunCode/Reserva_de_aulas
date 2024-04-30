@@ -236,5 +236,5 @@ public function urgente()
         $solicitud->delete();
 
         return response()->json(['message' => 'Solicitud eliminada exitosamente']);
-    }
+    }   
 }

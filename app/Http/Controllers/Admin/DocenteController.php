@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Docente;
 use Illuminate\Http\Request;
 
 class DocenteController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * Devolvera a la lista de api para los fetch de busquedas
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        
+        return json_encode(Docente::all());
     }
 
     /**
@@ -34,9 +35,13 @@ class DocenteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($caracter)
     {
-        //
+        $docente = Docente::with(
+                            'docente_relacion_dahm.dahm_relacion_materia', 
+                            'docente_relacion_dahm.dahm_relacion_horario', 
+                            'docente_relacion_dahm.dahm_relacion_ambiente')->get();
+        return $docente;
     }
 
     /**
