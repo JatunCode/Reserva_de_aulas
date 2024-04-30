@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Docente;
 use Illuminate\Http\Request;
 
 class MateriaController extends Controller
@@ -34,9 +35,16 @@ class MateriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($nombre)
     {
-        //
+        $materias_docente = Docente::with(
+            'docente_relacion_dahm.dahm_relacion_materia'
+        )->whereHas('docente_relacion_dahm.dahm_relacion_materia', 
+                function ($query) use ($nombre){
+                    $query->where('docente.NOMBRE', 'LIKE', "%$nombre%");
+                })->get();
+
+        return json_encode($materias_docente);
     }
 
     /**

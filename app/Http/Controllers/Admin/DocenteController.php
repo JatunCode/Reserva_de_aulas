@@ -15,7 +15,8 @@ class DocenteController extends Controller
      */
     public function index()
     {
-        
+        $docentes = Docente::all();
+        return json_encode($docentes);
     }
 
     /**
@@ -38,7 +39,7 @@ class DocenteController extends Controller
     public function show($caracter)
     {
         $docente = Docente::where('NOMBRE', 'LIKE', "%$caracter%")->get();
-        return $docente;
+        return json_encode($docente);
     }
 
     /**

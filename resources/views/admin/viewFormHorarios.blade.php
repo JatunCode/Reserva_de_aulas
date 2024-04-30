@@ -25,7 +25,7 @@
         <div class="card h-100">
             <div class="card-header">
                 <h3 class="card-title">
-                    Lista de horarios habiles y existentes o inexistentes
+                    Lista de horarios ocupados y libres
                 </h3>
             </div>
             <div class="card-body">
@@ -39,16 +39,8 @@
                             <th style="width: 40px">Docente</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach($horarios as $horario)
-                            <tr>
-                                <td>{{ $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>   
-                                <td>{{ $horario->INICIO }}</td>
-                                <td>{{ $horario->FIN }}</td>
-                                <td>{{ $horario['relacion_materia_horario']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
-                                <td>{{ $horario['relacion_materia_horario']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
-                            </tr>
-                        @endforeach
+                    
+                    <tbody id="tableHorarios">
                     </tbody>
                 </table>
             </div>
@@ -70,15 +62,15 @@
 @section('js')
 
 <script>
-    var i = 1
+    let i = 1
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
-            var container_main =  document.getElementById('container-main')
+            let container_main =  document.getElementById('container-main')
 
-            var container = document.createElement('div')
+            let container = document.createElement('div')
             container.classList.add('row')
 
-            var dia = document.createElement('div')
+            let dia = document.createElement('div')
             dia.classList.add('col-md-10')
             dia.innerHTML = "<label for='nombre' class='form-label'>Seleccione el dia de clases</label>"
                 +"<div class='input-group mb-2'>"+
@@ -91,17 +83,22 @@
                         "<option value='Sabado'>Sabado</option>"+
                     "</select>"+"</div>"
 
-            var inicio = document.createElement('div')
+            let inicio = document.createElement('div')
             inicio.classList.add('col-md-4')
-            inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" required>'
+            inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" value="08:15:00" min="06:45:00" max="20:15:00" step="5400" onchange="bloquearHoras(this)" required>'
 
-            var fin = document.createElement('div')
+            let fin = document.createElement('div')
             fin.classList.add('col-md-4')
-            fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" required>'
+            fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" value="08:15:00" min="08:15:00" max="21:45:00" step="5400" onchange="bloquearHoras(this)" required>'
+            
+            let messageHora = document.createElement('p')
+            messageHora.id = "messageErrorHora"
+            messageHora.style.display = "none"
+            messageHora.textContent = '*No se encuentra en el rango de hora'
 
-            var ambiente = document.createElement('div')
+            let ambiente = document.createElement('div')
             ambiente.classList.add('col-md-4')
-            ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" required>'
+            ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)" required><p id="messageErrorAmbiente" style="display: none">*No se encontro el ambiente</p>'
             // errordiv.innerHTML = '@error("REFERENCIAS")
             //         <div class="text-danger">{{ $message }}</div>
             //     @enderror'
@@ -109,6 +106,7 @@
                 container.appendChild(dia)
                 container.appendChild(inicio)
                 container.appendChild(fin)
+                container.appendChild(messageHora)
                 container.appendChild(ambiente)
                 container_main.appendChild(container)
                 i++
@@ -118,74 +116,219 @@
         
     }
 
+    function agregarTabla(text) {
+        let tabla = document.getElementById("tableHorarios")
+        
+        if(text){
+            //Agregar horarios ocupados en la tabla de informacion
+            fetch('http://127.0.0.1:8000/api/horarios/'+text,{
+                method:'PUT',
+                headers:{
+                    'Content-Type' : 'application/json'
+                }
+            }).then(
+                response => response.json()
+            ).then(
+                data => {
+                    tabla.innerHTML += `<h6 id="ocupado" style="color: red; width: 100%">Horarios ocupadas para el aula ${text} </h6>`
+                    data.forEach(horario => 
+                        {
+                            tabla.innerHTML +=
+                                        `<tr>
+                                            <td> ${horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? ''}</td>   
+                                            <td> ${horario['INICIO']}</td>
+                                            <td> ${horario['FIN']}</td>
+                                            <td> ${horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? ''}</td>
+                                            <td> ${horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}</td>
+                                        </tr>`
+                        }
+                    )
+                }
+            ).catch(
+                error => {
+                    console.log("Error encontrado: ", error)
+                }
+            )
+            //Agregar horarios libres en la tabla de informacion
+            fetch('http://127.0.0.1:8000/api/horarios/libres/'+text,{
+                method:'PUT',
+                headers:{
+                    'Content-Type' : 'application/json'
+                }
+            }).then(
+                response => response.json()
+            ).then(
+                data => {
+                    tabla.innerHTML += `<h6 id="libre" style="color: green; width: 100%">Horarios libres para el aula ${text} </h6>`
+                    data.forEach(horario => 
+                        {
+                            tabla.innerHTML +=
+                                `<tr>
+                                    <td> ${horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? ''}</td>   
+                                    <td> ${horario['INICIO']}</td>
+                                    <td> ${horario['FIN']}</td>
+                                    <td> ${horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? ''}</td>
+                                    <td> ${horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}</td>
+                                </tr>`
+                        }
+                    )
+                }
+            ).catch(
+                error => {
+                    console.log("Error encontrado: ", error)
+                }
+            )
+        }else{
+            eliminarTabla()
+        }
+    }
+
+    function bloquearHoras(horas){
+        let list = String(horas).split(":")
+        let segundos = parseInt(list[0], 10)*3600 + parseInt(list[1], 10)*60
+        let message = document.getElementById("messageErrorHora")
+        if(segundos <= 78300 && segundos >= 24300){
+            message.style.color = "red"
+            message.style.display = "block !important"
+        }else{
+            message.style.display = "none"
+        }
+    }
+
+    function findDocente(text) {
+        let message = document.getElementById("messageErrorDocente")
+        let docentes = null
+        fetch('http://127.0.0.1:8000/api/docentes').then(
+            response => response.json()
+        ).then(
+            data => {
+                docentes = data
+                if(!docentes.find((docente) => docente['NOMBRE'] == text.value.toUpperCase()) &&
+                    text.value != ""){
+                    message.style.color = "red"
+                    message.style.display = "block" 
+                }else{
+                    message.style.display = "none" 
+                }
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )        
+    }
+
+    function findAmbiente(text){
+        let message = document.getElementById("messageErrorAmbiente")
+        let ambientes = null
+        fetch('http://127.0.0.1:8000/api/ambientes').then(
+            response => response.json()
+        ).then(
+            data => {
+                ambientes = data
+                if(!ambientes.find((ambiente) => ambiente['NOMBRE'] == text.value.toUpperCase()) &&
+                    text.value != ""){
+                    message.style.color = "red"
+                    message.style.display = "block"
+                }else{
+                    message.style.display = "none"
+                    agregarTabla(text.value)
+                }
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )
+    }
+
     function eliminarCampos(){
-        var string = document.getElementById('nombre').value
-        var j = 0;
+        let string = document.getElementById('nombre').value
+        let j = 0;
         if(string === ""){
             while(j < i+1){
-                var campo = document.getElementById('ref'+j)
+                let campo = document.getElementById('ref'+j)
                 campo.parentNode.remove()
                 j++
             }
             i = 0
         }
     }
+
+    function eliminarTabla() {
+        let tabla = document.getElementById("tableHorarios")
+        let divOcupado = document.getElementById("ocupado")
+        let divLibre = document.getElementById("libre")
+        while (tabla.rows.length > 0) {
+            tabla.deleteRow(0)
+        }
+        tabla.removeChild(divOcupado)
+        tabla.removeChild(divLibre)
+    }
+
     function obtainValues(){
-        //event.preventDefault()
-        var docente = document.querySelector('[name="docente"]')
-        var materia = document.querySelector('[name="materia"]')
-        var dias = document.querySelectorAll('[name="dia"]')
-        var inicios = document.querySelectorAll('[name="inicio"]')
-        var fins = document.querySelectorAll('[name="fin"]')
-        var ambientes = document.querySelectorAll('[name="ambiente"]')
+        event.preventDefault()
+        let bandera = true
+        let docente = document.querySelector('[name="docente"]')
+        let materia = document.querySelector('[name="materia"]')
+        let dias = document.querySelectorAll('[name="dia"]')
+        let inicios = document.querySelectorAll('[name="inicio"]')
+        let fins = document.querySelectorAll('[name="fin"]')
+        let ambientes = document.querySelectorAll('[name="ambiente"]')
 
         console.log("Tamaño de arreglo dias: ", dias.length)
         console.log("Tamaño de arreglo inicio: ", inicios.length)
         console.log("Tamaño de arreglo fin: ", fins.length)
         console.log("Tamaño de arreglo ambiente: ", ambientes.length)
-
-        var list_dia = []
-        var list_horaini = []
-        var list_horafin = []
-        var list_ambiente = []
+        
+        let list_dia = []
+        let list_horaini = []
+        let list_horafin = []
+        let list_ambiente = []
 
         dias.forEach(dia => {
-            var index = dia.selectedIndex
-            var dia_select = dia.options[index]
+            let index = dia.selectedIndex
+            let dia_select = dia.options[index]
             list_dia.push(dia_select.value)
         });
         
         inicios.forEach(inicio => {
+            bandera = (inicio.value != "")
             list_horaini.push(inicio.value)
         });
 
         fins.forEach(fin => {
+            bandera = (fin.value != "")
             list_horafin.push(fin.value)
         });
 
         ambientes.forEach(ambiente => {
+            bandera = (ambiente.value != "")
             list_ambiente.push(ambiente.value)
         });
 
-        var json_list = {
+        let json_list = {
             'LIST_DIA': list_dia,
             'LIST_HORAINI': list_horaini,
             'LIST_HORAFIN': list_horafin,
             'LIST_AMBIENTE': list_ambiente
         }
         //Enviar datos de los campos
-        var json_json = JSON.stringify(json_list)
+        let json_json = JSON.stringify(json_list)
 
-        var form = JSON.stringify({
+        let form = JSON.stringify({
                     NOMBRE_DOCENTE: docente.value,
                     MATERIA: materia.value,
                     LISTAS: json_json
                 })
 
         console.log("Formulario con datos: ",form)
-        var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
+        let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
-        fetch('horarios/store', 
+        bandera = (docente.value != "" && materia.value != "")
+
+        if(bandera == true){
+            fetch('store', 
             {
                 method: 'POST',
                 headers: {
@@ -205,8 +348,11 @@
             .then(data=>{
                 console.log('Contendido del form guardado: ', data)
             }).catch(error => {
-                console.log('Error encontrador al enviar: ', error)
+                console.log('Error encontrado al enviar: ', error)
             })
+        }else{
+
+        }
     }
 
     document.getElementById('ref-add').addEventListener('click',agregarCampos)
@@ -223,5 +369,3 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js">
 </script>
 @stop
-
-

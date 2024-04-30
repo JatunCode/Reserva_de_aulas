@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\GeneradorHorariosNoRegistrados;
 use App\Models\Admin\Ambiente;
 use App\Models\Admin\Docente;
 use App\Models\Admin\Horario;
@@ -11,7 +12,6 @@ use App\Models\Admin\Relacion_DAHM;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 
-use function PHPSTORM_META\map;
 
 class HorarioController extends Controller
 {
@@ -22,13 +22,13 @@ class HorarioController extends Controller
      */
     public function index()
     {
-        //$horarios = Horario::all();
         $horarios = Horario::with(
-            'relacion_materia_horario.dahm_relacion_ambiente',
-            'relacion_materia_horario.dahm_relacion_materia',
-            'relacion_materia_horario.dahm_relacion_docente')->get();
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia',
+            'horario_relacion_dahm.dahm_relacion_docente')->get();
         return view('admin.horarios', ['horarios' => $horarios]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -38,55 +38,7 @@ class HorarioController extends Controller
      */
     public function store(Request $request)
     {
-<<<<<<< HEAD
-        $horarios_no_reg = Horario::with(
-            'relacion_materia_horario.dahm_relacion_ambiente',
-            'relacion_materia_horario.dahm_relacion_materia',
-            'relacion_materia_horario.dahm_relacion_docente')->get();
-        if($request->isMethod('post')){
-            $request->validate([
-                'NOMBRE_DOCENTE' => ['required','string', function($attribute, $value, $fail){
-                    $nombre = Docente::where('NOMBRE', $value)->first();
-                    if(!$nombre){
-                        $fail('No existe el docente indicado.');
-                    }
-                }],
-                'MATERIA' => ['required', 'string', function($attribute, $value, $fail){
-                    $nombre = Materia::where('NOMBRE', $value)->first();
-                    if(!$nombre){
-                        $fail('No existe la materia indicada.');
-                    }
-                }],
-                'LISTAS' => 'required'
-            ]);
-            
-            $data = json_decode($request->getContent(), true);
-
-            $id_docente = Docente::where('NOMBRE', $data['NOMBRE_DOCENTE'])->value('ID_DOCENTE');
-            $id_materia = Materia::where('NOMBRE', $data['MATERIA'])->value('ID_MATERIA');
-
-            $data_list = json_decode($data['LISTAS'], true);
-            $lista_dias = $data_list["LIST_DIA"];
-            $lista_inis = $data_list["LIST_HORAINI"];
-            $lista_fins = $data_list["LIST_HORAFIN"];
-            $lista_ambientes = $data_list["LIST_AMBIENTE"];
-
-            for ($i=0; $i < count($lista_dias); $i++) { 
-                $id_ambiente = Ambiente::where('NOMBRE', $lista_ambientes[$i])->value('ID_AMBIENTE');
-                $id_horario = Uuid::uuid4();
-                if(!$id_ambiente){
-                    return redirect()->back()->withInput()->withErrors(['error' => 'No existe el ambiente indicado por favor ingrese uno existente.']);
-                }else{
-                    Horario::create([
-                        'ID_HORARIO' => $id_horario,
-                        'INICIO' => $lista_inis[$i],
-                        'FIN' => $lista_fins[$i],
-                        'DIA' => $lista_dias[$i]
-                    ]);
-        
-=======
-        $horarios = null;
-        
+        $generador =  new GeneradorHorariosNoRegistrados();
         if($request->isMethod('post')){
             $request->validate([
                 'NOMBRE_DOCENTE' => ['required','string', function($attribute, $value, $fail){
@@ -128,7 +80,6 @@ class HorarioController extends Controller
                         'DIA' => $lista_dias[$i]
                     ]);
         
->>>>>>> origin/raul2
                     Relacion_DAHM::create([
                         'ID_RELACION' => Uuid::uuid4(),
                         'ID_DOCENTE' => $id_docente,
@@ -138,27 +89,48 @@ class HorarioController extends Controller
                     ]);
                 }
             }
-<<<<<<< HEAD
-            return redirect()->route('admin.viewFormHorarios', ['horarios_no_reg' => $horarios_no_reg])->with('success', 'Horario creado exitosamente');
-        }else{
-            return view('admin.viewFormHorarios', ['horarios_no_reg' => $horarios_no_reg]);
+            return redirect()->route('admin.viewFormHorarios')->with('success', 'Horario creado exitosamente');
         }
-=======
-            return redirect()->route('admin.viewFormHorarios', ['horarios' => $horarios])->with('success', 'Horario creado exitosamente');
-        }
-        return view('admin.viewFormHorarios', ['horarios' => $horarios]);
->>>>>>> origin/raul2
+        return view('admin.viewFormHorarios');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string ambiente
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($ambiente)
     {
-        //
+        $horarios = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia',
+            'horario_relacion_dahm.dahm_relacion_docente'
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_ambiente',
+                function ($query) use ($ambiente){
+                    $query->where('ambiente.NOMBRE', $ambiente);
+                })->get();
+        return json_encode($horarios);
+    }
+
+    /**
+     * Mandara los horarios libres de una aula por api para metodos fetch
+     * 
+     * @return json_List
+     */
+    public function indexList($ambiente){
+        $horarios = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente'
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_ambiente',
+                function ($query) use ($ambiente){
+                    $query->where('ambiente.NOMBRE', $ambiente);
+                });
+        
+        $horarios_libres = new GeneradorHorariosNoRegistrados();
+        $horarios_nuevo = $horarios_libres->horarios_no_reg($horarios);
+        return json_encode($horarios_nuevo);
     }
 
     /**
@@ -184,5 +156,3 @@ class HorarioController extends Controller
         //
     }
 }
-
-
