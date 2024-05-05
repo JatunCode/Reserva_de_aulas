@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-<h1>Solictud Urgente</h1>
+<h1>Solictud Normal</h1>
 @stop
 
 @section('content')
@@ -11,28 +11,27 @@
     <div class="row">
         <div class="col-lg-6 col-md-12">
             <!-- En pantallas grandes, ocupa la mitad del ancho; en dispositivos móviles ocupa todo el ancho -->
-            <div class="card h-100" style="border-radius: 20px; border-color: red;">
+            <div class="card h-100">
                 <div class="card-header">
                     <h3 class="card-title">Formulario</h3>
                 </div>
                 <div class="card-body">
-                    @include('docente.components.formularioSolicitudUrgente')
+                    @include('docente.components.formularioSolicitudNormal')
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-12">
             <!-- En pantallas grandes, ocupa la mitad del ancho; en dispositivos móviles ocupa todo el ancho -->
-            <div class="card h-100" style="border-radius: 20px; border-color: red;">
+            <div class="card h-100">
                 <div class="card-header">
                     <h3 class="card-title">Horarios disponibles</h3>
                 </div>
 
                 <div class="card-body">
-                    <div class="form-group">
-                        <label for="filtroFecha">fecha:</label>
-                        <input type="date" class="form-control" id="filtroFecha">
-
-                    </div>
+                <div class="form-group">
+    <label for="filtroFecha">Fecha:</label>
+    <input type="date" class="form-control" id="filtroFecha" min="{{ date('Y-m-d') }}">
+</div>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -49,7 +48,7 @@
                     </table>
                 </div>
 
-                <div class="card-footer clearfix">
+                <!-- <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-right">
                         <li class="page-item"><a class="page-link" href="#">«</a></li>
                         <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -57,7 +56,7 @@
                         <li class="page-item"><a class="page-link" href="#">3</a></li>
                         <li class="page-item"><a class="page-link" href="#">»</a></li>
                     </ul>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -70,12 +69,40 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+
 @stop
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filtroFechaInput = document.getElementById('filtroFecha');
+    const modoInput = document.getElementById('modo');
+    const campoRazon = document.getElementById('campoRazon');
+
+    filtroFechaInput.addEventListener('change', function() {
+        const fechaSeleccionada = new Date(this.value);
+        const fechaActual = new Date();
+        fechaActual.setDate(fechaActual.getDate() + 2);
+
+        if (fechaSeleccionada > fechaActual) {
+            // Si la fecha seleccionada es mayor a la fecha actual + 2 días, establecer modo como "Normal"
+            modoInput.value = 'Normal';
+            // Ocultar el campo de razón
+            campoRazon.style.display = 'none';
+        } else {
+            // Si la fecha seleccionada está dentro de los 2 días próximos, establecer modo como "Urgente"
+            modoInput.value = 'Urgente';
+            // Mostrar el campo de razón
+            campoRazon.style.display = 'block';
+        }
+    });
+});
+</script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Obtener los botones de solicitud

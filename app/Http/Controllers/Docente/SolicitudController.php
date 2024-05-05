@@ -228,6 +228,7 @@ public function urgente()
 
      public function store(Request $request)
      {
+        print_r($_POST);
          // Validar los datos del formulario
          $request->validate([
              'nombre' => 'required|string',
@@ -279,8 +280,55 @@ public function urgente()
              return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
          }
      }
-
-
+     public function docente_datos(Request $request)
+     {
+        $solicitudess = [
+            (object) ['id' => 1, 'aula' => '691A', 'horario' => '15:45 PM - 16:15 PM', 'fecha' => '2024-02-16'],
+            (object) ['id' => 2, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-02-16'],
+            (object) ['id' => 3, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-03-16'],
+            (object) ['id' => 4, 'aula' => '691C', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-03-16'],
+            (object) ['id' => 5, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
+            (object) ['id' => 6, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
+            (object) ['id' => 7, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
+            (object) ['id' => 8, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
+            (object) ['id' => 9, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
+            (object) ['id' => 10, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
+            (object) ['id' => 11, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
+            (object) ['id' => 12, 'aula' => '91B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
+            (object) ['id' => 13, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
+            (object) ['id' => 14, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
+            (object) ['id' => 15, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
+            (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
+        ];
+    
+    
+       
+         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
+ 
+         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
+         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
+                                     ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
+                                     ->get();
+         // Construir la consulta base
+         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
+         ->where('estado', 'Reservado')
+         ->get();
+         $materiasAsociadas = [];
+         foreach ($relaciones as $relacion) {
+     // Obtener la colección de materias asociadas a través de la relación
+     $materias = $relacion->dahm_relacion_materia;
+     // Iterar sobre las materias para obtener sus nombres
+     foreach ($materias as $materia) {
+         // Obtener el nombre de la materia y agregarlo al array si no existe aún
+         $nombreMateria = $materia->NOMBRE;
+         if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+             $materiasAsociadas[] = $nombreMateria;
+         }
+     }
+    }
+        
+        return view('docente.solicitud.normal', ['solicitudes' => $solicitudess,'materias' => $materiasAsociadas]);
+    }
     public function storee(Request $request)
     {
 

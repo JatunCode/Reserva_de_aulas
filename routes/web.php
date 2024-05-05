@@ -55,7 +55,7 @@ Route::prefix('admin')->group(function () {
 Route::prefix('docente')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('docente.inicio');
     Route::get('/solicitud/normal/hola', [SolicitudController::class, 'fecha'])->name('docente.solicitud.fecha');
-    Route::get('/solicitud/normal/', [SolicitudController::class, 'normal'])->name('docente.solicitud.normal');
+    Route::get('/solicitud/normal/', [SolicitudController::class, 'docente_datos'])->name('docente.solicitud.normal');
     Route::get('/solicitud/urgente', [SolicitudController::class, 'urgente'])->name('docente.solicitud.urgente');
     Route::get('/solicitudes/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.solicitud.filtrar.urgente');
     Route::get('/solicitudes/listar', [ReservasController::class, 'datos'])->name('docente.solicitud.filtrar.datos');
