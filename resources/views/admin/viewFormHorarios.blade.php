@@ -160,16 +160,20 @@
             ).then(
                 data => {
                     tabla.innerHTML += `<h6 id="libre" style="color: green; width: 100%">Horarios libres para el aula ${text} </h6>`
-                    data.forEach(horario => 
+                    data.forEach(horarios => 
                         {
-                            tabla.innerHTML +=
-                                `<tr>
-                                    <td> ${horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? ''}</td>   
-                                    <td> ${horario['INICIO']}</td>
-                                    <td> ${horario['FIN']}</td>
-                                    <td> ${horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? ''}</td>
-                                    <td> ${horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}</td>
-                                </tr>`
+                            horarios.forEach(horario =>
+                                {
+                                    tabla.innerHTML +=
+                                    `<tr>
+                                        <td> ${horario['AMBIENTE']}</td>   
+                                        <td> ${horario['HORA_INI']}</td>
+                                        <td> ${horario['HORA_FIN']}</td>
+                                        <td> </td>
+                                        <td> </td>
+                                    </tr>`
+                                }
+                            )
                         }
                     )
                 }
@@ -226,8 +230,7 @@
         ).then(
             data => {
                 ambientes = data
-                if(!ambientes.find((ambiente) => ambiente['NOMBRE'] == text.value.toUpperCase()) &&
-                    text.value != ""){
+                if(!ambientes.find((ambiente) => ambiente['NOMBRE'] == text.value.toUpperCase()) && text.value != ""){
                     message.style.color = "red"
                     message.style.display = "block"
                 }else{

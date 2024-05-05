@@ -26,6 +26,7 @@ class HorarioController extends Controller
             'horario_relacion_dahm.dahm_relacion_ambiente',
             'horario_relacion_dahm.dahm_relacion_materia',
             'horario_relacion_dahm.dahm_relacion_docente')->get();
+        //return $horarios;
         return view('admin.horarios', ['horarios' => $horarios]);
     }
 
@@ -120,13 +121,11 @@ class HorarioController extends Controller
      * @return json_List
      */
     public function indexList($ambiente){
-        $horarios = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente'
-            )->whereHas(
+        $horarios = Horario::whereHas(
                 'horario_relacion_dahm.dahm_relacion_ambiente',
                 function ($query) use ($ambiente){
                     $query->where('ambiente.NOMBRE', $ambiente);
-                });
+                })->get();
         
         $horarios_libres = new GeneradorHorariosNoRegistrados();
         $horarios_nuevo = $horarios_libres->horarios_no_reg($horarios);

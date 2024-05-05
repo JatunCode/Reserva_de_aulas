@@ -21,43 +21,23 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 col-md-12" id="tbhorarios">
+    {{-- <div class="col-lg-6 col-md-12" id="tbhorarios">
         <div class="card h-100">
             <div class="card-header">
                 <h3 class="card-title">
-                    Ambientes existentes y no existentes
+                    Mapa de Referencias
                 </h3>
             </div>
             <div class="card-body">
-                <table class="table table-bordered" id="tabla-scroll">
-                    <thead>
-                        <tr>
-                            <th style="width: 40px">Tipo ambiente</th>
-                            <th style="width: 40px">Nombre ambiente</th>
-                            <th style="width: 40px">Capacidad</th>
-                            <th style="width: 40px">Data</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($ambientes as $ambiente)
-                            <tr>
-                                <td style="width: 40px">{{ $ambiente->TIPO }}</td>
-                                <td style="width: 40px">{{ $ambiente->NOMBRE }}</td>
-                                <td style="width: 40px">{{ $ambiente->CAPACIDAD }}</td>
-                                <td style="width: 40px">{{ $ambiente->DATA }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                {{-- Espacio para las referencias dentro del mapa --}}
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 
 @stop
 
 @section('css')
-<link href="{{ asset('css/admin/viewFormHorarios.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="/css/admin/home.css">
 <!-- CSS de Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
@@ -69,13 +49,14 @@
 @section('js')
 
 <script>
-    var i = 1
+    let i = 1
+    let bandera = true
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
-            var container =  document.getElementById('referencias')
+            let container =  document.getElementById('referencias')
             container.classList.add('col-md-10')
 
-            var refer = document.createElement('input')
+            let refer = document.createElement('input')
             refer.classList.add('form-control')
             refer.type = 'text'
             refer.name = 'refers'
@@ -94,41 +75,122 @@
     }
 
     function eliminarCampos(){
-        var string = document.getElementById('nombre').value
-        var j = 0;
+        let string = document.getElementById('nombre').value
+        let j = 0;
         if(string === ""){
             while(j < i+1){
-                var campo = document.getElementById('ref'+j)
+                let campo = document.getElementById('ref'+j)
                 campo.parentNode.remove()
                 j++
             }
             i = 0
         }
     }
+
+    function checkReferencias(referencias){
+        let message = document.getElementById("messageErrorReferencias")
+        let regex = /[a-z0-9\s]/i
+        if(referencias.forEach((referencia) => {return (referencia.value == "") ? true : false}) == false){
+            message.textContent = "*Llene o elimine la referencia vacia"
+            message.style.display = "block"
+            bandera = false
+        }else{
+            if(referencias.forEach((referencia) => {return (regex.test(referencia.value)) ? true : false})){
+                message.textContent = "*No se aceptan caracteres especiales"
+                message.style.display = "block"
+                bandera = false
+            }else{
+                message.style.display = "none"
+                bandera = true
+            }
+        }
+    }
+
+    function checkCapacidad(text){
+        let capacidad = document.getElementById("messageErrorCapacidad")
+        let tipo_ambiente = document.querySelector('[name="opcion"]')
+        let seleccionado = tipo_ambiente.options[tipo_ambiente.selectedIndex]
+        let limit = (seleccionado.value == "Aula comun") ?  150 : 300
+        if(text.value != ""){
+            let conver = (text.value.includes(".")) ? 0 : parseInt(text.value, 10)
+            capacidad.style.color = "red"
+            if(conver != 0){
+                if(conver < 10){
+                    capacidad.textContent = "*La capacidad debe ser mayor igual a 10"
+                    capacidad.style.display = "block"
+                    bandera = false
+                }else{
+                    if(conver > limit){
+                        capacidad.textContent = `*La capacidad debe ser menor igual a ${limit}`
+                        capacidad.style.display = "block"
+                        bandera = false
+                    }else{
+                        capacidad.style.display = "none"
+                        bandera = true
+                    }
+                }
+            }else{
+                capacidad.textContent = "*Solo numeros enteros"
+                capacidad.style.display = "block"
+                bandera = false
+            }
+        }else{
+            capacidad.textContent = "*El campo es obligatorio"
+            capacidad.style.display = "block"
+            bandera = false
+        }
+    }
+
+    function findAmbiente(text){
+        let message = document.getElementById("messageErrorAmbiente")
+        let ambientes = null
+        if(text.value != ""){
+            fetch('http://127.0.0.1:8000/api/ambientes').then(
+                response => response.json()
+            ).then(
+                data => {
+                    ambientes = data
+                    if(ambientes.find((ambiente) => ambiente['NOMBRE'].toUpperCase() == text.value.toUpperCase())){
+                        message.style.color = "red"
+                        message.style.display = "block"
+                        bandera = false
+                    }else{
+                        message.style.display = "none"
+                        bandera = true
+                    }
+                }
+            ).catch(
+                error => {
+                    console.log("Error encontrado: ", error)
+                }
+            )
+        }else{
+            message.style.color = "red"
+            message.textContent = "*El campo es obligatorio"
+            message.style.display = "block"
+            bandera = false
+        }
+    }
+
     function obtainValues(){
-        //event.preventDefault()
-        var tipo_ambiente = document.querySelector('[name="opcion"]')
-        var nombre = document.querySelector('[name="nombre"]')
-        var index = tipo_ambiente.selectedIndex
-        var opcion_select = tipo_ambiente.options[index]
-        var referencias = document.querySelectorAll('[name="refers"]')
-        var json_list = []
+        event.preventDefault()
+        let tipo_ambiente = document.querySelector('[name="opcion"]')
+        let nombre = document.querySelector('[name="nombre"]')
+        let index = tipo_ambiente.selectedIndex
+        let opcion_select = tipo_ambiente.options[index]
+        let referencias = document.querySelectorAll('[name="refers"]')
+        let json_list = []
         referencias.forEach(element => {
             json_list.push(element.value)
         })
-        var capac = document.querySelector('[name="capacidad"]')
-        var data = document.querySelector('[name="data"]')
-        var checked = data.checked ? "SI" : "NO"
+        let capac = document.querySelector('[name="capacidad"]')
+        let data = document.querySelector('[name="data"]')
+        let checked = data.checked ? "SI" : "NO"
 
         //Enviar datos de los campos
-        var json_json = JSON.stringify(json_list)
+        let json_json = JSON.stringify(json_list)
         
-        console.log("Seleccionado: "+opcion_select.value)
-        console.log("Nombre: "+nombre.value)
-        console.log("Lista de referencias: "+json_json)
-        console.log("Checked: ", checked)
-
-        var form = JSON.stringify({
+        let form = JSON.stringify({
                     TIPO: opcion_select.value,
                     NOMBRE: nombre.value,
                     REFERENCIAS: json_json,
@@ -136,10 +198,13 @@
                     DATA: checked
                 })
 
-        console.log("Formulario con datos: ",form)
-        var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
-
-        fetch('ambientes/store', 
+        let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
+        
+        checkReferencias(referencias)
+        
+        if(bandera == true){
+            console.log("Envio de datos del formulario: ", form)
+            fetch('http://127.0.0.1:8000/admin/ambientes/store', 
             {
                 method: 'POST',
                 headers: {
@@ -161,6 +226,7 @@
             }).catch(error => {
                 console.log('Error encontrador al enviar: ', error)
             })
+        }
     }
 
     document.getElementById('ref-add').addEventListener('click',agregarCampos)

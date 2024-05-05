@@ -27,8 +27,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::controller(AmbienteController::class)->group(
     function(){
-        Route::get('/ambientes', 'indexList');
-        Route::post('/ambientes/store', 'store');
+        Route::get('/fetch/ambientes', 'indexList');
+        //Route::post('/ambientes/store', 'store');
         // Route::post('/putambiente', 'show');
     }
 );

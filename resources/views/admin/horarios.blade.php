@@ -16,6 +16,7 @@
         <h3 class="card-title">Horarios registrados</h3>
     </div>
     <div class="card-body table-responsive">
+        
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -25,7 +26,6 @@
                     <th style="width: 100px">Materia</th>
                     <th style="width: 40px">Ambiente</th>
                     <th style="width: 40px">Docente</th>
-                    <th style="width: 100px">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,9 +34,9 @@
                         <td>{{ $horario->DIA }}</td>
                         <td>{{ $horario->INICIO }}</td>
                         <td>{{ $horario->FIN }}</td>
-                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
-                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>
-                        <td>{{ $horario['relacion_materia_horario']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
+                        <td>{{ $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
+                        <td>{{ $horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>
+                        <td>{{ $horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
                         
                     </tr>
                 @endforeach
