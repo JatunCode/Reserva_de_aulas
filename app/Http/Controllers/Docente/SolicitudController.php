@@ -228,7 +228,7 @@ public function urgente()
 
      public function store(Request $request)
      {
-        print_r($_POST);
+        $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d';
          // Validar los datos del formulario
          $request->validate([
              'nombre' => 'required|string',
@@ -250,6 +250,7 @@ public function urgente()
 
          try {
              // Crear una nueva instancia de la solicitud
+             
              $solicitud = new Solicitudes;
              $solicitud->nombre = $request->input('nombre');
              $solicitud->nombre1 = $request->input('nombre1');
@@ -268,6 +269,7 @@ public function urgente()
              $solicitud->fecha = $request->input('fecha'); // Asegúrate de obtener correctamente el valor de 'fecha'
              $solicitud->estado = $request->input('fecha');
              $solicitud->estado = 'Solicitando';
+             $solicitud->ID_Docente = $idDocente;
              // Guardar la solicitud en la base de datos
              $solicitud->save();
 
