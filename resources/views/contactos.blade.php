@@ -15,7 +15,7 @@ asdada
 // TODO: Tarea pendiente para completar
 -->
 
-                        @section('content')
+@section('content')
 <p>
     Contactos
 

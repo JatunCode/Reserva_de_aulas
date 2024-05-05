@@ -304,13 +304,13 @@ return [
         // Sidebar items:
 
 
-       // ['header' => 'Inicio'],
-       // [
-          //  'text' => 'Perfil',
-         //   'url'  => 'admin/settings',
-         //   'icon' => 'fas fa-fw fa-user',
-         //   'can'  => ['admin'],
-        //],
+    //    ['header' => 'Inicio'],
+       [
+           'text' => 'Inicio',
+           'route'  => 'docente.inicio',
+           'icon' => 'fa fa-home',
+        //    'can'  => ['admin'],
+        ],
        // [
          //   'text'       => 'inicio',
          //   'icon_color' => 'fas fa fa-home',
@@ -362,30 +362,19 @@ return [
         // ],
         ['header' => 'Realizar solicitud'],
         [
-            'text'       => 'Solicitud Normal',
+            'text'       => 'Registrar una solicitud',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
             'route'      => 'docente.solicitud.normal',
         ],
-        [
-            'text'       => 'Solicitud de Urgencia',
-            'icon'       => 'fas fa-exclamation-circle',
-            'icon_color' => 'yellow',
-            'route'      => 'docente.solicitud.urgente',
-        ],
+        
 
         ['header' => ' Listar'],
         [
-            'text'       => 'Listar Solicitudes Normales',
+            'text'       => 'Visualizar mis solicitudes',
             'icon'       => 'fas fa-list',
             'icon_color' => 'green',
-            'route'      => 'docente.solicitud.filtrar.llegada',
-        ],
-        [
-            'text'       => 'Listar Solicitudes Urgencia',
-            'icon'       => 'fas fa-table',
-            'icon_color' => 'yellow',
-            'route'      => 'docente.solicitud.filtrar.urgente',
+            'route'      => 'docente.solicitud.filtrar.datos',
         ],
         [
             'text'       => 'Cancelar Solicitud',

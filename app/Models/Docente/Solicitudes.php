@@ -26,6 +26,9 @@ class Solicitudes extends Model
         'fecha',
         'horario',
         'estado',
+        'ID_DOCENTE',
+        'hInicio',
+        'hFin',
     ];
     //protected $fillable = ['ID_SOLICITUD', 'ID_DOCENTE_s', 'CANTIDAD_EST', 'FECHA_RE', 'HORAINI', 'HORAFIN', 'FECHAHORA_SOLI', 'MOTIVO', 'PRIORIDAD', 'ID_MATERIA', 'GRUPOS', 'ID_AMBIENTE', 'ESTADO'];
 }
