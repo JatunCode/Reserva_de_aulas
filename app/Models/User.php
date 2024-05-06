@@ -45,14 +45,13 @@ class User extends Authenticatable
     ];
     public function adminlte_image()
     {
-
         return $this->foto ?: 'https://picsum.photos/300/300';
     }
 
     public function adminlte_desc()
     {
 
-        return $this->cargo ?: 'Usuario';
+        return $this->cargo ? : 'Usuario';
     }
 
     public function adminlte_profile_url()

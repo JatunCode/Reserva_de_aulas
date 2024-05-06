@@ -23,6 +23,16 @@ class AmbienteController extends Controller
     }
 
     /**
+     * Devuelve una lista de ambientes para la peticion de busqueda fetch
+     */
+
+    public function indexList()
+    {
+        $ambientes = Ambiente::all();
+        return json_encode($ambientes);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -30,7 +40,6 @@ class AmbienteController extends Controller
      */
     public function store(Request $request)
     {
-        $ambientes = Ambiente::all();
         if($request->isMethod('post')){
             $uuid = Uuid::uuid4();
             $request->validate([
@@ -55,9 +64,9 @@ class AmbienteController extends Controller
                 'DATA' => $request->DATA,
                 'ESTADO' => 'HABILITADO'
             ]);
-            return redirect()->route('admin.viewFormAmbientes', ['ambientes' => $ambientes])->with('success', 'Ambiente creado exitosamente');
+            return redirect()->route('admin.viewFormAmbientes')->with('success', 'Ambiente creado exitosamente');
         }
-        return view('admin.viewFormAmbientes', ['ambientes' => $ambientes]);
+        return view('admin.viewFormAmbientes');
     }
 
     /**

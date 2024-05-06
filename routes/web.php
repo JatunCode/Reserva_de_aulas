@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DocenteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\HorarioController;
+use App\Http\Controllers\Admin\NotificacionController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\ReservasController;
 use App\Models\Admin\Docente;
@@ -23,6 +24,9 @@ use Illuminate\Support\Facades\Auth;
 
 
 Route::group(['prefix' => '/'], function () {
+    Route::get('/auth/login', function () {
+        return view('auth.login');
+    });
     Route::get('/', function () {
         return view('welcome');
     });
@@ -49,8 +53,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/hola',  function () {
         return 'Hola :v';
     });
-
 });
+
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('docente.inicio');
@@ -75,3 +79,5 @@ Route::prefix('docente')->group(function () {
  Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
  Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
 });
+
+

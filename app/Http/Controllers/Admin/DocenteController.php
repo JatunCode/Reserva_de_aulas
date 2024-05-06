@@ -15,7 +15,8 @@ class DocenteController extends Controller
      */
     public function index()
     {
-        return json_encode(Docente::all());
+        $docentes = Docente::all();
+        return json_encode($docentes);
     }
 
     /**
@@ -37,11 +38,8 @@ class DocenteController extends Controller
      */
     public function show($caracter)
     {
-        $docente = Docente::with(
-                            'docente_relacion_dahm.dahm_relacion_materia', 
-                            'docente_relacion_dahm.dahm_relacion_horario', 
-                            'docente_relacion_dahm.dahm_relacion_ambiente')->get();
-        return $docente;
+        $docente = Docente::where('NOMBRE', 'LIKE', "%$caracter%")->get();
+        return json_encode($docente);
     }
 
     /**

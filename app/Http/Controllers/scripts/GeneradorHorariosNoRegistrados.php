@@ -19,14 +19,14 @@ class GeneradorHorariosNoRegistrados extends Controller
         $hora_ini= 24300;
         $hora_fin = 78300;
         $list = [];
+        $rango = (!empty($horas)) ? $this->verificarRango($horas) : 5400;
         foreach ($horas as $hora) {
-            $rango = $this->verificarRango($horas);
-            while($hora_ini <= $hora_fin){
-                if($hora_ini != strtotime($hora['INICIO']) - strtotime($hora['FIN'])){
+            while($hora_ini < $hora_fin){
+                if($hora_ini != strtotime($hora['INICIO'])){
                     $list[] = [
                         'DIA' => $hora['DIA'],
-                        'HORA_INI' => $hora_ini,
-                        'HORA_FIN' => $hora_ini+$rango,
+                        'HORA_INI' => date('H:i:s',$hora_ini),
+                        'HORA_FIN' => date('H:i:s',$hora_ini+$rango),
                         'AMBIENTE' => $hora['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']
                     ];
                 }
@@ -49,7 +49,7 @@ class GeneradorHorariosNoRegistrados extends Controller
     private function verificarRango($horas){
         $aux = 0;
         foreach ($horas as $hora) {
-            $var = strtotime($hora['INICIO']) - strtotime($hora['FIN']);
+            $var = strtotime($hora['FIN']) - strtotime($hora['INICIO']);
             if($aux <= $var){
                 $aux = $var;
             }

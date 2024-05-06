@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Docente;
 use DateTime;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Docente;
+use App\Models\Admin\Horario;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
@@ -140,7 +142,7 @@ class SolicitudController extends Controller
         (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
     ];
 
-
+    //$solicitudes = Solicitudes::where('modo', 'Normal')->get();
 
     // Paginar las solicitudes filtradas (si es necesario)
      // Ejemplo de paginación con array_slice
@@ -152,6 +154,7 @@ public function normal()
 {
 
     // Array de objetos de ejemplo
+    $horarios_disponibles = Horario::all();
     $solicitudes = [
         (object) ['id' => 1, 'aula' => '691A', 'horario' => '15:45 PM - 16:15 PM', 'fecha' => '2024-02-16'],
         (object) ['id' => 2, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-02-16'],
@@ -171,12 +174,13 @@ public function normal()
         (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
     ];
 
-
-
-    // Paginar las solicitudes filtradas (si es necesario)
+    // $solicitudes = Solicitudes::where('modo', 'Normal')->get();
+    // $index = 1;
+    // // Paginar las solicitudes filtradas (si es necesario)
      // Ejemplo de paginación con array_slice
 
     // Retornar la vista con las solicitudes filtradas y paginadas
+    //return $solicitudes;
     return view('docente.solicitud.normal', ['solicitudes' => $solicitudes]);
 }
 public function urgente()
@@ -202,8 +206,8 @@ public function urgente()
         (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
     ];
 
-
-
+    // $solicitudes = Solicitudes::where('modo', 'Urgente')->get();
+    // $index = 1;
     // Paginar las solicitudes filtradas (si es necesario)
      // Ejemplo de paginación con array_slice
 
@@ -383,5 +387,48 @@ public function urgente()
         $solicitud->delete();
 
         return response()->json(['message' => 'Solicitud eliminada exitosamente']);
+    }
+
+    /**
+     * Encuentra el id y grupos del docente si es uno
+     * else
+     * Devolvera los ids y grupos de los docentes en el arreglo
+     * Todos en formato json
+     */
+    private function getGruposDocentes($nombres){
+        $ids_docentes = [];
+        $grupos = [];
+        $json_all = [];
+        foreach ($nombres as $nombre) {
+            $docente = Docente::where('NOMBRE', $nombre)->first();
+            $ids_docentes[] = $docente->ID_DOCENTE;
+            $grupos[] = $docente->GRUPO;
+        }
+        $json_all[] = json_encode($ids_docentes);
+        $json_all[] = json_encode($grupos);
+        return json_encode($json_all);
+    }
+
+    /**
+     * Obtener todos los horarios habilitados
+     */
+    private function getHorariosHabilitados($fecha){
+        $strip_fecha = str_replace('/', '-', $fecha);
+        $horarios = Horario::where('DIA', date('l',strtotime($strip_fecha)));
+        $horarios_habilitados = [];
+        foreach ($horarios as $horario) {
+            $salto = 1.5*60*60;
+            $hora_inicio = strtotime($horario["INICIO"]);
+            $hora_fin = strtotime($horario["FIN"]);
+            $horacomplet = $hora_inicio+$hora_fin;
+            if($horacomplet >= $salto){
+                $horarios_habilitados[] = [
+                    "aula" => $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'],
+                    "horario" => "",
+                    "fecha" => $strip_fecha
+                ];
+            }
+        }
+        return $horarios_habilitados;
     }
 }

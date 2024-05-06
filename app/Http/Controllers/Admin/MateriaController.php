@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Docente;
-use App\Models\Admin\Materia;
-use App\Models\Admin\Relacion_DAHM;
 use Illuminate\Http\Request;
 
 class MateriaController extends Controller
@@ -39,14 +37,14 @@ class MateriaController extends Controller
      */
     public function show($nombre)
     {
-        $materias = Materia::with(
-                    'materia_relacion_dahm.dahm_relacion_docente'
-                )->whereHas('materia_relacion_dahm.dahm_relacion_docente', 
-                    function($query) use ($nombre){
-                        $query->where('docente.NOMBRE', $nombre);
-                    }
-                )->get();
-        return $materias;
+        $materias_docente = Docente::with(
+            'docente_relacion_dahm.dahm_relacion_materia'
+        )->whereHas('docente_relacion_dahm.dahm_relacion_materia', 
+                function ($query) use ($nombre){
+                    $query->where('docente.NOMBRE', 'LIKE', "%$nombre%");
+                })->get();
+
+        return json_encode($materias_docente);
     }
 
     /**

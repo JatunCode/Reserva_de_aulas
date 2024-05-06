@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\User;
+
+$role_usuario = new User();
+$role = $role_usuario->adminlte_desc();
 return [
 
     /*
@@ -288,7 +292,7 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Menu-Configuration
     |
     */
-
+    
     'menu' => [
         // Navbar items:
         [
@@ -365,7 +369,7 @@ return [
             'text'       => 'Registrar una solicitud',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
-            'route'      => 'docente.solicitud.normal',
+            'route'      => ($role != 'Usuario') ? 'admin.solicitud.normal':'docente.solicitud.normal',
         ],
         
 
