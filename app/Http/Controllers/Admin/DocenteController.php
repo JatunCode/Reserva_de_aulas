@@ -10,7 +10,7 @@ class DocenteController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * Devolvera a la lista de api para los fetch de busquedas
      * @return \Illuminate\Http\Response
      */
     public function index()

@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-<h1>Solictud Normal</h1>
+<h1>Registrar una Solicitud</h1>
 @stop
 
 @section('content')
@@ -28,11 +28,10 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="form-group">
-                        <label for="filtroFecha">fecha:</label>
-                        <input type="date" class="form-control" id="filtroFecha">
-
-                    </div>
+                <div class="form-group">
+    <label for="filtroFecha">Fecha:</label>
+    <input type="date" class="form-control" id="filtroFecha" min="{{ date('Y-m-d') }}"required>
+</div>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -48,7 +47,7 @@
                     </table>
                 </div>
 
-                <div class="card-footer clearfix">
+                <!-- <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-right">
                         <li class="page-item"><a class="page-link" href="#">«</a></li>
                         <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -56,7 +55,7 @@
                         <li class="page-item"><a class="page-link" href="#">3</a></li>
                         <li class="page-item"><a class="page-link" href="#">»</a></li>
                     </ul>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -69,12 +68,40 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+
 @stop
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filtroFechaInput = document.getElementById('filtroFecha');
+    const modoInput = document.getElementById('modo');
+    const campoRazon = document.getElementById('campoRazon');
+
+    filtroFechaInput.addEventListener('change', function() {
+        const fechaSeleccionada = new Date(this.value);
+        const fechaActual = new Date();
+        fechaActual.setDate(fechaActual.getDate() + 2);
+
+        if (fechaSeleccionada > fechaActual) {
+            // Si la fecha seleccionada es mayor a la fecha actual + 2 días, establecer modo como "Normal"
+            modoInput.value = 'Normal';
+            // Ocultar el campo de razón
+            campoRazon.style.display = 'none';
+        } else {
+            // Si la fecha seleccionada está dentro de los 2 días próximos, establecer modo como "Urgente"
+            modoInput.value = 'Urgente';
+            // Mostrar el campo de razón
+            campoRazon.style.display = 'block';
+        }
+    });
+});
+</script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     // Obtener los botones de solicitud
@@ -101,63 +128,116 @@ document.addEventListener("DOMContentLoaded", function() {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('solicitudForm').addEventListener('submit', function(event) {
-        document.getElementById('aula').removeAttribute('disabled');
-        document.getElementById('fecha').removeAttribute('disabled');
-        document.getElementById('horario').removeAttribute('disabled');
-        event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
 
-        // Obtener los datos del formulario
-        const formData = new FormData(this);
-
-        // Convertir los datos del formulario a un objeto JSON
-        const formDataObject = {};
-        formData.forEach((value, key) => {
-            formDataObject[key] = value;
+        // Verificar si hay campos vacíos
+        const inputs = this.querySelectorAll('input, select, textarea');
+        let isValid = true;
+        inputs.forEach(input => {
+            // Verificar si el campo está vacío y es requerido
+            if (input.required && input.value.trim() === '') {
+                // Marcar el campo en rojo
+                input.style.borderColor = 'red';
+                isValid = false;
+            } else {
+                // Restablecer el color del borde si el campo está lleno
+                input.style.borderColor = '';
+            }
         });
 
-        // Imprimir los datos del formulario en la consola
-        console.log('Datos del formulario:', JSON.stringify(formDataObject));
-
-        // Obtener el token CSRF
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        // Configurar la solicitud fetch
-        fetch(this.action, {
-                method: this.method,
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Solicitud enviada correctamente!',
-                        showConfirmButton: false,
-                        timer: 1500 // Cerrar automáticamente después de 1.5 segundos
-                    }).then(() => {
-                        // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
-                        document.getElementById('solicitudForm').reset();
-                        var offcanvasElement = document.getElementById('offcanvasRight');
-                        var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
-                        offcanvas.hide();
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Error al enviar la solicitud',
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al enviar la solicitud');
+        // Si hay campos vacíos, detener el envío y mostrar un mensaje
+        if (!isValid) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Por favor, completa todos los campos requeridos.',
             });
+            return;
+        }
+
+        // Asignar un valor predeterminado al campo "modo"
+        document.getElementById('modo').value = 'Normal';
+
+        // Obtener los datos del formulario y convertirlos en un objeto
+        const formData = new FormData(this);
+        const formDataObject = {};
+        formData.forEach((value, key) => {
+            if (key !== '_token') {
+                formDataObject[key] = value;
+            }
+        });
+
+        // Verificar si el modo seleccionado es urgente
+        const modo = formData.get('modo');
+        if (modo !== 'Urgente') {
+            // Eliminar la razón del objeto de datos si el modo no es urgente
+            delete formDataObject.razon;
+        }
+
+        // Generar el contenido del modal con los datos del formulario
+        const modalContent = Object.entries(formDataObject).map(([key, value]) => {
+            return `<p><strong>${key}:</strong> ${value}</p>`;
+        }).join('');
+
+        // Mostrar el modal de confirmación con los datos del formulario
+        Swal.fire({
+            icon: 'info',
+            title: 'Confirmación de envío',
+            html: modalContent,
+            showCancelButton: true,
+            confirmButtonText: 'Enviar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar el formulario si se confirma la acción
+                sendForm(formData);
+            }
+        });
     });
 });
+
+function sendForm(formData) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch(document.getElementById('solicitudForm').action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': csrfToken
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Solicitud enviada correctamente!',
+                showConfirmButton: false,
+                timer: 1500 // Cerrar automáticamente después de 1.5 segundos
+            }).then(() => {
+                // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
+                document.getElementById('solicitudForm').reset();
+                var offcanvasElement = document.getElementById('offcanvasRight');
+                var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+                offcanvas.hide();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Error al enviar la solicitud',
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al enviar la solicitud');
+    });
+}
 </script>
+
+
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">
 </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Ambiente;
+use App\Models\Admin\Horario;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Ramsey\Uuid\Uuid;

@@ -3,8 +3,8 @@
     <div class="col-md-12" id="container">
         <label for="nombre" class="form-label">Docente(s)</label>
         <div class="input-group mb-2">
-            <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre"
-                id="nombre">
+        <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre" id="nombre" readonly value="TORRICO TROCHE MILKA MONICA">
+
             <button class=" btn btn-success agregar-nombre" type="button">
                 <i class="bi bi-person-plus"></i>
             </button>
@@ -13,14 +13,14 @@
 
 
     <div class="col-md-12">
-        <label for="materia" class="form-label">Materia:</label>
-        <select class="form-select" id="materia" aria-label="Floating label select example" required name="materia">
-            <option selected disabled value=""></option>
-            <option value="Introducción a la programación">Introducción a la programación</option>
-            <option value="Física">Física</option>
-            <option value="Elementos">Elementos</option>
-        </select>
-    </div>
+    <label for="materia" class="form-label">Materia:</label>
+    <select class="form-select" id="materia" aria-label="Floating label select example" required name="materia">
+        <option selected disabled value="">Selecciona una materia</option>
+        @foreach($materias as $materia)
+            <option value="{{ $materia }}">{{ $materia }}</option>
+        @endforeach
+    </select>
+</div>
 
     <div class="col-6">
         <label for="grupo" class="form-label">Grupo(s):</label>
@@ -35,7 +35,7 @@
         <input type="number" class="form-control" id="cantidad_estudiantes" name="cantidad_estudiantes"
             placeholder="Ingrese la cantidad de estudiantes" required>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <label for="motivo" class="form-label">Motivo:</label>
         <select class="form-select" id="motivo" required name="motivo">
             <option selected disabled value=""></option>
@@ -47,31 +47,29 @@
             <option value="Clase regular">Clase regular</option>
             <option value="Otro">Otro</option>
         </select>
+        
     </div>
     <div class="col-md-6">
         <label for="modo" class="form-label">Modo:</label>
-        <select class="form-select" id="modo" required name="modo" readonly>
-            <option value="Normal" selected>Normal</option>
-
-        </select>
-    </div>
-
-    <div class="form-floating comentarios" id="campoRazon" style="display: none;">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"
-            name="razon"></textarea>
-        <label for="floatingTextarea2">Razon:</label>
+        <input type="text" class="form-control" id="modo" name="modo" readonly required>
+        <!-- Campo oculto para enviar el valor de "modo" -->
+        <!-- <input type="hidden" id="modo" name="modo"> -->
     </div>
     <div class="col-6">
         <label for="aula" class="form-label">Aula:</label>
-        <input type="text" class="form-control" id="aula" name="aula" placeholder="Ingrese el aula" readonly>
+        <input type="text" class="form-control" id="aula" name="aula" placeholder="Ingrese el aula"required readonly>
     </div>
-    <div class="col-md-6">
+    <div class="form-floating comentarios" id="campoRazon" style="display: none;">
+    <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="razon"></textarea>
+    <label for="floatingTextarea2">Razon:</label>
+</div>
+    <div class="col-md-6" style="display: none;">
         <label for="fecha" class="form-label">Fecha:</label>
         <input type="date" class="form-control" id="fecha" name="fecha" required readonly>
     </div>
     <div class="col-12">
         <label for="horario" class="form-label">Horario:</label>
-        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario" readonly>
+        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario" required readonly>
     </div>
 
     <div class="col-12 mt-3 text-center">

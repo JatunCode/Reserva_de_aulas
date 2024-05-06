@@ -43,6 +43,11 @@
                 </div>
                 <p id="messageErrorHora" style="display: none">*No se encuentra en el rango de hora</p>
             </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class=" btn btn-success agregar-nombre" type="button" id="ref-add">
+                    <i class="bi bi-hourglass"></i>
+                </button>
+            </div>
 
             <div class="col-md-4">
                 <label for="ambiente" class="form-label">Ambiente</label>

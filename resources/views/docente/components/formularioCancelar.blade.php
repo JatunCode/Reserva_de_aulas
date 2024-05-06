@@ -59,10 +59,10 @@
                     readonly>
             </div>
 
-            <!-- <div class="col-12 mt-3 text-center">
+            <div class="col-12 mt-3 text-center">
                 <button id="cancelarBtn" class="btn btn-danger d-inline-block w-75"
                     data-id="{{ $solicitud->id }}">Cancelar</button>
-            </div> -->
+            </div>
 
             <input type="hidden" id="solicitudId">
 
