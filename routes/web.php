@@ -78,6 +78,17 @@ Route::prefix('docente')->group(function () {
  Route::get('/registroReservas', [ReservasController::class, 'registroReservas'])->name('docente.registroReservas');
  Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
  Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
+
+
+ 
+
+ 
+ 
+    Route::get('/docente/registroReservas', [ReservasController::class, 'registroReservas'])->name('docente.registroReservas');
 });
-
-
+//atender solicitud 
+Route::get('/admin/atenderSolicitud', [ReservasController::class, 'atenderSolicitud'])->name('docente.atenderSolicitud');
+Route::get('/admin/solicitudes/filtro', [ReservasController::class, 'filtrarSolicitudes'])->name('docente.solicitud.filtrar.datosfiltro');
+//cancelar solicitud
+Route::get('/admin/cancelarSolicitud', [ReservasController::class, 'cancelarSolicitud'])->name('docente.cancelarSolicitud');
+Route::post('/path-to-cancel-api/{id}', [YourController::class, 'cancelarSoli']);

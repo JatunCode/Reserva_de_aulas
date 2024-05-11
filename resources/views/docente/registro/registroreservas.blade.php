@@ -114,7 +114,7 @@ background-color: #FFC0B7;btn btn-outline-secondary
 </div>
 
 
-@include('docente.components.formularioRegistroreserva')
+@include('docente.components.formularioCancelar')
 
 @stop
 

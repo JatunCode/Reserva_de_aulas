@@ -360,6 +360,107 @@ public function registroReservas()
     // Retornar la vista con ambas variables
     return view('docente.registro.registroreservas', ['solicitudes' => $solicitudes, 'razon' => $razon]);
 }
+//visualizar solicitud
+
+
+public function atenderSolicitud()
+{
+    // Obtener todas las relaciones Relacion_DAHM con sus materias relacionadas
+    $relaciones = Relacion_DAHM::with('dahm_relacion_materia')
+        ->get();
+
+    // Obtener todas las solicitudes ordenadas por updated_at (Fecha Reservada)
+    $solicitudes = Solicitudes::orderBy('updated_at', 'desc')
+        ->paginate(10);
+
+    // Obtener todas las materias asociadas
+    $materiasAsociadas = [];
+    foreach ($relaciones as $relacion) {
+        $materias = $relacion->dahm_relacion_materia;
+        foreach ($materias as $materia) {
+            $nombreMateria = $materia->NOMBRE;
+            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                $materiasAsociadas[] = $nombreMateria;
+            }
+        }
+    }
+
+    // Retornar la vista con las variables necesarias
+    return view('docente.listar.atenderSolicitud', [
+        'solicitudes' => $solicitudes,
+        'materias' => $materiasAsociadas
+    ]);
+}
+    
+public function filtrarSolicitudes(Request $request)
+{
+    // Obtener los filtros
+    $filtroModo = $request->input('modo', 'Todos');
+    $filtroEstado = $request->input('estado', 'Todos');
+    $filtroMateria = $request->input('materia');
+
+    // Crear una consulta base
+    $query = Solicitudes::query();
+
+    // Aplicar el filtro de materia si está presente
+    if (!empty($filtroMateria)) {
+        $query->where('materia', 'like', '%' . $filtroMateria . '%');
+    }
+
+    // Aplicar el filtro de modo solo si es diferente de "Todos"
+    if ($filtroModo !== "Todos") {
+        $query->where('modo', $filtroModo);
+    }
+
+    // Aplicar el filtro de estado solo si es diferente de "Todos"
+    if ($filtroEstado !== "Todos") {
+        $query->where('estado', $filtroEstado);
+    }
+
+    // Obtener las solicitudes filtradas
+    $solicitudes = $query->orderBy('updated_at', 'desc')->get();
+
+    // Devolver las solicitudes filtradas como respuesta en formato JSON
+    return response()->json($solicitudes);
+}
+
+//cancelar solicitud
+public function cancelarSolicitud()
+{
+    $razones = Razones::all();  // Asegúrate de tener el modelo Razones y su respectiva tabla
+// Obtener todas las relaciones Relacion_DAHM con sus materias relacionadas
+$relaciones = Relacion_DAHM::with('dahm_relacion_materia')
+->get();
+
+// Obtener todas las solicitudes ordenadas por updated_at (Fecha Reservada)
+$solicitudes = Solicitudes::orderBy('updated_at', 'desc')
+->paginate(10);
+
+// Obtener todas las materias asociadas
+$materiasAsociadas = [];
+foreach ($relaciones as $relacion) {
+$materias = $relacion->dahm_relacion_materia;
+foreach ($materias as $materia) {
+    $nombreMateria = $materia->NOMBRE;
+    if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+        $materiasAsociadas[] = $nombreMateria;
+    }
+}
+}
+
+
+    // El resto de tu lógica...
+    return view('docente.listar.cancelarSolicitud', [
+        'solicitudes' => $solicitudes,
+        'materias' => $materiasAsociadas,
+        'razones' => $razones  // Pasar razones a la vista
+    ]);
+}
+public function cancelarSoli(Request $request, $id) {
+    $solicitud = Solicitudes::findOrFail($id);
+    $solicitud->update(['estado' => 'Cancelado', 'razon_id' => $request->reasonId]);
+    return response()->json(['message' => 'Solicitud cancelada correctamente']);
+}
 
 public function showReservas($id)
 {
