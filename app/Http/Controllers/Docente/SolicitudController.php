@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Docente;
 use DateTime;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Admin\Docente;
 use App\Models\Admin\Horario;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
+use App\Models\Docente\Solicitud;
+use Illuminate\Support\Facades\Date;
+use Ramsey\Uuid\Uuid;
+
 class SolicitudController extends Controller
 {
     /**
@@ -25,8 +30,8 @@ class SolicitudController extends Controller
         $solicitudes = Solicitudes::where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')->get();
         //dump($relaciones);
         $pendientesCount = $solicitudes->where('estado', 'Cancelado')->count();
-    $urgentesCount = $solicitudes->where('estado', 'Solicitando')->count();
-    $reservadasCount = $solicitudes->where('estado', 'Reservado')->count();
+        $urgentesCount = $solicitudes->where('estado', 'Solicitando')->count();
+        $reservadasCount = $solicitudes->where('estado', 'Reservado')->count();
         $anoActual = date('Y');
     
         // Convertir los datos en el formato adecuado para FullCalendar
@@ -54,31 +59,30 @@ class SolicitudController extends Controller
                 }
             }
         }
-    // Convertir las solicitudes en eventos y agregarlas al arreglo de eventos
-    foreach ($solicitudes as $solicitud) {
-        if ($solicitud->estado == 'Solicitando') {
-            $backgroundColor = '#CCCC00'; // Color para estado Pendiente
-        } elseif ($solicitud->estado == 'Reservado') {
-            $backgroundColor = '#006600'; // Color para estado Reservado
-        } 
-        else {
-            $backgroundColor = '#990000'; // Color por defecto para otros estados
+        // Convertir las solicitudes en eventos y agregarlas al arreglo de eventos
+        foreach ($solicitudes as $solicitud) {
+            if ($solicitud->estado == 'Solicitando') {
+                $backgroundColor = '#CCCC00'; // Color para estado Pendiente
+            } elseif ($solicitud->estado == 'Reservado') {
+                $backgroundColor = '#006600'; // Color para estado Reservado
+            } 
+            else {
+                $backgroundColor = '#990000'; // Color por defecto para otros estados
+            }
+            $eventos[] = [
+                'title' => $solicitud->motivo . '-'.$solicitud->aula, // Nombre de la solicitud como título del evento
+                'start' => $solicitud->fecha . 'T' . $solicitud->hInicio, // Fecha y hora de inicio
+                'end' => $solicitud->fecha . 'T' . $solicitud->hFin, // Fecha y hora de fin (misma que inicio)
+                'aula' => $solicitud->aula,
+                'modo' => $solicitud->modo,
+                'materia' => $solicitud->materia,
+                'estado' => $solicitud->estado,
+                'eventBackgroundColor'=>$backgroundColor,
+                'textColor'=>'white',
+            ];
         }
-        $eventos[] = [
-            'title' => $solicitud->motivo . '-'.$solicitud->aula, // Nombre de la solicitud como título del evento
-            'start' => $solicitud->fecha . 'T' . $solicitud->hInicio, // Fecha y hora de inicio
-            'end' => $solicitud->fecha . 'T' . $solicitud->hFin, // Fecha y hora de fin (misma que inicio)
-            'aula' => $solicitud->aula,
-            'modo' => $solicitud->modo,
-            'materia' => $solicitud->materia,
-            'estado' => $solicitud->estado,
-            'eventBackgroundColor'=>$backgroundColor,
-            'textColor'=>'white',
-        ];
-    }
         // Convertir los eventos a formato JSON para pasarlo a la vista
         $eventos_json = json_encode($eventos);
-    
         return view('docente.home', compact('eventos_json', 'solicitudes','pendientesCount', 'urgentesCount', 'reservadasCount'));
     }
     
@@ -233,6 +237,7 @@ public function urgente()
      public function store(Request $request)
      {
         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d';
+        $buscardor = new EncontrarTodo();
          // Validar los datos del formulario
          $request->validate([
              'nombre' => 'required|string',
@@ -251,7 +256,8 @@ public function urgente()
              'horario' => 'required|string',
 
          ]);
-
+        $uuid = Uuid::uuid4();
+        
          try {
              // Crear una nueva instancia de la solicitud
              
@@ -285,7 +291,46 @@ public function urgente()
              // Por ejemplo:
              return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
          }
+
+         try {
+            $request->validate([
+                'NOMBRES' => ['required', 
+                    function($attribute, $value, $fail){
+                        $decoder = json_decode($value, true);
+                        if(!is_array($decoder) || count($decoder) < 1){
+                            $fail($attribute.' debe contener al menos un docente');
+                        }
+                    }],
+                'CANTIDAD' => 'required|integer',
+                'FECHA_RESERVA' => 'required|datetime',
+                'HORA_INICIO' => 'required|date_format:H:i:s',
+                'HORA_FIN' => 'required|date_format:H:i:s',
+                'MOTIVO' => 'required|string',
+                'MATERIA' => 'required|string',
+                'AMBIENTE' => 'required|string'
+            ]);
+            $idsygruposDocente = $buscardor->getGruposyIdsDocentes($request->NOMBRES);
+            Solicitud::create([
+                'ID_SOLICITUD' => $uuid->toString(),
+                'ID_DOCENTES' => $idsygruposDocente[0],
+                'CANTIDAD_EST' => $request->CANTIDAD,
+                'FECHA_RE' => $request->FECHA_RESERVA,
+                'HORAINI' => $request->HORA_INICIO,
+                'HORAFIN' => $request->HORA_FIN,
+                'FECHAHORA_SOLI' => Date::now(),
+                'MOTIVO' => $request->MOTIVO,
+                'PRIORIDAD' => ($request->PRIORIDAD) ? json_encode($request->PRIORIDAD) : $request->PRIORIDAD,
+                'ID_MATERIA' => $buscardor->getIdMateria($request->MATERIA),
+                'GRUPOS' => $idsygruposDocente[1],
+                'ID_AMBIENTE' => $buscardor->getIdAmbiente($request->AMBIENTE),
+                'ESTADO' => 'PENDIENTE'
+            ]);
+            return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
+         } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
+         }
      }
+     
      public function docente_datos(Request $request)
      {
         $solicitudess = [
@@ -335,11 +380,11 @@ public function urgente()
         
         return view('docente.solicitud.normal', ['solicitudes' => $solicitudess,'materias' => $materiasAsociadas]);
     }
-    public function storee(Request $request)
-    {
+    // public function storee(Request $request)
+    // {
 
-        print_r($_POST);
-    }
+    //     print_r($_POST);
+    // }
 
     /**
      * Display the specified resource.
@@ -387,48 +432,5 @@ public function urgente()
         $solicitud->delete();
 
         return response()->json(['message' => 'Solicitud eliminada exitosamente']);
-    }
-
-    /**
-     * Encuentra el id y grupos del docente si es uno
-     * else
-     * Devolvera los ids y grupos de los docentes en el arreglo
-     * Todos en formato json
-     */
-    private function getGruposDocentes($nombres){
-        $ids_docentes = [];
-        $grupos = [];
-        $json_all = [];
-        foreach ($nombres as $nombre) {
-            $docente = Docente::where('NOMBRE', $nombre)->first();
-            $ids_docentes[] = $docente->ID_DOCENTE;
-            $grupos[] = $docente->GRUPO;
-        }
-        $json_all[] = json_encode($ids_docentes);
-        $json_all[] = json_encode($grupos);
-        return json_encode($json_all);
-    }
-
-    /**
-     * Obtener todos los horarios habilitados
-     */
-    private function getHorariosHabilitados($fecha){
-        $strip_fecha = str_replace('/', '-', $fecha);
-        $horarios = Horario::where('DIA', date('l',strtotime($strip_fecha)));
-        $horarios_habilitados = [];
-        foreach ($horarios as $horario) {
-            $salto = 1.5*60*60;
-            $hora_inicio = strtotime($horario["INICIO"]);
-            $hora_fin = strtotime($horario["FIN"]);
-            $horacomplet = $hora_inicio+$hora_fin;
-            if($horacomplet >= $salto){
-                $horarios_habilitados[] = [
-                    "aula" => $horario['relacion_materia_horario']['dahm_relacion_ambiente']['NOMBRE'],
-                    "horario" => "",
-                    "fecha" => $strip_fecha
-                ];
-            }
-        }
-        return $horarios_habilitados;
     }
 }

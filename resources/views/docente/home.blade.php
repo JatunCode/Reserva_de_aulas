@@ -111,13 +111,13 @@
             events: {!! $eventos_json !!},
             dayMaxEvents: 2,
             moreLinkText: function(num) {
-            return num + ' más'; // Texto para mostrar cuando hay más eventos
-        },
+                return num + ' más'; // Texto para mostrar cuando hay más eventos
+            },
             eventDidMount: function(info) {
-    // Establecer el color de fondo del evento
-    info.el.style.backgroundColor = info.event.extendedProps.eventBackgroundColor;
-    
-},
+                // Establecer el color de fondo del evento
+                info.el.style.backgroundColor = info.event.extendedProps.eventBackgroundColor;
+                
+            },
             
        
             dateClick: function(info) {

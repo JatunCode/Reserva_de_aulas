@@ -11,7 +11,34 @@
 <!-- Contenido de la página -->
 
 <div class="card">
-
+    <div class="card-header row">
+        <div class="col-md-2">
+            <label class="form-label" for="dia">Dia</label>
+            <select class="form-select" name="dia">
+                <option value="LUNES" selected>Lunes</option>
+                <option value="MARTES">Martes</option>
+                <option value="MIERCOLES">Miercoles</option>
+                <option value="JUEVES">Jueves</option>
+                <option value="VIERNES">Viernes</option>
+                <option value="SABADO">Sabado</option>
+            </select>
+        </div>
+        
+        <div class="col-md-4" id="containerDocente">
+            <label class="form-label" for="docente">Docente</label>
+            <input class="form-control" type="text" name="docente" placeholder="Buscar docente">
+            <p id="messageErrorDocente" style="display: none; color: red">*No se encontro el docente</p>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="blockfree">
+                <option value="NO HABILITADO">Horarios bloqueados</option>
+                <option value="HABILITADO" selected>Horarios libres</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary d-inline-block w-7" style="background-color:green" onclick="findHorario()">Buscar</button>
+        </div>
+    </div>
     <div class="card-header">
         <h3 class="card-title">Horarios registrados</h3>
     </div>
@@ -20,23 +47,25 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th style="width: 100px">Dia</th>
+                    <th style="width: 20px">Nº</th>
+                    <th style="width: 40px">Dia</th>
+                    <th style="width: 100px">Materia</th>
                     <th style="width: 40px">Hora Entrada</th>
                     <th style="width: 40px">Hora Salida</th>
-                    <th style="width: 100px">Materia</th>
+                    <th style="width: 100px">Docente</th>
                     <th style="width: 40px">Ambiente</th>
-                    <th style="width: 40px">Docente</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tableHorarios">
                 @foreach($horarios as $horario)
                     <tr>
-                        <td>{{ $horario->DIA }}</td>
-                        <td>{{ $horario->INICIO }}</td>
-                        <td>{{ $horario->FIN }}</td>
-                        <td>{{ $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
-                        <td>{{ $horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>
-                        <td>{{ $horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
+                        <th style="width: 20px"></td>
+                        <th style="width: 40px">{{ $horario->DIA }}</td>
+                        <th style="width: 100px">{{ $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
+                        <th style="width: 40px">{{ $horario->INICIO }}</td>
+                        <th style="width: 40px">{{ $horario->FIN }}</td>
+                        <th style="width: 100px">{{ $horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
+                        <th style="width: 40px">{{ $horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>
                         
                     </tr>
                 @endforeach
@@ -61,6 +90,121 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+</script>
+
+<script>
+    docentes = []
+    horarios = []
+    horariosFiltro = []
+
+    fetch('http://127.0.0.1:8000/api/fetch/docentes').then(
+        response => response.json()
+    ).then(
+        data => {
+            docentes = data
+        }
+    ).catch(
+        error => {
+            console.log("Error encontrado: ", error)
+        }
+    )
+
+    fetch('http://127.0.0.1:8000/api/fetch/horarios').then(
+        response => response.json()
+    ).then(
+        data => {
+            horarios = data
+        }
+    ).catch(
+        error => {
+            console.log("Error encontrado: ", error)
+        }
+    )
+
+    document.querySelector('[name="docente"]').addEventListener('change', 
+        function(event){
+            let text =  event.target.value
+            const message = document.getElementById("messageErrorDocente")
+            const content = document.getElementById("containerDocente")
+            const lista = document.createElement('ul')
+            docentes.forEach(docente => {
+                lista.innerHTML += `<li>${docente['NOMBRE']}</li>`
+            });
+            if(docentes.find((docente) => docente['NOMBRE'].includes(text.toUpperCase()))){
+                message.style.display = "none"
+                console.log("Cadena del input: ", text)
+            }else{
+                message.style.display = "block"
+                console.log("Cadena del input no encontrada: ", text)
+            }
+        }
+    )
+
+    function agregarTabla(lista, tabla){
+        lista.forEach(elemento => {
+            tabla.innerHTML += 
+            `<tr>
+                <th style="width: 20px"></td>
+                <td style="width: 35px">${elemento['DIA']}</td>
+                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_materia']['MATERIA']}</td>
+                <td style="width: 35px">${elemento['INICIO']}</td>
+                <td style="width: 150px">${elemento['FIN']}</td>
+                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE']}</td>
+                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']}</td>
+            </tr>`
+            console.log('Ingresando al inner')
+        })
+    }
+
+    function findHorario(){
+        tipo = ""
+        tabla  =  document.getElementById('tableHorarios')
+
+        input_docente = document.querySelector('[name="docente"]').value
+
+        input_dia = document.querySelector('[name="dia"]')
+        dia_select = input_dia.options[input_dia.selectedIndex].value
+
+        input_libres_ocupados = document.querySelector('[name="blockfree"]')
+        blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
+
+        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/horarios'
+
+        if(input_docente != ""){
+            cadena_fetch += `docente/${input_docente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+            console.log('Cadena de docente', cadena_fetch)
+        }else{
+            cadena_fetch += `todosin/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+        }
+
+        fetch(
+            cadena_fetch,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then(
+            response => response.json()
+        ).then(
+            data => {
+                horariosFiltro = data
+                while(tabla.rows.length > 0){
+                    tabla.deleteRow(0)
+                }
+                try{
+                    agregarTabla(horariosFiltro, tabla)
+                }catch(error){
+                    console.log('Erro: ', error)
+                }
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )
+    }
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">

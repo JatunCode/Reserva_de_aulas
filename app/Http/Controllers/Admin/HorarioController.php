@@ -30,6 +30,19 @@ class HorarioController extends Controller
         return view('admin.horarios', ['horarios' => $horarios]);
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexFetch()
+    {
+        $horarios = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia',
+            'horario_relacion_dahm.dahm_relacion_docente')->get();
+        return $horarios;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -111,7 +124,7 @@ class HorarioController extends Controller
                 'horario_relacion_dahm.dahm_relacion_ambiente',
                 function ($query) use ($ambiente){
                     $query->where('ambiente.NOMBRE', $ambiente);
-                })->get();
+                })->orderBy('INICIO')->get();
         return json_encode($horarios);
     }
 
@@ -125,11 +138,60 @@ class HorarioController extends Controller
                 'horario_relacion_dahm.dahm_relacion_ambiente',
                 function ($query) use ($ambiente){
                     $query->where('ambiente.NOMBRE', $ambiente);
-                })->get();
+                })->orderBy('INICIO')->get();
         
         $horarios_libres = new GeneradorHorariosNoRegistrados();
-        $horarios_nuevo = $horarios_libres->horarios_no_reg($horarios);
+        $horarios_nuevo = $horarios_libres->horarios_no_reg($horarios, $ambiente);
         return json_encode($horarios_nuevo);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  string ambiente
+     * @return \Illuminate\Http\Response
+     */
+    public function showTodo($docente, $dia, $estado)
+    {
+        $horarios = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia',
+            'horario_relacion_dahm.dahm_relacion_docente'
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_ambiente',
+                function ($query) use ($dia, $estado) {
+                    $query->where('DIA', $dia);
+                    $query->where('ambiente.ESTADO', $estado);
+                }
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_docente',
+                function ($query) use ($docente){
+                    $query->where('docente.NOMBRE', $docente);
+                }
+            )->orderBy('INICIO')->get();
+        return $horarios;
+    }
+    
+    /**
+     * Display the specified resource.
+     *
+     * @param  string ambiente
+     * @return \Illuminate\Http\Response
+     */
+    public function showSin($dia, $estado)
+    {
+        $horarios = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia',
+            'horario_relacion_dahm.dahm_relacion_docente'
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_ambiente',
+                function ($query) use ($dia, $estado) {
+                    $query->where('DIA', $dia);
+                    $query->where('ambiente.ESTADO', $estado);
+                }
+            )->orderBy('INICIO')->get();
+        return $horarios;
     }
 
     /**
