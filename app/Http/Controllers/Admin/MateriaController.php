@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Docente;
+use App\Models\Admin\Materia;
 use Illuminate\Http\Request;
 
 class MateriaController extends Controller
@@ -15,7 +16,7 @@ class MateriaController extends Controller
      */
     public function index()
     {
-        
+        return json_encode(Materia::all());
     }
 
     /**
