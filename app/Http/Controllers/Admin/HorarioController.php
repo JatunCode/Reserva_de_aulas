@@ -52,7 +52,6 @@ class HorarioController extends Controller
      */
     public function store(Request $request)
     {
-        $generador =  new GeneradorHorariosNoRegistrados();
         if($request->isMethod('post')){
             $request->validate([
                 'NOMBRE_DOCENTE' => ['required','string', function($attribute, $value, $fail){
@@ -103,7 +102,7 @@ class HorarioController extends Controller
                     ]);
                 }
             }
-            return redirect()->route('admin.viewFormHorarios')->with('success', 'Horario creado exitosamente');
+            return response()->json(["message" => "Horario creado exitosamente"], 200);
         }
         return view('admin.viewFormHorarios');
     }
