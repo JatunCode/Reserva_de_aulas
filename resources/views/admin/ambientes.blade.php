@@ -14,7 +14,7 @@
     <div class="card-header row">
         <div class="col-md-3" id="containerMateria">
             <label class="form-label" for="materia">Materia</label>
-            <input class="form-control" type="text" name="materia">
+            <input class="form-control" type="text" name="materia" placeholder="Buscar materia">
             <p id="messageErrorMateria" style="display: none; color: red">*No se encontro la materia</p>
         </div>
         <div class="col-md-2">
@@ -30,7 +30,7 @@
         </div>
         <div class="col-md-2" id="containerAmbiente">
             <label class="form-label" for="ambiente">Ambiente</label>
-            <input class="form-control" type="text" name="ambiente">
+            <input class="form-control" type="text" name="ambiente" placeholder="Buscar ambiente">
             <p id="messageErrorAmbiente" style="display: none; color: red">*No se encontro el ambiente</p>
         </div>
         <div class="col-md-3">

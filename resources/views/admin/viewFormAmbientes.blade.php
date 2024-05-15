@@ -29,7 +29,6 @@
                 </h3>
             </div>
             <div class="card-body">
-                {{-- Espacio para las referencias dentro del mapa --}}
             </div>
         </div>
     </div> --}}
@@ -50,18 +49,24 @@
 
 <script>
     let i = 1
-    let bandera = true
+    let banderaambiente = true
+    let banderareferencia = true
+    let banderacapacidad = true
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
             let container =  document.getElementById('referencias')
             container.classList.add('col-md-10')
 
             let refer = document.createElement('input')
+
             refer.classList.add('form-control')
             refer.type = 'text'
             refer.name = 'refers'
             refer.placeholder = 'Bliblioteca FCyT/Area verde'
             refer.isrequired = true
+            refer.onchange = function(){
+                caracterReferencia(this)
+            }
             // errordiv.innerHTML = '@error("REFERENCIAS")
             //         <div class="text-danger">{{ $message }}</div>
             //     @enderror'
@@ -71,7 +76,6 @@
             }
             console.log("Contador de inputs: ", i)
         })
-        
     }
 
     function eliminarCampos(){
@@ -87,23 +91,32 @@
         }
     }
 
+    function caracterReferencia(referencia){
+        let message = document.getElementById("messageErrorReferencias")
+        let regex = /^[a-z0-9\s]+$/i
+        let esRegex = !regex.test(referencia.value)
+        if(esRegex) {
+            message.textContent = "*No se aceptan caracteres especiales"
+            message.style.display = "block"
+            banderareferencia = false
+        }else{
+            message.style.display = "none"
+            banderareferencia = true
+        }
+    }
+
     function checkReferencias(referencias){
         let message = document.getElementById("messageErrorReferencias")
-        let regex = /[a-z0-9\s]/i
-        if(referencias.forEach((referencia) => {return (referencia.value == "") ? true : false}) == false){
+        let estaVacio = referencias.some(ref => ref === "")
+        if(estaVacio){
             message.textContent = "*Llene o elimine la referencia vacia"
             message.style.display = "block"
-            bandera = false
+            banderareferencia = false
         }else{
-            if(referencias.forEach((referencia) => {return (regex.test(referencia.value)) ? true : false})){
-                message.textContent = "*No se aceptan caracteres especiales"
-                message.style.display = "block"
-                bandera = false
-            }else{
-                message.style.display = "none"
-                bandera = true
-            }
+            message.style.display = "none"
+            banderareferencia = true
         }
+        console.log("Resultado del envio al ingresar una refeerncia: ", banderareferencia)
     }
 
     function checkCapacidad(text){
@@ -111,52 +124,49 @@
         let tipo_ambiente = document.querySelector('[name="opcion"]')
         let seleccionado = tipo_ambiente.options[tipo_ambiente.selectedIndex]
         let limit = (seleccionado.value == "Aula comun") ?  150 : 300
+        console.log("Parcer de capacidad: ", parseInt(text.value, 10))
         if(text.value != ""){
             let conver = (text.value.includes(".")) ? 0 : parseInt(text.value, 10)
-            capacidad.style.color = "red"
-            if(conver != 0){
-                if(conver < 10){
-                    capacidad.textContent = "*La capacidad debe ser mayor igual a 10"
-                    capacidad.style.display = "block"
-                    bandera = false
-                }else{
-                    if(conver > limit){
-                        capacidad.textContent = `*La capacidad debe ser menor igual a ${limit}`
-                        capacidad.style.display = "block"
-                        bandera = false
-                    }else{
-                        capacidad.style.display = "none"
-                        bandera = true
-                    }
-                }
-            }else{
-                capacidad.textContent = "*Solo numeros enteros"
+            if(conver == 0 || isNaN(conver)){
+                capacidad.textContent = "*Solo caracteres numericos y enteros"
                 capacidad.style.display = "block"
-                bandera = false
+                banderacapacidad = false
+            }else if(conver < 10){
+                capacidad.textContent = "*La capacidad debe ser mayor igual a 10"
+                capacidad.style.display = "block"
+                banderacapacidad = false
+            }else if(conver > limit){
+                capacidad.textContent = `*La capacidad debe ser menor igual a ${limit}`
+                capacidad.style.display = "block"
+                banderacapacidad = false
+            }else{
+                capacidad.style.display = "none"
+                banderacapacidad = true
             }
         }else{
             capacidad.textContent = "*El campo es obligatorio"
             capacidad.style.display = "block"
-            bandera = false
+            banderacapacidad = false
         }
+        console.log("Resultado del envio al ingresar la capacidad: ", banderacapacidad)
     }
 
     function findAmbiente(text){
         let message = document.getElementById("messageErrorAmbiente")
         let ambientes = null
         if(text.value != ""){
-            fetch('http://127.0.0.1:8000/api/ambientes').then(
+            fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
                 response => response.json()
             ).then(
                 data => {
                     ambientes = data
                     if(ambientes.find((ambiente) => ambiente['NOMBRE'].toUpperCase() == text.value.toUpperCase())){
-                        message.style.color = "red"
+                        message.textContent = "*El ambiente ya existe."
                         message.style.display = "block"
-                        bandera = false
+                        banderaambiente = false
                     }else{
                         message.style.display = "none"
-                        bandera = true
+                        banderaambiente = true
                     }
                 }
             ).catch(
@@ -164,25 +174,28 @@
                     console.log("Error encontrado: ", error)
                 }
             )
-        }else{
+        }
+        checkAmbiente(text)
+        console.log("Resultado del envio al ingresar el ambiente: ", banderaambiente)
+    }
+
+    function checkAmbiente(text){
+        let message = document.getElementById("messageErrorAmbiente")
+        if(text.value == ""){
             message.style.color = "red"
-            message.textContent = "*El campo es obligatorio"
+            message.textContent = "*El campo es obligatorio."
             message.style.display = "block"
-            bandera = false
+            banderaambiente = false
         }
     }
 
-    function obtainValues(){
+    function obtainValues(event){
         event.preventDefault()
         let tipo_ambiente = document.querySelector('[name="opcion"]')
         let nombre = document.querySelector('[name="nombre"]')
-        let index = tipo_ambiente.selectedIndex
-        let opcion_select = tipo_ambiente.options[index]
+        let opcion_select = tipo_ambiente.options[tipo_ambiente.selectedIndex]
         let referencias = document.querySelectorAll('[name="refers"]')
-        let json_list = []
-        referencias.forEach(element => {
-            json_list.push(element.value)
-        })
+        let json_list = Array.from(referencias).map(element => element.value)
         let capac = document.querySelector('[name="capacidad"]')
         let data = document.querySelector('[name="data"]')
         let checked = data.checked ? "SI" : "NO"
@@ -200,8 +213,12 @@
 
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
         
-        checkReferencias(referencias)
-        
+        checkReferencias(json_list)
+        checkCapacidad(capac)
+        checkAmbiente(nombre)
+
+        let bandera = banderaambiente && banderacapacidad && banderareferencia
+
         if(bandera == true){
             console.log("Envio de datos del formulario: ", form)
             fetch('http://127.0.0.1:8000/admin/ambientes/store', 

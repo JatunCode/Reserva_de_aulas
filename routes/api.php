@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DocenteController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Admin\MateriaController;
 use App\Http\Controllers\Admin\NotificacionController;
+use App\Http\Controllers\Docente\ReservasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Docente\SolicitudController;
@@ -48,8 +49,8 @@ Route::controller(HorarioController::class)->group(
     function(){
         Route::get('/horarios', 'index');
         Route::get('/fetch/horarios', 'indexFetch');
-        Route::put('/horarios/libres/{ambiente}', 'indexList');
-        Route::put('/horarios/{ambiente}', 'show');
+        Route::put('/fetch/horarios/libres/{ambiente}', 'indexList');
+        Route::put('/fetch/horarios/{ambiente}', 'show');
         Route::put('/fetch/horariosdocentes/{docente}/{dia}/{estado}', 'showTodo');
         Route::put('/fetch/horariostodosin/{dia}/{estado}', 'showSin');
         Route::post('/horarios/store', 'store');
@@ -71,6 +72,12 @@ Route::controller(NotificacionController::class)->group(
         Route::get('/notificaciones', 'index');
         //Route::post('/horarios/store', 'store');
         // Route::post('/putambiente', 'show');
+    }
+);
+
+Route::controller(ReservasController::class)->group(
+    function(){
+        Route::get('/fetch/reservas', 'index');
     }
 );
 

@@ -13,15 +13,16 @@
     <div class="col-md-10">
         <label for="nombre" class="form-label">Nombre ambiente</label>
         <input type="text" class="form-control" name="nombre" placeholder="691 A/Auditorio UMSS" onchange="findAmbiente(this)">
-        <p id="messageErrorAmbiente" style="display: none">*El ambiente ya existe</p>
+        <p id="messageErrorAmbiente" style="display: none; color: red"></p>
     </div>
 
-    <div class="col-md-10" id="referencias">
-        <label for="refers" class="form-label">Referencias</label>
-        <input type="text" class="form-control" name="refers" placeholder="Bliblioteca FCyT/Area verde">
+    <div class="col-md-10">
+        <div id="referencias">
+            <label for="refers" class="form-label">Referencias</label>
+            <input type="text" class="form-control" name="refers" placeholder="Bliblioteca FCyT/Area verde" onchange="caracterReferencia(this)">
+        </div>
+        <p id="messageErrorReferencias" style="display: none; color: red"></p>
     </div>
-
-    <p id="messageErrorReferencias" style="display: none"></p>
 
     <div class="col-md-2 d-flex align-items-end">
         <button class=" btn btn-success agregar-nombre" type="button" id="ref-add">
@@ -41,8 +42,8 @@
         <input type="checkbox" name="data">
     </div>
     <div class="col-md-12 mt-3 text-center">
-        <button type="submit" class="btn btn-primary d-inline-block w-75" id="boton-sub">Registrar ambiente</button>
-        <button type="reset" class="btn btn-primary d-inline-block w-75">Cancelar registro</button>
+        <button type="submit" class="btn btn-primary d-inline-block w-75" id="boton-sub" style="background-color: green">Registrar ambiente</button>
+        <button type="reset" class="btn btn-primary d-inline-block w-75" style="background-color: red">Cancelar registro</button>
     </div>
 </form>
 

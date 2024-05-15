@@ -46,4 +46,19 @@ class EncontrarTodo extends Controller
     public function getIdAmbiente($ambiente){
         return Ambiente::where('NOMBRE', $ambiente)->first()->ID_AMBIENTE;
     }
+
+    /**
+     * Encuentra el nombre de los docentes por los ids de una solicitud
+     * else
+     * Devolvera solo el primer nombre
+     * Todos en formato json
+     */
+    public function getNombreDocentes($json){
+        $iterables = json_decode($json);
+        $list = [];
+        foreach($iterables as $iterable){
+            $list[] = Docente::where('ID_DOCENTE', $iterable)->first()->NOMBRE;
+        }
+        return json_encode($list);
+    }
 }

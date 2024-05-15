@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Docente;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Docente\Solicitudes;
 use App\Models\Admin\Relacion_DAHM;
 use App\Models\Docente\Razones;
 use App\Models\Docente\Solicitud;
 use Illuminate\Http\Request;
+use PHPUnit\TextUI\XmlConfiguration\Constant;
 
 class ReservasController extends Controller
 {
@@ -18,11 +20,18 @@ class ReservasController extends Controller
      */
     public function index()
     {
-
-        $solicitudes = Solicitudes::paginate(10);
-
-        // Envía los datos a la vista 'home'
-        return "Hola";
+        $solicitudes = Solicitud::where('ESTADO', 'PENDIENTE')->get();
+        $nombres_docentes = [];
+        $todo = [];
+        $buscador = new EncontrarTodo();
+        foreach($solicitudes as $solicitud){
+            $ids = $solicitud['ID_DOCENTE_s'];
+            $nombres_docentes[] = $buscador->getNombreDocentes($ids);
+        }
+        $todo[] = $solicitudes;
+        $todo[] = $nombres_docentes;
+        //return json_encode($todo);
+        return view('admin.reservas', ['solicitudes' => Solicitudes::where('ESTADO', 'PENDIENTE')]);
     }
    
     public function datos(Request $request)
@@ -39,15 +48,15 @@ class ReservasController extends Controller
         foreach ($relaciones as $relacion) {
         // Obtener la colección de materias asociadas a través de la relación
         $materias = $relacion->dahm_relacion_materia;
-        // Iterar sobre las materias para obtener sus nombres
-        foreach ($materias as $materia) {
-            // Obtener el nombre de la materia y agregarlo al array si no existe aún
-            $nombreMateria = $materia->NOMBRE;
-            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-                $materiasAsociadas[] = $nombreMateria;
+            // Iterar sobre las materias para obtener sus nombres
+            foreach ($materias as $materia) {
+                // Obtener el nombre de la materia y agregarlo al array si no existe aún
+                $nombreMateria = $materia->NOMBRE;
+                if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                    $materiasAsociadas[] = $nombreMateria;
+                }
             }
         }
-}
         
 
         
