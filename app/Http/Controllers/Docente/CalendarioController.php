@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
+use App\Models\Admin\Materia;
 class CalendarioController extends Controller
 {
     /**
