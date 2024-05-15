@@ -26,7 +26,7 @@ class CreateSolicitudsTable extends Migration
             $table->foreignId('ID_MATERIA')->constrained('materia','ID_MATERIA'); //procedural store
             $table->json('GRUPOS'); //procedural store
             $table->foreignUuid('ID_AMBIENTE')->constrained('ambiente','ID_AMBIENTE');
-            $table->enum('ESTADO', ['CANCELADO', 'RESERVADO', 'SOLICITADO']);
+            $table->enum('ESTADO', ['CANCELADO', 'ACEPTADO', 'PENDIENTE']);
             $table->timestamps();
         });
     }

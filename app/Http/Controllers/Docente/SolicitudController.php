@@ -83,6 +83,7 @@ class SolicitudController extends Controller
         }
         // Convertir los eventos a formato JSON para pasarlo a la vista
         $eventos_json = json_encode($eventos);
+        
         return view('docente.home', compact('eventos_json', 'solicitudes','pendientesCount', 'urgentesCount', 'reservadasCount'));
     }
     

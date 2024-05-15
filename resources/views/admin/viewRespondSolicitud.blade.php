@@ -10,69 +10,70 @@
 
 <!-- Contenido de la página -->
 
-<div class="row">
-    <div class="col-lg-6 col-md-12" id="tbhorarios">
-        <div class="card h-100">
-            <div class="card-header">
-                <h3 class="card-title">
-                    Atencion reserva
-                </h3>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">Atencion reserva</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="row">
+            <div class="col-md-12">
+                <label for="docente" class="form-label">Docentes</label>
+                <input type="text" name="docente" class="form-control">
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <label for="docente" class="form-label">Docentes</label>
-                        <input type="text" name="docente" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="fechasoli" class="form-label">Fecha solicitud</label>
-                        <input type="text" name="fechasoli" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="fechares" class="form-label">Fecha reserva</label>
-                        <input type="text" name="fechares" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="capacidad" class="form-label">Capacidad</label>
-                        <input type="text" name="capacidad" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="grupos" class="form-label">Grupos</label>
-                        <input type="text" name="grupos" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="materia" class="form-label">Materia</label>
-                        <input type="text" name="materia" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="ambiente" class="form-label">Ambiente</label>
-                        <input type="text" name="ambiente" class="form-control">
-                    </div>
-                    <div class="col-md-8">
-                        <label for="motivo" class="form-label">Motivo</label>
-                        <input type="text" name="motivo" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="modo" class="form-label">Modo</label>
-                        <input type="text" name="modo" class="form-control">
-                    </div>
-                </div>
+            <div class="col-md-4">
+                <label for="fechasoli" class="form-label">Fecha solicitud</label>
+                <input type="text" name="fechasoli" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="fechares" class="form-label">Fecha reserva</label>
+                <input type="text" name="fechares" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="capacidad" class="form-label">Capacidad</label>
+                <input type="text" name="capacidad" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="grupos" class="form-label">Grupos</label>
+                <input type="text" name="grupos" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="materia" class="form-label">Materia</label>
+                <input type="text" name="materia" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="ambiente" class="form-label">Ambiente</label>
+                <input type="text" name="ambiente" class="form-control">
+            </div>
+            <div class="col-md-8">
+                <label for="motivo" class="form-label">Motivo</label>
+                <input type="text" name="motivo" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="modo" class="form-label">Modo</label>
+                <input type="text" name="modo" class="form-control">
+            </div>
+        </div>
 
-                <div>
-                    <div>
-                        <button type="submit" class="btn btn-primary d-inline-block w-75" id="boton-sub" style="color: green">Confirmar<button>
-                        <button class="btn btn-primary d-inline-block w-75" style="color: red" onclick="openRazones()">Cancelar</button>
-                    </div>
-                    <div>
-                        <button class="btn btn-primary d-inline-block w-75" style="color: red" onclick="closeWindow()">Atras</button>
-                    </div>
+        <div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary d-inline-block w-75" name="confirmar" style="color: green">Confirmar<button>
                 </div>
+                <div class="col-md-6">
+                    <button class="btn btn-primary d-inline-block w-75" style="color: red" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Cancelar</button>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-primary d-inline-block w-75" style="color: red" name="atras">Atras</button>
             </div>
         </div>
     </div>
 </div>
 
 @stop
+
+@include('admin.components.formularioRazones')
 
 @section('css')
 <link rel="stylesheet" href="/css/admin/home.css">
@@ -87,10 +88,49 @@
 
 <script>
     let i = 1
-    function openRazones(){
+    razones = []
+    reservas = []
 
-    }
-    
+    fetch(
+        'http://127.0.0.1:8000/api/fetch/razones'
+    ).then(
+        response = response.json()
+    ).then(
+        data => {
+            razones = data
+        }
+    ).catch(
+        error => {
+            console.log('Error encontrado: ', error)
+        }
+    )
+
+    fetch(
+        'http://127.0.0.1:8000/api/fetch/reservas'
+    ).then(
+        response = response.json()
+    ).then(
+        data => {
+            reservas = data
+        }
+    ).catch(
+        error => {
+            console.log('Error encontrado: ', error)
+        }
+    )
+
+    document.querySelector('[name="razon"]').addEventListener('change',
+        function (event) {
+            let text = event.target.value
+            let message = document.getElementById('messageErrorRazon')
+            if(razones.find((razon) => razon['CUERPO'].toUpperCase() == text.toUpperCase())){
+                message.style.display = "block"
+            }else{
+                message.style.display = "none"
+            }
+        }
+    )
+
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
             let container_main =  document.getElementById('container-main')

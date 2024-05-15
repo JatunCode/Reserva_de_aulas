@@ -62,7 +62,42 @@
 @section('js')
 
 <script>
+
     let i = 1
+    let docentes = []
+    let ambientes = []
+
+    let banderaAmbiente = true
+    let banderaDocente = true
+
+    let messageDocente = document.getElementById("messageErrorDocente")
+    let messageAmbiente = document.getElementById("messageErrorAmbiente")
+
+    fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
+        response => response.json()
+    ).then(
+        data => {
+            ambientes = data
+        }
+    ).catch(
+        error => {
+            console.log("Error encontrado: ", error)
+        }
+    )
+
+    fetch('http://127.0.0.1:8000/api/fetch/docentes').then(
+        response => response.json()
+    ).then(
+        data => {
+            docentes = data
+            
+        }
+    ).catch(
+        error => {
+            console.log("Error encontrado: ", error)
+        }
+    )
+
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
             let container_main =  document.getElementById('container-main')
@@ -121,7 +156,7 @@
         
         if(text){
             //Agregar horarios ocupados en la tabla de informacion
-            fetch('http://127.0.0.1:8000/api/horarios/'+text,{
+            fetch('http://127.0.0.1:8000/api/fetch/horarios/'+text,{
                 method:'PUT',
                 headers:{
                     'Content-Type' : 'application/json'
@@ -150,7 +185,7 @@
                 }
             )
             //Agregar horarios libres en la tabla de informacion
-            fetch('http://127.0.0.1:8000/api/horarios/libres/'+text,{
+            fetch('http://127.0.0.1:8000/api/fetch/horarios/libres/'+text,{
                 method:'PUT',
                 headers:{
                     'Content-Type' : 'application/json'
@@ -199,50 +234,50 @@
         }
     }
 
-    function findDocente(text) {
-        let message = document.getElementById("messageErrorDocente")
-        let docentes = null
-        fetch('http://127.0.0.1:8000/api/docentes').then(
-            response => response.json()
-        ).then(
-            data => {
-                docentes = data
-                if(!docentes.find((docente) => docente['NOMBRE'] == text.value.toUpperCase()) &&
-                    text.value != ""){
-                    message.style.color = "red"
-                    message.style.display = "block" 
-                }else{
-                    message.style.display = "none" 
-                }
-            }
-        ).catch(
-            error => {
-                console.log("Error encontrado: ", error)
-            }
-        )        
+    function checkDocente(text){
+        if(text.value == ""){
+            messageDocente.textContent = "*El campo es obligatorio"
+            messageDocente.style.display = "block" 
+            banderaDocente = false
+        }else{
+            messageDocente.style.display = "none" 
+            banderaDocente = true
+        }
+    }
+
+    function findDocente(text) {     
+        if(!docentes.find((docente) => docente['NOMBRE'] == text.value.toUpperCase()) &&
+            text.value != ""){
+            messageDocente.textContent = "*No se encontro el ambiente"
+            messageDocente.style.display = "block" 
+            banderaDocente = false
+        }else{
+            messageDocente.style.display = "none" 
+            banderaDocente = true
+        }
+    }
+
+    function checkAmbiente(text){
+        if(text.value == ""){
+            messageAmbiente.textContent = "*El campo es obligatorio"
+            messageAmbiente.style.display = "block"
+            banderaAmbiente = false
+        }else{
+            messageAmbiente.style.display = "none" 
+            banderaAmbiente = true
+        }
     }
 
     function findAmbiente(text){
-        let message = document.getElementById("messageErrorAmbiente")
-        let ambientes = null
-        fetch('http://127.0.0.1:8000/api/ambientes').then(
-            response => response.json()
-        ).then(
-            data => {
-                ambientes = data
-                if(!ambientes.find((ambiente) => ambiente['NOMBRE'] == text.value.toUpperCase()) && text.value != ""){
-                    message.style.color = "red"
-                    message.style.display = "block"
-                }else{
-                    message.style.display = "none"
-                    agregarTabla(text.value)
-                }
-            }
-        ).catch(
-            error => {
-                console.log("Error encontrado: ", error)
-            }
-        )
+        if(!ambientes.find((ambiente) => ambiente['NOMBRE'] == text.value.toUpperCase()) && text.value != ""){
+            messageAmbiente.textContent = "*No se encontro el docente"
+            messageAmbiente.style.display = "block"
+            banderaAmbiente = false
+        }else{
+            messageAmbiente.style.display = "none"
+            banderaAmbiente = true
+            agregarTabla(text.value)
+        }
     }
 
     function eliminarCampos(){
@@ -328,10 +363,11 @@
         console.log("Formulario con datos: ",form)
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
-        bandera = (docente.value != "" && materia.value != "")
+        
+        bandera = banderaAmbiente && banderaDocente
 
         if(bandera == true){
-            fetch('store', 
+            fetch('http://127.0.0.1:8000/admin/horarios/store', 
             {
                 method: 'POST',
                 headers: {

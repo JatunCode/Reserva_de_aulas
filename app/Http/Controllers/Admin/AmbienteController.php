@@ -64,7 +64,7 @@ class AmbienteController extends Controller
                 'DATA' => $request->DATA,
                 'ESTADO' => 'HABILITADO'
             ]);
-            return redirect()->route('admin.viewFormAmbientes')->with('success', 'Ambiente creado exitosamente');
+            return response()->json(["message" => "Ambiente creado exitosamente"], 200);
         }
         return view('admin.viewFormAmbientes');
     }
