@@ -23,6 +23,16 @@ class AmbienteController extends Controller
     }
 
     /**
+     * Devuelve una lista de ambientes para la peticion de busqueda fetch
+     */
+
+    public function indexList()
+    {
+        $ambientes = Ambiente::all();
+        return json_encode($ambientes);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -30,7 +40,6 @@ class AmbienteController extends Controller
      */
     public function store(Request $request)
     {
-        $ambientes = Ambiente::all();
         if($request->isMethod('post')){
             $uuid = Uuid::uuid4();
             $request->validate([
@@ -55,9 +64,9 @@ class AmbienteController extends Controller
                 'DATA' => $request->DATA,
                 'ESTADO' => 'HABILITADO'
             ]);
-            return redirect()->route('admin.viewFormAmbientes', ['ambientes' => $ambientes])->with('success', 'Ambiente creado exitosamente');
+            return redirect()->route('admin.viewFormAmbientes')->with('success', 'Ambiente creado exitosamente');
         }
-        return view('admin.viewFormAmbientes', ['ambientes' => $ambientes]);
+        return view('admin.viewFormAmbientes');
     }
 
     /**
@@ -75,6 +84,101 @@ class AmbienteController extends Controller
         //return view('search.ambiente');
         return response()->json(['message' => 'Ambiente encontrado', 'data' => $value], 200);
         
+    }
+
+    /**
+     * Muestra a los ambientes por dia para las peticiones fetch.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showAmbiente($nombre, $dia, $estado)
+    {
+        $value = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente'
+            )->whereHas(
+            'horario_relacion_dahm.dahm_relacion_ambiente', 
+                function ($query) use ($dia, $nombre, $estado){
+                    $query->where('DIA', $dia);
+                    $query->where('ambiente.NOMBRE', $nombre);
+                    $query->where('ambiente.ESTADO', $estado);
+                }
+            )->get();
+        return $value;
+    }
+
+    /**
+     * Muestra a los ambientes por dia para las peticiones fetch.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showMateria($materia, $dia, $estado)
+    {
+        $value = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_materia',
+            'horario_relacion_dahm.dahm_relacion_ambiente'
+            )->whereHas(
+            'horario_relacion_dahm.dahm_relacion_materia', 
+                function ($query) use ($dia, $materia){
+                    $query->where('DIA', $dia);
+                    $query->where('materia.NOMBRE', $materia);
+                }
+            )->whereHas(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+                function ($query) use ($estado){
+                    $query->where('ambiente.ESTADO', $estado);
+                }
+            )->get();
+        return $value;
+    }
+
+    /**
+     * Muestra a los ambientes por dia para las peticiones fetch.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showTodo($ambiente, $materia, $dia, $estado)
+    {
+        $value = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia'
+            )->whereHas(
+            'horario_relacion_dahm.dahm_relacion_ambiente', 
+                function ($query) use ($ambiente, $dia, $estado){
+                    $query->where('DIA', $dia);
+                    $query->where('ambiente.NOMBRE', $ambiente);
+                    $query->where('ambiente.ESTADO', $estado);
+                }
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_materia',
+                function ($query) use ($materia){
+                    $query->where('materia.NOMBRE', $materia);
+                }
+            )->get();
+        return $value;
+    }
+
+    /**
+     * Muestra a los ambientes por dia para las peticiones fetch.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showSin($dia, $estado)
+    {
+        $value = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia'
+            )->whereHas(
+            'horario_relacion_dahm.dahm_relacion_ambiente', 
+                function ($query) use ($dia, $estado){
+                    $query->where('DIA', $dia);
+                    $query->where('ambiente.ESTADO', $estado);
+                }
+            )->get();
+        return $value;
     }
 
     /**

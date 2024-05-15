@@ -15,9 +15,9 @@ class CreateSolicitudsTable extends Migration
     {
         Schema::create('solicitud', function (Blueprint $table) {
             $table->uuid('ID_SOLICITUD')->primary()->unique();
-            $table->json('ID_DOCENTE_s')->nullable(false);
+            $table->json('ID_DOCENTE_s')->nullable(false); //Procedural store
             $table->integer('CANTIDAD_EST')->nullable(false);
-            $table->date('FECHA_RE');
+            $table->dateTime('FECHA_RE');
             $table->time('HORAINI'); //Hora en que comienza el evento
             $table->time('HORAFIN'); //Hora en que termina el evento
             $table->dateTime('FECHAHORA_SOLI'); //hora en que llego la solicitud

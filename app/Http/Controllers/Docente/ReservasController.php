@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Docente;
 use App\Http\Controllers\Controller;
 use App\Models\Docente\Solicitudes;
 use App\Models\Admin\Relacion_DAHM;
+use App\Models\Docente\Razones;
+use App\Models\Docente\Solicitud;
 use Illuminate\Http\Request;
 
 class ReservasController extends Controller
@@ -35,16 +37,16 @@ class ReservasController extends Controller
         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)->get();
         $materiasAsociadas = [];
         foreach ($relaciones as $relacion) {
-    // Obtener la colección de materias asociadas a través de la relación
-    $materias = $relacion->dahm_relacion_materia;
-    // Iterar sobre las materias para obtener sus nombres
-    foreach ($materias as $materia) {
-        // Obtener el nombre de la materia y agregarlo al array si no existe aún
-        $nombreMateria = $materia->NOMBRE;
-        if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-            $materiasAsociadas[] = $nombreMateria;
+        // Obtener la colección de materias asociadas a través de la relación
+        $materias = $relacion->dahm_relacion_materia;
+        // Iterar sobre las materias para obtener sus nombres
+        foreach ($materias as $materia) {
+            // Obtener el nombre de la materia y agregarlo al array si no existe aún
+            $nombreMateria = $materia->NOMBRE;
+            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                $materiasAsociadas[] = $nombreMateria;
+            }
         }
-    }
 }
         
 

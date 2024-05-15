@@ -3,9 +3,16 @@
 namespace App\Http\Controllers\Docente;
 use DateTime;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\EncontrarTodo;
+use App\Models\Admin\Docente;
+use App\Models\Admin\Horario;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
+use App\Models\Docente\Solicitud;
+use Illuminate\Support\Facades\Date;
+use Ramsey\Uuid\Uuid;
+
 class SolicitudController extends Controller
 {
     /**
@@ -15,7 +22,8 @@ class SolicitudController extends Controller
      */
     public function index()
     {
-      
+
+
     }
     
     
@@ -66,7 +74,7 @@ class SolicitudController extends Controller
         (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
     ];
 
-
+    //$solicitudes = Solicitudes::where('modo', 'Normal')->get();
 
     // Paginar las solicitudes filtradas (si es necesario)
      // Ejemplo de paginación con array_slice
@@ -78,6 +86,7 @@ public function normal()
 {
 
     // Array de objetos de ejemplo
+    $horarios_disponibles = Horario::all();
     $solicitudes = [
         (object) ['id' => 1, 'aula' => '691A', 'horario' => '15:45 PM - 16:15 PM', 'fecha' => '2024-02-16'],
         (object) ['id' => 2, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-02-16'],
@@ -97,12 +106,13 @@ public function normal()
         (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
     ];
 
-
-
-    // Paginar las solicitudes filtradas (si es necesario)
+    // $solicitudes = Solicitudes::where('modo', 'Normal')->get();
+    // $index = 1;
+    // // Paginar las solicitudes filtradas (si es necesario)
      // Ejemplo de paginación con array_slice
 
     // Retornar la vista con las solicitudes filtradas y paginadas
+    //return $solicitudes;
     return view('docente.solicitud.normal', ['solicitudes' => $solicitudes]);
 }
 public function urgente()
@@ -128,8 +138,8 @@ public function urgente()
         (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
     ];
 
-
-
+    // $solicitudes = Solicitudes::where('modo', 'Urgente')->get();
+    // $index = 1;
     // Paginar las solicitudes filtradas (si es necesario)
      // Ejemplo de paginación con array_slice
 
@@ -155,6 +165,7 @@ public function urgente()
      public function store(Request $request)
      {
         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d';
+        $buscardor = new EncontrarTodo();
          // Validar los datos del formulario
          $request->validate([
              'nombre' => 'required|string',
@@ -173,7 +184,8 @@ public function urgente()
              'horario' => 'required|string',
 
          ]);
-
+        $uuid = Uuid::uuid4();
+        
          try {
              // Crear una nueva instancia de la solicitud
              
@@ -207,7 +219,46 @@ public function urgente()
              // Por ejemplo:
              return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
          }
+
+         try {
+            $request->validate([
+                'NOMBRES' => ['required', 
+                    function($attribute, $value, $fail){
+                        $decoder = json_decode($value, true);
+                        if(!is_array($decoder) || count($decoder) < 1){
+                            $fail($attribute.' debe contener al menos un docente');
+                        }
+                    }],
+                'CANTIDAD' => 'required|integer',
+                'FECHA_RESERVA' => 'required|datetime',
+                'HORA_INICIO' => 'required|date_format:H:i:s',
+                'HORA_FIN' => 'required|date_format:H:i:s',
+                'MOTIVO' => 'required|string',
+                'MATERIA' => 'required|string',
+                'AMBIENTE' => 'required|string'
+            ]);
+            $idsygruposDocente = $buscardor->getGruposyIdsDocentes($request->NOMBRES);
+            Solicitud::create([
+                'ID_SOLICITUD' => $uuid->toString(),
+                'ID_DOCENTES' => $idsygruposDocente[0],
+                'CANTIDAD_EST' => $request->CANTIDAD,
+                'FECHA_RE' => $request->FECHA_RESERVA,
+                'HORAINI' => $request->HORA_INICIO,
+                'HORAFIN' => $request->HORA_FIN,
+                'FECHAHORA_SOLI' => Date::now(),
+                'MOTIVO' => $request->MOTIVO,
+                'PRIORIDAD' => ($request->PRIORIDAD) ? json_encode($request->PRIORIDAD) : $request->PRIORIDAD,
+                'ID_MATERIA' => $buscardor->getIdMateria($request->MATERIA),
+                'GRUPOS' => $idsygruposDocente[1],
+                'ID_AMBIENTE' => $buscardor->getIdAmbiente($request->AMBIENTE),
+                'ESTADO' => 'PENDIENTE'
+            ]);
+            return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
+         } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
+         }
      }
+     
      public function docente_datos(Request $request)
      {
         $solicitudess = [
@@ -257,11 +308,11 @@ public function urgente()
         
         return view('docente.solicitud.normal', ['solicitudes' => $solicitudess,'materias' => $materiasAsociadas]);
     }
-    public function storee(Request $request)
-    {
+    // public function storee(Request $request)
+    // {
 
-        print_r($_POST);
-    }
+    //     print_r($_POST);
+    // }
 
     /**
      * Display the specified resource.

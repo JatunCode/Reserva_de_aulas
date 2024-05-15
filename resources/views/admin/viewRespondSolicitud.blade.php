@@ -3,7 +3,7 @@
 @section('title', 'Registro de horarios')
 
 @section('content_header')
-<h1>Registro de horarios</h1>
+<h1>Atencion de reserva</h1>
 @stop
 
 @section('content')
@@ -11,38 +11,62 @@
 <!-- Contenido de la página -->
 
 <div class="row">
-    <div class="col-lg-6 col-md-12" id="formulario">
-        <div class="card h-100">
-            <div class="card-header">
-                <h3 class="card-title">Formulario</h3>
-            </div>
-            <div class="card-body">
-                @include('admin.components.formularioHorarios')
-            </div>
-        </div>
-    </div>
     <div class="col-lg-6 col-md-12" id="tbhorarios">
         <div class="card h-100">
             <div class="card-header">
                 <h3 class="card-title">
-                    Lista de horarios ocupados y libres
+                    Atencion reserva
                 </h3>
             </div>
             <div class="card-body">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th style="width: 40px">Ambiente</th>
-                            <th style="width: 40px">Hora Entrada</th>
-                            <th style="width: 40px">Hora Salida</th>
-                            <th style="width: 100px">Materia</th>
-                            <th style="width: 40px">Docente</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody id="tableHorarios">
-                    </tbody>
-                </table>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="docente" class="form-label">Docentes</label>
+                        <input type="text" name="docente" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fechasoli" class="form-label">Fecha solicitud</label>
+                        <input type="text" name="fechasoli" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fechares" class="form-label">Fecha reserva</label>
+                        <input type="text" name="fechares" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="capacidad" class="form-label">Capacidad</label>
+                        <input type="text" name="capacidad" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="grupos" class="form-label">Grupos</label>
+                        <input type="text" name="grupos" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="materia" class="form-label">Materia</label>
+                        <input type="text" name="materia" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ambiente" class="form-label">Ambiente</label>
+                        <input type="text" name="ambiente" class="form-control">
+                    </div>
+                    <div class="col-md-8">
+                        <label for="motivo" class="form-label">Motivo</label>
+                        <input type="text" name="motivo" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="modo" class="form-label">Modo</label>
+                        <input type="text" name="modo" class="form-control">
+                    </div>
+                </div>
+
+                <div>
+                    <div>
+                        <button type="submit" class="btn btn-primary d-inline-block w-75" id="boton-sub" style="color: green">Confirmar<button>
+                        <button class="btn btn-primary d-inline-block w-75" style="color: red" onclick="openRazones()">Cancelar</button>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary d-inline-block w-75" style="color: red" onclick="closeWindow()">Atras</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -63,6 +87,10 @@
 
 <script>
     let i = 1
+    function openRazones(){
+
+    }
+    
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
             let container_main =  document.getElementById('container-main')

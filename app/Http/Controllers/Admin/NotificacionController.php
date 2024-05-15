@@ -18,8 +18,8 @@ class NotificacionController extends Controller
     public function index()
     {
         $notificaciones = Notificacion::with('docente_relacion_notificacion.notificaion_relacion_docente')->get();
-        //return view('admin.notificaiones', ['notificaciones'=>$notificaciones]);
-        return $notificaciones;
+        return view('admin.mail.mailbox', ['notificaciones'=>$notificaciones]);
+        //return $notificaciones;
     }
 
     /**

@@ -6,32 +6,44 @@ use App\Http\Controllers\Controller;
 
 class GeneradorHorariosNoRegistrados extends Controller
 {
-    public function horarios_no_reg($horarios){
+    public function horarios_no_reg($horarios, $ambiente){
         $lista_horarios_no_reg = [];
         $dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
         foreach ($dias as $dia) {
-            $lista_horarios_no_reg[] = $this->porDia($this->obtenerHorasPorDia($horarios, $dia));
+            $lista_horarios_no_reg[] = $this->porDia($this->obtenerHorasPorDia($horarios, $dia), $dia, $ambiente);
         }
         return $lista_horarios_no_reg;
     }
 
-    private function porDia($horas){
+    private function porDia($horas, $dia, $ambiente){
         $hora_ini= 24300;
         $hora_fin = 78300;
         $list = [];
-        foreach ($horas as $hora) {
-            $rango = $this->verificarRango($horas);
-            while($hora_ini <= $hora_fin){
-                if($hora_ini != strtotime($hora['INICIO']) - strtotime($hora['FIN'])){
+        $rango = (!empty($horas)) ? $this->verificarRango($horas) : 5400;
+        $horas_eliminar = $horas;
+        $hora_nose = array_shift($horas_eliminar);
+        while($hora_ini < $hora_fin){
+            if(count($horas) == 0){
+                $list[] = [
+                    'DIA' => $dia,
+                    'HORA_INI' => date('H:i:s',$hora_ini),
+                    'HORA_FIN' => date('H:i:s',$hora_ini+$rango),
+                    'AMBIENTE' => $ambiente
+                ];
+            }else{
+                if($hora_nose['INICIO'] != date('H:i:s', $hora_ini)){
                     $list[] = [
-                        'DIA' => $hora['DIA'],
-                        'HORA_INI' => $hora_ini,
-                        'HORA_FIN' => $hora_ini+$rango,
-                        'AMBIENTE' => $hora['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']
+                        'DIA' => $dia,
+                        'HORA_INI' => date('H:i:s',$hora_ini),
+                        'HORA_FIN' => date('H:i:s',$hora_ini+$rango),
+                        'AMBIENTE' => $ambiente
                     ];
+                }else{
+                    $hora_nose = array_shift($horas_eliminar);
+                    array_shift($horas);
                 }
-                $hora_ini += $rango;
             }
+            $hora_ini += $rango;
         }
         return $list;
     }
@@ -49,7 +61,7 @@ class GeneradorHorariosNoRegistrados extends Controller
     private function verificarRango($horas){
         $aux = 0;
         foreach ($horas as $hora) {
-            $var = strtotime($hora['INICIO']) - strtotime($hora['FIN']);
+            $var = strtotime($hora['FIN']) - strtotime($hora['INICIO']);
             if($aux <= $var){
                 $aux = $var;
             }
@@ -57,5 +69,6 @@ class GeneradorHorariosNoRegistrados extends Controller
         return $aux;
     }
 }
+
 
 
