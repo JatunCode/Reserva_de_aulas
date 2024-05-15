@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
     filtroFechaInput.addEventListener('change', function() {
         const fechaSeleccionada = new Date(this.value);
         const fechaActual = new Date();
-        fechaActual.setDate(fechaActual.getDate() + 2);
+        fechaActual.setDate(fechaActual.getDate() + 1);
 
         if (fechaSeleccionada > fechaActual) {
             // Si la fecha seleccionada es mayor a la fecha actual + 2 días, establecer modo como "Normal"
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'Por favor, completa todos los campos requeridos.',
+                text: 'Por favor, Selecciona una fecha.',
             });
             return;
         }
@@ -249,17 +249,32 @@ function sendForm(formData) {
 document.addEventListener('DOMContentLoaded', function() {
     const grupoInput = document.getElementById('grupo');
 
-    grupoInput.addEventListener('input', function(event) {
+    grupoInput.addEventListener('keydown', function(event) {
         let inputValue = grupoInput.value;
 
-        // Mantener solo números, comas y guiones
-        inputValue = inputValue.replace(/[^0-9,\-]/g, '');
+        // Convertir todo el texto a mayúsculas
+        inputValue = inputValue.toUpperCase();
+
+        // Mantener solo números, letras y comas
+        inputValue = inputValue.replace(/[^0-9A-Z,]/g, '');
+
+        // Si la tecla presionada es espacio (código 32), agregar una coma
+        if (event.keyCode === 32) {
+            // Obtener la última parte de la cadena después de la última coma
+            const lastPart = inputValue.split(',').pop().trim();
+
+            // Si la última parte no está vacía, agregar una coma
+            if (lastPart !== '') {
+                inputValue += ',';
+            }
+        }
 
         // Actualizar el valor del campo de entrada con la entrada filtrada
         grupoInput.value = inputValue;
     });
 });
 </script>
+
 
 
 <script>
@@ -325,6 +340,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 '<tr><td colspan="5">No hay ambientes disponibles en esta fecha</td></tr>';
         } else {
             // Generar el HTML de las filas de la tabla
+           
             const tablaHTML = solicitudesFiltradas.map(solicitud => `
                 <tr>
                     <td>${solicitud.id}</td>

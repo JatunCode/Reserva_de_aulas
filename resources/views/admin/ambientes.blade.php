@@ -34,6 +34,7 @@
             <p id="messageErrorAmbiente" style="display: none; color: red">*No se encontro el ambiente</p>
         </div>
         <div class="col-md-3">
+            <label class="form-label" for="ambiente">‎</label>
             <select class="form-select" name="blockfree">
                 <option value="NO HABILITADO">Ambientes bloqueados</option>
                 <option value="HABILITADO" selected>Ambientes libres</option>
