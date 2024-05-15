@@ -69,6 +69,7 @@
 
     let banderaAmbiente = true
     let banderaDocente = true
+    let banderaHora = true
 
     let messageDocente = document.getElementById("messageErrorDocente")
     let messageAmbiente = document.getElementById("messageErrorAmbiente")
@@ -120,20 +121,15 @@
 
             let inicio = document.createElement('div')
             inicio.classList.add('col-md-4')
-            inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" value="08:15:00" min="06:45:00" max="20:15:00" step="5400" onchange="bloquearHoras(this)" required>'
+            inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" value="08:15:00" min="06:45:00" max="20:15:00" step="5400" onchange="bloquearHoras(this)">'
 
             let fin = document.createElement('div')
             fin.classList.add('col-md-4')
-            fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" value="08:15:00" min="08:15:00" max="21:45:00" step="5400" onchange="bloquearHoras(this)" required>'
-            
-            let messageHora = document.createElement('p')
-            messageHora.id = "messageErrorHora"
-            messageHora.style.display = "none"
-            messageHora.textContent = '*No se encuentra en el rango de hora'
+            fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" value="08:15:00" min="08:15:00" max="21:45:00" step="5400" onchange="bloquearHoras(this)">'
 
             let ambiente = document.createElement('div')
             ambiente.classList.add('col-md-4')
-            ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)" required><p id="messageErrorAmbiente" style="display: none">*No se encontro el ambiente</p>'
+            ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)">'
             // errordiv.innerHTML = '@error("REFERENCIAS")
             //         <div class="text-danger">{{ $message }}</div>
             //     @enderror'
@@ -141,7 +137,6 @@
                 container.appendChild(dia)
                 container.appendChild(inicio)
                 container.appendChild(fin)
-                container.appendChild(messageHora)
                 container.appendChild(ambiente)
                 container_main.appendChild(container)
                 i++
@@ -223,13 +218,15 @@
     }
 
     function bloquearHoras(horas){
-        let list = String(horas).split(":")
+        let list = String(horas.value).split(":")
         let segundos = parseInt(list[0], 10)*3600 + parseInt(list[1], 10)*60
         let message = document.getElementById("messageErrorHora")
-        if(segundos <= 78300 && segundos >= 24300){
-            message.style.color = "red"
-            message.style.display = "block !important"
+        if(segundos <= 24300 || segundos >= 78300){
+            message.textContent = "*Esta fuera del rango de la hora"
+            message.style.display = "block"
+            banderaHora = false
         }else{
+            banderaHora = true
             message.style.display = "none"
         }
     }
@@ -259,7 +256,7 @@
 
     function checkAmbiente(text){
         if(text.value == ""){
-            messageAmbiente.textContent = "*El campo es obligatorio"
+            messageAmbiente.textContent = "*Debe llenar o eliminar el campo vacio"
             messageAmbiente.style.display = "block"
             banderaAmbiente = false
         }else{
@@ -270,7 +267,7 @@
 
     function findAmbiente(text){
         if(!ambientes.find((ambiente) => ambiente['NOMBRE'] == text.value.toUpperCase()) && text.value != ""){
-            messageAmbiente.textContent = "*No se encontro el docente"
+            messageAmbiente.textContent = "*El ambiente no existe"
             messageAmbiente.style.display = "block"
             banderaAmbiente = false
         }else{
@@ -331,17 +328,15 @@
         });
         
         inicios.forEach(inicio => {
-            bandera = (inicio.value != "")
             list_horaini.push(inicio.value)
         });
 
         fins.forEach(fin => {
-            bandera = (fin.value != "")
             list_horafin.push(fin.value)
         });
 
         ambientes.forEach(ambiente => {
-            bandera = (ambiente.value != "")
+            checkAmbiente(ambiente)
             list_ambiente.push(ambiente.value)
         });
 
@@ -363,8 +358,9 @@
         console.log("Formulario con datos: ",form)
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
-        
-        bandera = banderaAmbiente && banderaDocente
+        checkDocente(docente)
+
+        bandera = banderaAmbiente && banderaDocente && banderaHora
 
         if(bandera == true){
             fetch('http://127.0.0.1:8000/admin/horarios/store', 
