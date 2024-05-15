@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Docente\SolicitudController;
+use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
 use App\Models\Admin\Docente;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +54,7 @@ Route::prefix('admin')->group(function () {
 });
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')->group(function () {
-    Route::get('/', [SolicitudController::class, 'index'])->name('docente.inicio');
+    Route::get('/', [CalendarioController::class, 'index'])->name('docente.inicio');
     Route::get('/solicitud/normal/hola', [SolicitudController::class, 'fecha'])->name('docente.solicitud.fecha');
     Route::get('/solicitud/normal/', [SolicitudController::class, 'docente_datos'])->name('docente.solicitud.normal');
     Route::get('/solicitud/urgente', [SolicitudController::class, 'urgente'])->name('docente.solicitud.urgente');
