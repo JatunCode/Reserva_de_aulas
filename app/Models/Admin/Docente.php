@@ -12,7 +12,7 @@ class Docente extends Model
     protected $fillable = ['ID_DOCENTE', 'NOMBRE', 'GRUPO', 'CELULAR', 'EMAIL'];
     
     public function docente_relacion_dahm(){
-        return $this->hasOne(Relacion_DAHM::class, 'ID_DOCENTE', 'ID_DOCENTE');
+        return $this->hasMany(Relacion_DAHM::class, 'ID_DOCENTE', 'ID_DOCENTE');
     }
 
     public function notificaion_relacion_docente(){

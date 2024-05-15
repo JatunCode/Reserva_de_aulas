@@ -354,7 +354,7 @@ function actualizarTabla(data) {
     
     // Eliminar los elementos existentes en el cuerpo de la tabla
     tbody.innerHTML = '';
-
+    let contador = 1;
     // Iterar sobre los nuevos datos y agregar cada solicitud como una fila en la tabla
     data.forEach(solicitud => {
         // Crear una nueva fila
@@ -362,8 +362,8 @@ function actualizarTabla(data) {
         
         // Agregar las celdas con los datos de la solicitud a la fila
         row.innerHTML = `
-            <td>${solicitud.id}</td>
-            <td>${solicitud.aula}</td>
+            
+            <td>${contador++}</td>
             <td>${solicitud.materia}</td>
             <td>${solicitud.fecha}</td>
             <td ><span class="btn  btn-sm btn-block" style="background-color: ${solicitud.modo === 'Normal' ? '#198754' : '#dc3545'};color: white">

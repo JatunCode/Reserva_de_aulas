@@ -24,7 +24,8 @@
 
     <div class="col-6">
         <label for="grupo" class="form-label">Grupo(s):</label>
-        <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3" required>
+        <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3" required >
+        <div class="invalid-feedback">Por favor, completa este campoaaaaaaaaaa.</div>
     </div>
 
 
