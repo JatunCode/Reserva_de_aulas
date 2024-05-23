@@ -20,6 +20,7 @@
         <div class="col-md-2">
             <label class="form-label" for="dia">Dia</label>
             <select class="form-select" name="dia">
+                <option value="TODOS">Todos los dias</option>
                 <option value="LUNES">Lunes</option>
                 <option value="MARTES">Martes</option>
                 <option value="MIERCOLES">Miercoles</option>
@@ -34,8 +35,8 @@
             <p id="messageErrorAmbiente" style="display: none; color: red">*No se encontro el ambiente</p>
         </div>
         <div class="col-md-3">
-            <label class="form-label" for="ambiente">‎</label>
             <select class="form-select" name="blockfree">
+                <option value="TODOS">Todos los ambientes</option>
                 <option value="NO HABILITADO">Ambientes bloqueados</option>
                 <option value="HABILITADO" selected>Ambientes libres</option>
             </select>
@@ -189,32 +190,37 @@
         blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
 
         cadena_fetch = 'http://127.0.0.1:8000/api/fetch/ambientes'
-
-        if(input_materia == "" && input_ambiente != ""){
+        //Agregar combinacion de todos los dias y todos los estados del ambiente
+        if(input_materia == "" && input_ambiente != "" && input_dia != "" && input_libres_ocupados != ""){
+            //Solo con el input materia vacio
             cadena_fetch += `/${input_ambiente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
             console.log('Cadena de ambiente', cadena_fetch)
-        }else{
-            if(input_materia != "" && input_ambiente == ""){
-                cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-                console.log('Cadena de materia', cadena_fetch)
-            }else{
-                if(input_materia != "" && input_ambiente != ""){
-                    cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-                    console.log('Cadena de todo', cadena_fetch)
-                }else{
-                    cadena_fetch += `todosin/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-                }
-            }
+        }else if(input_materia != "" && input_ambiente == "" && input_dia != "" && input_libres_ocupados != ""){
+            //Solo con el input ambiente vacio
+            cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+            console.log('Cadena de materia', cadena_fetch)
+        }else if(input_materia == "" && input_ambiente != "" && input_dia == "" && input_libres_ocupados != ""){
+            //Con el input materia y dia vacios
+        }else if(input_materia != "" && input_ambiente == "" && input_dia == "" && input_libres_ocupados != ""){
+            //Con el input ambiente y dia vacio
+            cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+            console.log('Cadena de materia', cadena_fetch)
+        }else if(input_materia == "" && input_ambiente == "" && input_dia == "" && input_libres_ocupados != ""){
+            //Con el input materia, ambiente y dia vacios
+            cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+            console.log('Cadena de todo', cadena_fetch)
+        }else if(input_materia == "" && input_ambiente == "" && input_dia != "" && input_libres_ocupados == ""){
+            //Con el input materia, ambiente y libres vacios
+            cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+            console.log('Cadena de materia', cadena_fetch)
+        }else if(input_materia != "" && input_ambiente != "" && input_dia != "" && input_libres_ocupados != ""){
+            //Con trodos los input llenos
+            cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+            console.log('Cadena de todo', cadena_fetch)
         }
 
         fetch(
-            cadena_fetch,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
+            cadena_fetch
         ).then(
             response => response.json()
         ).then(

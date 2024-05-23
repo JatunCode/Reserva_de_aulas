@@ -20,11 +20,11 @@ class Relacion_DAHM extends Model
     }
 
     public function dahm_relacion_materia(){
-        return $this->hasMany(Materia::class, 'ID_MATERIA', 'ID_MATERIA');
+        return $this->hasOne(Materia::class, 'ID_MATERIA', 'ID_MATERIA');
     }
 
     public function dahm_relacion_docente(){
-        return $this->hasMany(Docente::class, 'ID_DOCENTE', 'ID_DOCENTE');
+        return $this->hasOne(Docente::class, 'ID_DOCENTE', 'ID_DOCENTE');
     }
 }
 

@@ -52,6 +52,21 @@
     let banderaambiente = true
     let banderareferencia = true
     let banderacapacidad = true
+    let regex = /^[a-z0-9\s]+$/i
+    let ambientes = []
+    
+    fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
+        response => response.json()
+    ).then(
+        data => {
+            ambientes = data
+        }
+    ).catch(
+        error => {
+            console.log("Error encontrado: ", error)
+        }
+    )
+
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
             let container =  document.getElementById('referencias')
@@ -93,7 +108,6 @@
 
     function caracterReferencia(referencia){
         let message = document.getElementById("messageErrorReferencias")
-        let regex = /^[a-z0-9\s]+$/i
         let esRegex = !regex.test(referencia.value)
         if(esRegex) {
             message.textContent = "*No se aceptan caracteres especiales"
@@ -123,11 +137,12 @@
         let capacidad = document.getElementById("messageErrorCapacidad")
         let tipo_ambiente = document.querySelector('[name="opcion"]')
         let seleccionado = tipo_ambiente.options[tipo_ambiente.selectedIndex]
+        let regexnumber = /^[0-9\s]+$/i
         let limit = (seleccionado.value == "Aula comun") ?  150 : 300
         console.log("Parcer de capacidad: ", parseInt(text.value, 10))
         if(text.value != ""){
             let conver = (text.value.includes(".")) ? 0 : parseInt(text.value, 10)
-            if(conver == 0 || isNaN(conver)){
+            if(conver == 0 || isNaN(conver) || !regexnumber.test(text.value)){
                 capacidad.textContent = "*Solo caracteres numericos y enteros"
                 capacidad.style.display = "block"
                 banderacapacidad = false
@@ -153,40 +168,23 @@
 
     function findAmbiente(text){
         let message = document.getElementById("messageErrorAmbiente")
-        let ambientes = null
-        if(text.value != ""){
-            fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
-                response => response.json()
-            ).then(
-                data => {
-                    ambientes = data
-                    if(ambientes.find((ambiente) => ambiente['NOMBRE'].toUpperCase() == text.value.toUpperCase())){
-                        message.textContent = "*El ambiente ya existe."
-                        message.style.display = "block"
-                        banderaambiente = false
-                    }else{
-                        message.style.display = "none"
-                        banderaambiente = true
-                    }
-                }
-            ).catch(
-                error => {
-                    console.log("Error encontrado: ", error)
-                }
-            )
-        }
-        checkAmbiente(text)
-        console.log("Resultado del envio al ingresar el ambiente: ", banderaambiente)
-    }
-
-    function checkAmbiente(text){
-        let message = document.getElementById("messageErrorAmbiente")
-        if(text.value == ""){
-            message.style.color = "red"
+        if(text.value != "" && !regex.test(text.value)){
+            message.textContent = "*No se permiten caracteres especiales."
+            message.style.display = "block"
+            banderaambiente = false
+        }else if(ambientes.find((ambiente) => ambiente['NOMBRE'].toUpperCase() == text.value.toUpperCase())){
+            message.textContent = "*El ambiente ya existe."
+            message.style.display = "block"
+            banderaambiente = false
+        }else if(text.value == ""){
             message.textContent = "*El campo es obligatorio."
             message.style.display = "block"
             banderaambiente = false
+        }else{
+            message.style.display = "none"
+            banderaambiente = true
         }
+        console.log("Resultado del envio al ingresar el ambiente: ", banderaambiente)
     }
 
     function obtainValues(event){
@@ -215,7 +213,7 @@
         
         checkReferencias(json_list)
         checkCapacidad(capac)
-        checkAmbiente(nombre)
+        findAmbiente(nombre)
 
         let bandera = banderaambiente && banderacapacidad && banderareferencia
 

@@ -47,14 +47,10 @@ class ReservasController extends Controller
         $materiasAsociadas = [];
         foreach ($relaciones as $relacion) {
         // Obtener la colección de materias asociadas a través de la relación
-        $materias = $relacion->dahm_relacion_materia;
             // Iterar sobre las materias para obtener sus nombres
-            foreach ($materias as $materia) {
-                // Obtener el nombre de la materia y agregarlo al array si no existe aún
-                $nombreMateria = $materia->NOMBRE;
-                if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-                    $materiasAsociadas[] = $nombreMateria;
-                }
+            $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
+            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                $materiasAsociadas[] = $nombreMateria;
             }
         }
         

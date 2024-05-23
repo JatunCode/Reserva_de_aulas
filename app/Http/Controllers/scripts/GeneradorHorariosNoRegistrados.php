@@ -6,11 +6,15 @@ use App\Http\Controllers\Controller;
 
 class GeneradorHorariosNoRegistrados extends Controller
 {
-    public function horarios_no_reg($horarios, $ambiente){
+    public function horarios_no_reg($tipo, $horarios, $ambiente){
         $lista_horarios_no_reg = [];
         $dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
-        foreach ($dias as $dia) {
-            $lista_horarios_no_reg[] = $this->porDia($this->obtenerHorasPorDia($horarios, $dia), $dia, $ambiente);
+        if($tipo == "horarios"){
+            foreach ($dias as $dia) {
+                $lista_horarios_no_reg[] = $this->porDia($this->obtenerHorasPorDia($horarios, $dia), $dia, $ambiente);
+            }
+        }else if($tipo == "solicitudes"){
+            $lista_horarios_no_reg = $this->porDia($this->obtenerHorasPorDia($horarios['arreglo'], $this->cambiarADiaEspañol($horarios['dia'])), $this->cambiarADiaEspañol($horarios['dia']), $ambiente);
         }
         return $lista_horarios_no_reg;
     }
@@ -51,7 +55,8 @@ class GeneradorHorariosNoRegistrados extends Controller
     private function obtenerHorasPorDia($horas, $dia){
         $list = [];
         foreach ($horas as $hora) {
-            if($hora['DIA'] == $dia){
+            $dia_cambio = (strpos($hora['DIA'], "y")) ? $this->cambiarADiaEspañol($hora['DIA']) : $hora['DIA'];
+            if($dia_cambio == $dia){
                 $list[] = $hora;
             }
         }
@@ -67,6 +72,19 @@ class GeneradorHorariosNoRegistrados extends Controller
             }
         }
         return $aux;
+    }
+
+    private function cambiarADiaEspañol($dia){
+        $dias = [
+            'LUNES' => 'monday',
+            'MARTES' => 'tuesday',
+            'MIERCOLES' => 'wednesday',
+            'JUEVES' => 'thursday',
+            'VIERNES' => 'friday',
+            'SABADO' => 'saturday'
+        ];
+
+        return array_search(strtolower($dia), $dias);
     }
 }
 

@@ -33,26 +33,23 @@ class CalendarioController extends Controller
         // Convertir los datos en el formato adecuado para FullCalendar
         $eventos = [];
         foreach ($relaciones as $relacion) {
-            foreach ($relacion->dahm_relacion_materia as $materia) {
-                // Convertir el nombre del día a un número de día de la semana
-                $dow = $this->convertirDiaSemanaANumero($relacion->dahm_relacion_horario->DIA);
+            $dow = $this->convertirDiaSemanaANumero($relacion->dahm_relacion_horario->DIA);
     
-                // Obtener todas las fechas de "Lunes" en el año actual
-                $fechasLunes = $this->obtenerFechasDiaSemanaEnAno($anoActual, $dow);
-    
-                // Agregar un evento para cada fecha de "Lunes"
-                foreach ($fechasLunes as $fechaLunes) {
-                    // Agregar el evento al arreglo de eventos
-                    $eventos[] = [
-                        'title' => $materia->NOMBRE. '-'.$relacion->dahm_relacion_ambiente->NOMBRE, // Nombre de la materia como título del evento
-                        'start' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->INICIO, // Fecha y hora de inicio
-                        'end' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->FIN, // Fecha y hora de fin
-                        'dow' => [$dow], // Convertir el día de la semana a un array de un solo elemento
-                        'aula' => $relacion->dahm_relacion_ambiente->NOMBRE,
-                        'eventBackgroundColor'=>'#AFEEEE',
-                        'textColor'=>'black',
-                    ];
-                }
+            // Obtener todas las fechas de "Lunes" en el año actual
+            $fechasLunes = $this->obtenerFechasDiaSemanaEnAno($anoActual, $dow);
+
+            // Agregar un evento para cada fecha de "Lunes"
+            foreach ($fechasLunes as $fechaLunes) {
+                // Agregar el evento al arreglo de eventos
+                $eventos[] = [
+                    'title' => $relacion->dahm_relacion_materia->NOMBRE. '-'.$relacion->dahm_relacion_ambiente->NOMBRE, // Nombre de la materia como título del evento
+                    'start' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->INICIO, // Fecha y hora de inicio
+                    'end' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->FIN, // Fecha y hora de fin
+                    'dow' => [$dow], // Convertir el día de la semana a un array de un solo elemento
+                    'aula' => $relacion->dahm_relacion_ambiente->NOMBRE,
+                    'eventBackgroundColor'=>'#AFEEEE',
+                    'textColor'=>'black',
+                ];
             }
         }
     // Convertir las solicitudes en eventos y agregarlas al arreglo de eventos
