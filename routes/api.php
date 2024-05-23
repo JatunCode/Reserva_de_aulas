@@ -29,10 +29,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(AmbienteController::class)->group(
     function(){
         Route::get('/fetch/ambientes', 'indexList');
-        Route::put('/fetch/ambientes/{ambiente}/{dia}/{estado}', 'showAmbiente');
-        Route::put('/fetch/ambientesmateria/{materia}/{dia}/{estado}', 'showMateria');
-        Route::put('/fetch/ambientestodo/{ambiente}/{materia}/{dia}/{estado}', 'showTodo');
-        Route::put('/fetch/ambientestodosin/{dia}/{estado}', 'showSin');
+        Route::get('/fetch/ambientes/{ambiente}', 'showAmbiente');
+        Route::get('/fetch/ambientes/{ambiente}/{estado}', 'showAmbiente');
+        Route::get('/fetch/ambientesmateria/{materia}', 'showMateria');
+        Route::get('/fetch/ambientesmateria/{materia}/{estado}', 'showMateria');
+        Route::get('/fetch/ambientestodo/{ambiente}/{materia}', 'showTodo');
+        Route::get('/fetch/ambientestodo/{ambiente}/{materia}/{estado}', 'showTodo');
+        Route::get('/fetch/ambientestodosin/{estado}', 'showEstado');
+        Route::get('/fetch/ambientes/{id_ambiente}', 'showId');
         //Route::post('/ambientes/store', 'store');
         //Route::post('/putambiente', 'show');
     }
@@ -48,11 +52,16 @@ Route::controller(DocenteController::class)->group(
 Route::controller(HorarioController::class)->group(
     function(){
         Route::get('/horarios', 'index');
+        Route::get('/fetch/horarios/libres/{ambiente}', 'indexList');
         Route::get('/fetch/horarios', 'indexFetch');
-        Route::put('/fetch/horarios/libres/{ambiente}', 'indexList');
-        Route::put('/fetch/horarios/{ambiente}', 'show');
-        Route::put('/fetch/horariosdocentes/{docente}/{dia}/{estado}', 'showTodo');
-        Route::put('/fetch/horariostodosin/{dia}/{estado}', 'showSin');
+        Route::get('/fetch/horarios/{ambiente}', 'show');
+        Route::get('/fetch/horarios/{docente}', 'showDocente');
+        Route::get('/fetch/horarios/{docente}/{dia}', 'showDocente');
+        Route::get('/fetch/horarios/{docente}/{estado}', 'showDocente');
+        Route::get('/fetch/horariostodosin/{dia}', 'showSin');
+        Route::get('/fetch/horariostodosin/{estado}', 'showSin');
+        Route::get('/fetch/horariostodosin/{dia}/{estado}', 'showSin');
+        Route::get('/fetch/horariostodo/{docente}/{dia}/{estado}', 'showTodo');
         Route::post('/horarios/store', 'store');
         // Route::post('/putambiente', 'show');
     }
@@ -83,7 +92,11 @@ Route::controller(ReservasController::class)->group(
 
 Route::controller(SolicitudController::class)->group(
     function(){
-        Route::get('/normal', 'normal');
+        Route::get('/fetch/normal', 'normal');
+        Route::get('/fetch/solicitudes', 'index');
+        Route::post('/fetch/solicitudes/store', 'store');
+        Route::get('/fetch/solicitudes/{ambiente}/{fecha}', 'solicitudes_libres');
+        Route::get('/fetch/solicitudesshow/{ambiente}', 'show');
         //Route::post('/horarios/store', 'store');
         // Route::post('/putambiente', 'show');
     }

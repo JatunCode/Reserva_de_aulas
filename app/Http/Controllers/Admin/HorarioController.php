@@ -102,7 +102,8 @@ class HorarioController extends Controller
                     ]);
                 }
             }
-            return response()->json(["message" => "Horario creado exitosamente"], 200);
+            //return response()->json(["message" => "Horario creado exitosamente"], 200);
+            return redirect()->route('admin.viewFormHorarios')->with('success', 'Horario creado exitosamente');
         }
         return view('admin.viewFormHorarios');
     }
@@ -140,12 +141,43 @@ class HorarioController extends Controller
                 })->orderBy('INICIO')->get();
         
         $horarios_libres = new GeneradorHorariosNoRegistrados();
-        $horarios_nuevo = $horarios_libres->horarios_no_reg($horarios, $ambiente);
+        $horarios_nuevo = $horarios_libres->horarios_no_reg("horarios", $horarios, $ambiente);
         return json_encode($horarios_nuevo);
     }
 
     /**
-     * Display the specified resource.
+     * Muestra condicionalmente los horarios por docente, dia o estado
+     *
+     * @param  string ambiente
+     * @return \Illuminate\Http\Response
+     */
+    public function showDocente($docente, $dia, $estado)
+    {
+        $horarios = Horario::with(
+            'horario_relacion_dahm.dahm_relacion_ambiente',
+            'horario_relacion_dahm.dahm_relacion_materia',
+            'horario_relacion_dahm.dahm_relacion_docente'
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_ambiente',
+                function ($query) use ($dia, $estado) {
+                    if($dia != ""){
+                        $query->where('DIA', $dia);
+                    }
+                    if($estado){
+                        $query->where('ambiente.ESTADO', $estado);
+                    }
+                }
+            )->whereHas(
+                'horario_relacion_dahm.dahm_relacion_docente',
+                function ($query) use ($docente){
+                    $query->where('docente.NOMBRE', $docente);
+                }
+            )->orderBy('INICIO')->get();
+        return json_encode($horarios);
+    }
+
+    /**
+     * Muestra los horarios con todos los parametros
      *
      * @param  string ambiente
      * @return \Illuminate\Http\Response
@@ -168,11 +200,11 @@ class HorarioController extends Controller
                     $query->where('docente.NOMBRE', $docente);
                 }
             )->orderBy('INICIO')->get();
-        return $horarios;
+        return json_encode($horarios);
     }
     
     /**
-     * Display the specified resource.
+     * Devuelve los horarios condicionalmente por dia o estado
      *
      * @param  string ambiente
      * @return \Illuminate\Http\Response
@@ -186,11 +218,15 @@ class HorarioController extends Controller
             )->whereHas(
                 'horario_relacion_dahm.dahm_relacion_ambiente',
                 function ($query) use ($dia, $estado) {
-                    $query->where('DIA', $dia);
-                    $query->where('ambiente.ESTADO', $estado);
+                    if($dia != ""){
+                        $query->where('DIA', $dia);
+                    }
+                    if($estado){
+                        $query->where('ambiente.ESTADO', $estado);
+                    }
                 }
             )->orderBy('INICIO')->get();
-        return $horarios;
+        return json_encode($horarios);
     }
 
     /**

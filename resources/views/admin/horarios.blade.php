@@ -146,7 +146,7 @@
             `<tr>
                 <th style="width: 20px"></td>
                 <td style="width: 35px">${elemento['DIA']}</td>
-                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_materia']['MATERIA']}</td>
+                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE']}</td>
                 <td style="width: 35px">${elemento['INICIO']}</td>
                 <td style="width: 150px">${elemento['FIN']}</td>
                 <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE']}</td>
@@ -170,10 +170,10 @@
 
         cadena_fetch = 'http://127.0.0.1:8000/api/fetch/horarios'
 
-        if(input_docente != ""){
+        if(input_docente != "" && input_dia != "" ){
             cadena_fetch += `docente/${input_docente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
             console.log('Cadena de docente', cadena_fetch)
-        }else{
+        }else if(input_docente == "" && input_dia != ""){
             cadena_fetch += `todosin/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
         }
 
@@ -195,6 +195,7 @@
                 }
                 try{
                     agregarTabla(horariosFiltro, tabla)
+                    console.log('Formato del objeto: ', horariosFiltro)
                 }catch(error){
                     console.log('Erro: ', error)
                 }

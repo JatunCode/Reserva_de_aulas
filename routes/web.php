@@ -41,19 +41,31 @@ Route::prefix('admin')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
     // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     // Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
+    /**
+     * Rutas de los ambientes
+     */
+    //Muestra todos los ambientes
     Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes');
+    //Muestra el formulario para los ambientes
     Route::get('/ambientes/registro', [AmbienteController::class, 'store'])->name('ambiente.list');
+    //Guarda o registra un registro de un nuevo ambiente
     Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
+    //
     Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
+
+    /** 
+     * Urls para horarios
+    */
+    //Muestra todos los horarios
     Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios');
+    //Muestra el formulario de horarios
     Route::get('/horarios/registro', [HorarioController::class, 'store'])->name('horario.list');
+    //Crea un registro nuevo en el servidor de los horarios
     Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
+    //comprobar si estas rutas se usan
     Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
     Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
     Route::put('/docentes/show/{caracter}', [DocenteController::class, 'show'])->name('docente.put');
-    Route::get('/hola',  function () {
-        return 'Hola :v';
-    });
 });
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
@@ -62,11 +74,15 @@ Route::prefix('docente')->group(function () {
     Route::get('/solicitud/normal/hola', [SolicitudController::class, 'fecha'])->name('docente.solicitud.fecha');
     Route::get('/solicitud/normal/', [SolicitudController::class, 'docente_datos'])->name('docente.solicitud.normal');
     Route::get('/solicitud/urgente', [SolicitudController::class, 'urgente'])->name('docente.solicitud.urgente');
-    Route::get('/solicitudes/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.solicitud.filtrar.urgente');
-    Route::get('/solicitudes/listar', [ReservasController::class, 'datos'])->name('docente.solicitud.filtrar.datos');
-    Route::get('/solicitudes/listar/cancelar', [ReservasController::class, 'datos_cancelar'])->name('docente.solicitud.filtrar.datos_cancelar');
-    Route::get('/solicitudes/listar/pendiente', [ReservasController::class, 'datos_solicitando'])->name('docente.solicitud.filtrar.datos_solicitando');
-    Route::get('/solicitudes/listar/reservado', [ReservasController::class, 'datos_reservado'])->name('docente.solicitud.filtrar.datos_reservado');
+
+    //Route::get('/solicitudes/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.solicitud.filtrar.urgente');
+    Route::get('/solicitudes/listar', [ReservasController::class, 'datos'])->name('docente.solicitud.filtrar.datos'); //si da
+    /**
+     * Se debe unir todas estas en una sola url y mandar por put o get
+     */
+    Route::get('/solicitudes/listar/cancelar', [ReservasController::class, 'datos_cancelar'])->name('docente.solicitud.filtrar.datos_cancelar'); //si da
+    Route::get('/solicitudes/listar/pendiente', [ReservasController::class, 'datos_solicitando'])->name('docente.solicitud.filtrar.datos_solicitando'); //si da
+    Route::get('/solicitudes/listar/reservado', [ReservasController::class, 'datos_reservado'])->name('docente.solicitud.filtrar.datos_reservado'); //si da 
     
     Route::get('/solicitudes/listar_filtro', [ReservasController::class, 'datos_filtro'])->name('docente.solicitud.filtrar.datos_filtro');
     
