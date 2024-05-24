@@ -104,7 +104,7 @@
             console.log("Fecha de reserva: ", fecha);
             if(fecha != ''){
                 fetch(
-                    'http://127.0.0.1:8000/api/fetch/solicitudes/'+ambiente.value+'/'+fecha
+                    'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
                 ).then(
                     response => response.json()
                 ).then(
@@ -170,6 +170,27 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Verificar si hay campos vacíos
             const inputs = this.querySelectorAll('input, select, textarea');
+            const input_nombre = this.querySelectorAll('[name="nombre"]');
+
+            let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
+
+            const input_materia = this.querySelector('[name="materia"]');
+            const dato_materia = input_materia.options[input_materia.selectedIndex].value;
+            const input_cant = this.querySelector('[name="cantidad_estudiantes"]').value;
+            const input_motivo = this.querySelector('[name="motivo"]');
+            const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
+            const input_fecha = this.querySelector('[name="filtroFecha"]').value;
+            const input_razon = this.querySelector('[name="razon"]').value;
+            let prioridad = 
+            (input_razon != "") ? {
+                "URGENTE" : input_razon
+            } : {
+                "NORMAL" : "Normal"
+            };
+            const input_aula = this.querySelector('[name="aula"]').value;
+            const input_horario = this.querySelector('[name="horario"]').value;
+            let arreglo_horario = input_horario.split(" - ");
+
             let isValid = true;
             inputs.forEach(input => {
                 // Verificar si el campo está vacío y es requerido
@@ -196,6 +217,17 @@ document.addEventListener("DOMContentLoaded", function() {
             // Asignar un valor predeterminado al campo "modo"
             document.getElementById('modo').value = 'Normal';
 
+            const json_send = {
+                'NOMBRES':JSON.stringify(arreglo_nombres),
+                'CANTIDAD':input_cant,
+                'FECHA_RESERVA':input_fecha,
+                'HORA_INICIO':arreglo_horario[0],
+                'HORA_FIN':arreglo_horario[1],
+                'PRIORIDAD':JSON.stringify(prioridad),
+                'MOTIVO':dato_motivo,
+                'MATERIA':dato_materia,
+                'AMBIENTE':input_aula
+            };
             // Obtener los datos del formulario y convertirlos en un objeto
             const formData = new FormData(this);
             const formDataObject = {};
@@ -228,7 +260,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Enviar el formulario si se confirma la acción
-                    sendForm(formData);
+                    console.log("Formato del json: ", json_send);
+                    sendForm(json_send);
                 }
             });
         });
@@ -334,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newInput = document.createElement('div');
             newInput.classList.add('input-group', 'mb-2');
             newInput.innerHTML = `
-                <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre${nextIndex}" id="nombre${nextIndex}">
+                <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre" id="nombre${nextIndex}">
                 <button class="btn btn-danger eliminar-nombre" type="button">
                     <i class="bi bi-trash"></i>
                 </button>

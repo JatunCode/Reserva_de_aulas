@@ -102,8 +102,7 @@ class HorarioController extends Controller
                     ]);
                 }
             }
-            //return response()->json(["message" => "Horario creado exitosamente"], 200);
-            return redirect()->route('admin.viewFormHorarios')->with('success', 'Horario creado exitosamente');
+            return response()->json(["message" => "Horario creado exitosamente"], 200);
         }
         return view('admin.viewFormHorarios');
     }

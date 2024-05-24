@@ -82,9 +82,6 @@
             refer.onchange = function(){
                 caracterReferencia(this)
             }
-            // errordiv.innerHTML = '@error("REFERENCIAS")
-            //         <div class="text-danger">{{ $message }}</div>
-            //     @enderror'
             if(i < 4){
                 container.appendChild(refer)
                 i++
@@ -187,6 +184,18 @@
         console.log("Resultado del envio al ingresar el ambiente: ", banderaambiente)
     }
 
+    function limpiar(){
+        const form = document.getElementById('formAmbiente')
+        const refs = document.querySelectorAll('[name="refers"]')
+        refs.forEach((element, index) => {
+            if(index > 0){
+                element.remove()
+            }
+        });
+        i = 1
+        form.reset()
+    }
+
     function obtainValues(event){
         event.preventDefault()
         let tipo_ambiente = document.querySelector('[name="opcion"]')
@@ -232,6 +241,16 @@
                 response => {
                     if (!response.ok) {
                         throw new Error('La respuesta al servidor no es correcta')
+                    }else{
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Ambiente creado exitosamente!',
+                            showConfirmButton: false,
+                            timer: 1500 // Cerrar automáticamente después de 1.5 segundos
+                        }).then(() => {
+                            // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
+                            limpiar();
+                        })
                     }
                     return response.json()
                 }

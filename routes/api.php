@@ -85,7 +85,8 @@ Route::controller(SolicitudController::class)->group(
         Route::get('/fetch/normal', 'normal');
         Route::get('/fetch/solicitudes', 'index');
         Route::post('/fetch/solicitudes/store', 'store');
-        Route::get('/fetch/solicitudes/{ambiente}/{fecha}', 'solicitudes_libres');
+        Route::get('/fetch/solicitudes/{materia}/{modo}', 'showAtencion');
+        Route::get('/fetch/solicitudeslibres/{ambiente}/{fecha}', 'solicitudes_libres');
         Route::get('/fetch/solicitudesshow/{ambiente}', 'show');
         //Route::post('/horarios/store', 'store');
         // Route::post('/putambiente', 'show');

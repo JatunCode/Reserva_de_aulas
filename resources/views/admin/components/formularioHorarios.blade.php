@@ -33,7 +33,7 @@
             </div>
         </div>
         
-        <div class="row">
+        <div class="row" id="container-ta">
             <div class="col-md-4">
                 <label for="inicio" class="form-label">Hora de inicio</label>
                 <input type="time" class="form-control" name="inicio" value="06:45:00" min="06:45:00" max="20:15:00" step="5400" onchange="bloquearHoras(this)" required>

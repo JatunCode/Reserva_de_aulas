@@ -52,7 +52,7 @@
     </div>
     <div class="col-md-6">
         <label for="filtroFecha">Fecha:</label>
-        <input type="date" class="form-control" id="filtroFecha" min="{{ date('Y-m-d') }}"required>
+        <input type="date" class="form-control" id="filtroFecha" name="filtroFecha" min="{{ date('Y-m-d') }}"required>
         <!-- Campo oculto para enviar el valor de "modo" -->
         <!-- <input type="hidden" id="modo" name="modo"> -->
     </div>
@@ -75,7 +75,7 @@
     </div>
     <div class="col-6">
         <label for="horario" class="form-label">Horario:</label>
-        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario" required readonly>
+        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario" required>
     </div>
 
     <div class="col-12 mt-3 text-center">
