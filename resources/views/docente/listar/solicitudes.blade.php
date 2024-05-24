@@ -363,7 +363,8 @@ function actualizarTabla(data) {
         // Agregar las celdas con los datos de la solicitud a la fila
         row.innerHTML = `
             
-            <td>${contador++}</td>
+             <td>${contador++}</td>
+            <td>${solicitud.aula}</td>
             <td>${solicitud.materia}</td>
             <td>${solicitud.fecha}</td>
             <td ><span class="btn  btn-sm btn-block" style="background-color: ${solicitud.modo === 'Normal' ? '#198754' : '#dc3545'};color: white">
