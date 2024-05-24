@@ -109,55 +109,6 @@ class AmbienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showAmbiente($nombre,  $estado)
-    {
-        $value = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente'
-            )->whereHas(
-            'horario_relacion_dahm.dahm_relacion_ambiente', 
-                function ($query) use ($nombre, $estado){
-                    $query->where('ambiente.NOMBRE', $nombre);
-                    if($estado != ""){
-                        $query->where('ambiente.ESTADO', $estado);
-                    }
-                }
-            )->get();
-        return json_encode($value);
-    }
-
-    /**
-     * Muestra a los ambientes por dia para las peticiones fetch.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function showMateria($materia, $estado)
-    {
-        $value = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_materia',
-            'horario_relacion_dahm.dahm_relacion_ambiente'
-            )->whereHas(
-            'horario_relacion_dahm.dahm_relacion_materia', 
-                function ($query) use ($materia){
-                    $query->where('materia.NOMBRE', $materia);
-                }
-            )->whereHas(
-            'horario_relacion_dahm.dahm_relacion_ambiente',
-                function ($query) use ($estado){
-                    if($estado != ""){
-                        $query->where('ambiente.ESTADO', $estado);
-                    }
-                }
-            )->get();
-        return json_encode($value);
-    }
-
-    /**
-     * Muestra a los ambientes por dia para las peticiones fetch.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function showTodo($ambiente, $materia, $estado)
     {
         $value = Horario::with(
@@ -166,35 +117,19 @@ class AmbienteController extends Controller
             )->whereHas(
             'horario_relacion_dahm.dahm_relacion_ambiente', 
                 function ($query) use ($ambiente, $estado){
-                    $query->where('ambiente.NOMBRE', $ambiente);
-                    if($estado != ""){
+                    if($ambiente != " "){
+                        $query->where('ambiente.NOMBRE', $ambiente);
+                    }
+                    if($estado != " "){
                         $query->where('ambiente.ESTADO', $estado);
                     }
                 }
             )->whereHas(
                 'horario_relacion_dahm.dahm_relacion_materia',
                 function ($query) use ($materia){
-                    $query->where('materia.NOMBRE', $materia);
-                }
-            )->get();
-        return json_encode($value);
-    }
-
-    /**
-     * Muestra a los ambientes por estado para las peticiones fetch.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function showEstado($estado)
-    {
-        $value = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente',
-            'horario_relacion_dahm.dahm_relacion_materia'
-            )->whereHas(
-            'horario_relacion_dahm.dahm_relacion_ambiente', 
-                function ($query) use ($estado){
-                    $query->where('ambiente.ESTADO', $estado);
+                    if($materia != " "){
+                        $query->where('materia.NOMBRE', $materia);
+                    }
                 }
             )->get();
         return json_encode($value);

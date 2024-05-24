@@ -192,41 +192,25 @@ class SolicitudController extends Controller
         // }
      }
      
-     public function docente_datos(Request $request)
-     {
-        // $solicitudess = [
-        //     (object) ['id' => 1, 'aula' => '691A', 'horario' => '15:45 PM - 16:15 PM', 'fecha' => '2024-02-16'],
-        //     (object) ['id' => 2, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-02-16'],
-        //     (object) ['id' => 3, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-03-16'],
-        //     (object) ['id' => 4, 'aula' => '691C', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-03-16'],
-        //     (object) ['id' => 5, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
-        //     (object) ['id' => 6, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
-        //     (object) ['id' => 7, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
-        //     (object) ['id' => 8, 'aula' => '69B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
-        //     (object) ['id' => 9, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-04-20'],
-        //     (object) ['id' => 10, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
-        //     (object) ['id' => 11, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
-        //     (object) ['id' => 12, 'aula' => '91B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
-        //     (object) ['id' => 13, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-17'],
-        //     (object) ['id' => 14, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
-        //     (object) ['id' => 15, 'aula' => '691B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
-        //     (object) ['id' => 16, 'aula' => '61B', 'horario' => '16:30 PM - 17:00 PM', 'fecha' => '2024-05-20'],
-        // ];
-    
-    
-       
-         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
- 
-         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
-         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-                                     ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-                                     ->get();
-         // Construir la consulta base
-         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
-         ->where('estado', 'Reservado')
-         ->get();
-         $materiasAsociadas = [];
-         foreach ($relaciones as $relacion) {
+    //Se debe realizar dos uno en el que se sepa que es admin y otro para docente
+    /**
+     * @param Request debe ser el id o el nombre del docente
+     * @return response mostrar los datos del docente en el registro
+     */
+    public function docente_datos(Request $request)
+    { 
+        $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
+
+        // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
+        $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
+                                    ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
+                                    ->get();
+        // Construir la consulta base
+        $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
+                                    ->where('estado', 'Reservado')
+                                    ->get();
+        $materiasAsociadas = [];
+        foreach ($relaciones as $relacion) {
             // Obtener la colección de materias asociadas a través de la relación
             // Iterar sobre las materias para obtener sus nombres
             $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
@@ -239,43 +223,55 @@ class SolicitudController extends Controller
     }
 
     /**
-     * Muestra una solicitud por su estado
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function showporEstado($estado)
-    {
-        $solicitudes = Solicitud::with(
-                        'solicitud_relacion_ambiente'
-                       )->where('ESTADO', $estado)->orderBy('FECHA_RE')->get();
-        return $solicitudes;
-    }
-
-    /**
-     * Muestra las solicitudes por su modo
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function showporModo($modo)
-    {
-        $solicitudes = Solicitud::with(
-                        'solicitud_relacion_ambiente'
-                       )->where('PRIORIDAD', $modo)->orderBy('FECHA_RE')->get();
-        return $solicitudes;
-    }
-
-    /**
      * Muestra todas las solicitudes con un tipo por su materia, modo y estado
+     * @param Materia el nombre de la materia a buscar
+     * @param Modo el modo en el que se encuentra la solicitud
+     * @param Estado el estado en que se encuentra la solicitud
      * @return \Illuminate\Http\JsonResponse
      */
     public function showTodo($materia, $modo, $estado)
     {
         $buscador =  new EncontrarTodo();
+        $modo = strtoupper($modo);
         $solicitudes = Solicitud::with(
                         'solicitud_relacion_ambiente'
-                       )->where('ID_MATERIA', $buscador->getIdMateria($materia)
-                       )->where('ESTADO', $estado
-                       )->where('PRIORIDAD', $modo)->orderBy('FECHA_RE')->get();
+                        )->whereHas(
+                            'solicitud_relacion_ambiente',
+                            function ($query) use ($materia, $modo, $estado, $buscador){
+                                $query->where('ID_MATERIA', $buscador->getIdMateria($materia));
+                                $query->where('PRIORIDAD', 'LIKE', "%$modo%");
+                                $query->where('ESTADO', $estado);
+                            }
+                        )->orderBy('FECHA_RE')->get();
         return $solicitudes;
     }
+
+    // /**
+    //  * Update the specified resource in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @param  \App\Models\Admin\Solicitud  $solicitud
+    //  * !!!!!!!!se debe encontrar la solicitud por el id es un error 
+    //  * !!!!!!!!de seguridad mandar toda la solicitud al servidor es mucha carga
+    //  * !!!!!!!!para el servidor en que mierda piensas >:v
+    //  * @return \Illuminate\Http\JsonResponse
+    //  */
+    // public function update(Request $request, Solicitud $solicitud)
+    // {
+    //     $request->validate([
+    //         'nombre' => 'required|string',
+    //         'materia' => 'required|string',
+    //         'grupo' => 'required|string',
+    //         'cantidad_estudiantes' => 'required|integer',
+    //         'motivo' => 'required|string',
+    //         'modo' => 'required|string',
+    //         'razon' => 'nullable|string',
+    //     ]);
+
+    //     $solicitud->update($request->all());
+
+    //     return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
+    // }
 
     /**
      * Update the specified resource in storage.
@@ -287,19 +283,14 @@ class SolicitudController extends Controller
      * !!!!!!!!para el servidor en que mierda piensas >:v
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Solicitud $solicitud)
+    public function update(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string',
-            'materia' => 'required|string',
-            'grupo' => 'required|string',
-            'cantidad_estudiantes' => 'required|integer',
-            'motivo' => 'required|string',
-            'modo' => 'required|string',
-            'razon' => 'nullable|string',
+            'ID_SOLICITUD' => 'required|string',
+            'ESTADO' => 'required|string'
         ]);
 
-        $solicitud->update($request->all());
+        $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICUTD)->update('ESTADO', $request->ESTADO);
 
         return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
     }

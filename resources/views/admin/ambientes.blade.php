@@ -17,18 +17,6 @@
             <input class="form-control" type="text" name="materia" placeholder="Buscar materia">
             <p id="messageErrorMateria" style="display: none; color: red">*No se encontro la materia</p>
         </div>
-        <div class="col-md-2">
-            <label class="form-label" for="dia">Dia</label>
-            <select class="form-select" name="dia">
-                <option value="TODOS">Todos los dias</option>
-                <option value="LUNES">Lunes</option>
-                <option value="MARTES">Martes</option>
-                <option value="MIERCOLES">Miercoles</option>
-                <option value="JUEVES">Jueves</option>
-                <option value="VIERNES">Viernes</option>
-                <option value="SABADO">Sabado</option>
-            </select>
-        </div>
         <div class="col-md-2" id="containerAmbiente">
             <label class="form-label" for="ambiente">Ambiente</label>
             <input class="form-control" type="text" name="ambiente" placeholder="Buscar ambiente">
@@ -183,40 +171,43 @@
         input_materia = document.querySelector('[name="materia"]').value
         input_ambiente = document.querySelector('[name="ambiente"]').value
 
-        input_dia = document.querySelector('[name="dia"]')
-        dia_select = input_dia.options[input_dia.selectedIndex].value
-
         input_libres_ocupados = document.querySelector('[name="blockfree"]')
         blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
 
-        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/ambientes'
+        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/ambientestodos'
         //Agregar combinacion de todos los dias y todos los estados del ambiente
-        if(input_materia == "" && input_ambiente != "" && input_dia != "" && input_libres_ocupados != ""){
-            //Solo con el input materia vacio
-            cadena_fetch += `/${input_ambiente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de ambiente', cadena_fetch)
-        }else if(input_materia != "" && input_ambiente == "" && input_dia != "" && input_libres_ocupados != ""){
-            //Solo con el input ambiente vacio
-            cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de materia', cadena_fetch)
-        }else if(input_materia == "" && input_ambiente != "" && input_dia == "" && input_libres_ocupados != ""){
-            //Con el input materia y dia vacios
-        }else if(input_materia != "" && input_ambiente == "" && input_dia == "" && input_libres_ocupados != ""){
-            //Con el input ambiente y dia vacio
-            cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de materia', cadena_fetch)
-        }else if(input_materia == "" && input_ambiente == "" && input_dia == "" && input_libres_ocupados != ""){
-            //Con el input materia, ambiente y dia vacios
-            cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de todo', cadena_fetch)
-        }else if(input_materia == "" && input_ambiente == "" && input_dia != "" && input_libres_ocupados == ""){
-            //Con el input materia, ambiente y libres vacios
-            cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de materia', cadena_fetch)
-        }else if(input_materia != "" && input_ambiente != "" && input_dia != "" && input_libres_ocupados != ""){
-            //Con trodos los input llenos
-            cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de todo', cadena_fetch)
+        if(input_ambiente == "" && input_materia == "" && blockfree_select == ""){
+            //Cadena para todos los datos sin filtros
+            cadena_fetch += `sin/ / /%20`
+            console.log('Cadena peticion fetch: ', cadena_fetch)
+        }else if(input_ambiente != "" && input_materia == "" && blockfree_select == ""){
+            //Cadena para lo datos solo por filtro de nombre de ambiente
+            cadena_fetch += `/${input_ambiente}/ / `
+            console.log('Cadena peticion fetch: ', cadena_fetch)
+        }else if(input_ambiente == "" && input_materia != "" && blockfree_select == ""){
+            //Cadena para los datos solo por filtro de nombre de materia
+            cadena_fetch += `/ /${input_materia}/ `
+            console.log('Cadena peticion fetch: ', cadena_fetch)
+        }else if(input_ambiente == "" && input_materia == "" && blockfree_select != ""){
+            //Cadena para los datos solo por filtro de seleccion de ambientes libres u ocupados
+            cadena_fetch += `/ / /${blockfree_select}`
+            console.log('Cadena peticion fetch: ', cadena_fetch)
+        }else if(input_ambiente != "" && input_materia != "" && blockfree_select == ""){
+            //Cadena para filtro de ambientes nombre de  materia y nombre de ambiente pero para todos los estados del ambiente
+            cadena_fetch += `/${input_ambiente}/${input_materia}/ `
+            console.log('Cadena peticion fetch: ', cadena_fetch)
+        }else if(input_ambiente == "" && input_materia != "" && blockfree_select != ""){
+            //Cadena para el filtro de ambientes por nombres de la materia y estado del ambiente
+            cadena_fetch += `/ /${input_materia}/${blockfree_select}`
+            console.log('Cadena peticion fetch: ', cadena_fetch)
+        }else if(input_ambiente != "" && input_materia == "" && blockfree_select != ""){
+            //Cadena para el filtro de ambientes por su nombre de ambiente y estado del mismo
+            cadena_fetch += `/${input_ambiente}/ /${blockfree_select}`
+            console.log('Cadena peticion fetch: ', cadena_fetch)
+        }else if(input_ambiente != "" && input_materia != "" && blockfree_select != ""){
+            //Cadena para el filtro de ambientes cuando se tenga selecionado el estado y tambien se ingrese el nombre dek ambientes y de la materia
+            cadena_fetch += `/${input_ambiente}/${input_materia}/${blockfree_select}`
+            console.log('Cadena peticion fetch: ', cadena_fetch)
         }
 
         fetch(
