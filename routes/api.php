@@ -29,14 +29,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(AmbienteController::class)->group(
     function(){
         Route::get('/fetch/ambientes', 'indexList');
-        Route::get('/fetch/ambientes/{ambiente}', 'showAmbiente');
-        Route::get('/fetch/ambientes/{ambiente}/{estado}', 'showAmbiente');
-        Route::get('/fetch/ambientesmateria/{materia}', 'showMateria');
-        Route::get('/fetch/ambientesmateria/{materia}/{estado}', 'showMateria');
-        Route::get('/fetch/ambientestodo/{ambiente}/{materia}', 'showTodo');
-        Route::get('/fetch/ambientestodo/{ambiente}/{materia}/{estado}', 'showTodo');
-        Route::get('/fetch/ambientestodosin/{estado}', 'showEstado');
-        Route::get('/fetch/ambientes/{id_ambiente}', 'showId');
+        Route::get('/fetch/ambientestodos/{ambiente}/{materia}/{estado}', 'showTodo');
+        Route::get('/fetch/ambientestodossin/{ambiente}/{materia}/{estado}', 'showEstado');
+        //Route::get('/fetch/ambientes/{id_ambiente}', 'showId');
         //Route::post('/ambientes/store', 'store');
         //Route::post('/putambiente', 'show');
     }
@@ -55,13 +50,8 @@ Route::controller(HorarioController::class)->group(
         Route::get('/fetch/horarios/libres/{ambiente}', 'indexList');
         Route::get('/fetch/horarios', 'indexFetch');
         Route::get('/fetch/horarios/{ambiente}', 'show');
-        Route::get('/fetch/horarios/{docente}', 'showDocente');
-        Route::get('/fetch/horarios/{docente}/{dia}', 'showDocente');
-        Route::get('/fetch/horarios/{docente}/{estado}', 'showDocente');
-        Route::get('/fetch/horariostodosin/{dia}', 'showSin');
-        Route::get('/fetch/horariostodosin/{estado}', 'showSin');
-        Route::get('/fetch/horariostodosin/{dia}/{estado}', 'showSin');
-        Route::get('/fetch/horariostodo/{docente}/{dia}/{estado}', 'showTodo');
+        Route::get('/fetch/horariostodos/{docente}/{dia}/{estado}', 'showTodo');
+        Route::get('/fetch/horariostodossin/{docente}/{dia}/{estado}', 'showTodo');
         Route::post('/horarios/store', 'store');
         // Route::post('/putambiente', 'show');
     }

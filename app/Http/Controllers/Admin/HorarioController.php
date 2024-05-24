@@ -146,37 +146,6 @@ class HorarioController extends Controller
     }
 
     /**
-     * Muestra condicionalmente los horarios por docente, dia o estado
-     *
-     * @param  string ambiente
-     * @return \Illuminate\Http\Response
-     */
-    public function showDocente($docente, $dia, $estado)
-    {
-        $horarios = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente',
-            'horario_relacion_dahm.dahm_relacion_materia',
-            'horario_relacion_dahm.dahm_relacion_docente'
-            )->whereHas(
-                'horario_relacion_dahm.dahm_relacion_ambiente',
-                function ($query) use ($dia, $estado) {
-                    if($dia != ""){
-                        $query->where('DIA', $dia);
-                    }
-                    if($estado){
-                        $query->where('ambiente.ESTADO', $estado);
-                    }
-                }
-            )->whereHas(
-                'horario_relacion_dahm.dahm_relacion_docente',
-                function ($query) use ($docente){
-                    $query->where('docente.NOMBRE', $docente);
-                }
-            )->orderBy('INICIO')->get();
-        return json_encode($horarios);
-    }
-
-    /**
      * Muestra los horarios con todos los parametros
      *
      * @param  string ambiente
@@ -191,38 +160,18 @@ class HorarioController extends Controller
             )->whereHas(
                 'horario_relacion_dahm.dahm_relacion_ambiente',
                 function ($query) use ($dia, $estado) {
-                    $query->where('DIA', $dia);
-                    $query->where('ambiente.ESTADO', $estado);
+                    if($dia != " "){
+                        $query->where('DIA', $dia);
+                    }
+                    if($estado != " "){
+                        $query->where('ambiente.ESTADO', $estado);
+                    }
                 }
             )->whereHas(
                 'horario_relacion_dahm.dahm_relacion_docente',
                 function ($query) use ($docente){
-                    $query->where('docente.NOMBRE', $docente);
-                }
-            )->orderBy('INICIO')->get();
-        return json_encode($horarios);
-    }
-    
-    /**
-     * Devuelve los horarios condicionalmente por dia o estado
-     *
-     * @param  string ambiente
-     * @return \Illuminate\Http\Response
-     */
-    public function showSin($dia, $estado)
-    {
-        $horarios = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente',
-            'horario_relacion_dahm.dahm_relacion_materia',
-            'horario_relacion_dahm.dahm_relacion_docente'
-            )->whereHas(
-                'horario_relacion_dahm.dahm_relacion_ambiente',
-                function ($query) use ($dia, $estado) {
-                    if($dia != ""){
-                        $query->where('DIA', $dia);
-                    }
-                    if($estado){
-                        $query->where('ambiente.ESTADO', $estado);
+                    if($docente != " "){
+                        $query->where('docente.NOMBRE', $docente);
                     }
                 }
             )->orderBy('INICIO')->get();
@@ -233,7 +182,7 @@ class HorarioController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  uuid  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)

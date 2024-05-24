@@ -39,8 +39,8 @@ Auth::routes();
 
 Route::prefix('admin')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
-    // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
-    // Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
+    Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
+    Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     /**
      * Rutas de los ambientes
      */
@@ -78,7 +78,7 @@ Route::prefix('docente')->group(function () {
     //Route::get('/solicitudes/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.solicitud.filtrar.urgente');
     Route::get('/solicitudes/listar', [ReservasController::class, 'datos'])->name('docente.solicitud.filtrar.datos'); //si da
     /**
-     * Se debe unir todas estas en una sola url y mandar por put o get
+     * Se debe unir todas estas en una sola url y mandar por get
      */
     Route::get('/solicitudes/listar/cancelar', [ReservasController::class, 'datos_cancelar'])->name('docente.solicitud.filtrar.datos_cancelar'); //si da
     Route::get('/solicitudes/listar/pendiente', [ReservasController::class, 'datos_solicitando'])->name('docente.solicitud.filtrar.datos_solicitando'); //si da

@@ -15,7 +15,8 @@
         <div class="col-md-2">
             <label class="form-label" for="dia">Dia</label>
             <select class="form-select" name="dia">
-                <option value="LUNES" selected>Lunes</option>
+                <option value="" selected>Todos los dias</option>
+                <option value="LUNES">Lunes</option>
                 <option value="MARTES">Martes</option>
                 <option value="MIERCOLES">Miercoles</option>
                 <option value="JUEVES">Jueves</option>
@@ -31,8 +32,9 @@
         </div>
         <div class="col-md-2">
             <select class="form-select" name="blockfree">
+                <option value="" selected>Todos los horarios</option>
                 <option value="NO HABILITADO">Horarios bloqueados</option>
-                <option value="HABILITADO" selected>Horarios libres</option>
+                <option value="HABILITADO">Horarios libres</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -168,23 +170,44 @@
         input_libres_ocupados = document.querySelector('[name="blockfree"]')
         blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
 
-        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/horarios'
+        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/horariostodos'
 
-        if(input_docente != "" && input_dia != "" ){
-            cadena_fetch += `docente/${input_docente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de docente', cadena_fetch)
-        }else if(input_docente == "" && input_dia != ""){
-            cadena_fetch += `todosin/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+        if(input_docente == "" && dia_select == "" && blockfree_select == ""){
+            //Cadena sin filtros
+            cadena_fetch += `sin/ / /%20`
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        }else if(input_docente != "" && dia_select == "" && blockfree_select == ""){
+            //Cadena para el filtro de los horarios por el nombre de doncente
+            cadena_fetch += `/${input_docente}/ / `
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        }else if(input_docente == "" && dia_select != "" && blockfree_select == ""){
+            //Cadena para el filtro de los horarios por el dia
+            cadena_fetch += `/ /${dia_select}/ `
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        }else if(input_docente == "" && dia_select == "" && blockfree_select != ""){
+            //Cadena para el filtro de los horarios por el estado del ambiente
+            cadena_fetch += `/ / /${blockfree_select}`
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        }else if(input_docente != "" && dia_select != "" && blockfree_select == ""){
+            //Cadena para el filtro de los horarios por el nombre del docente y el dia seleccionado
+            cadena_fetch += `/${input_docente}/${dia_select}/ `
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        }else if(input_docente == "" && dia_select != "" && blockfree_select != ""){
+            //Cadena para el filtro de los horarios por el dia y estado seleccionado
+            cadena_fetch += `/ /${dia_select}/${blockfree_select}`
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        }else if(input_docente != "" && dia_select == "" && blockfree_select != ""){
+            //Cadena para el filtro de los horarios por el nombre del docente y el estado del ambiente
+            cadena_fetch += `/${input_docente}/ /${blockfree_select}`
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        }else if(input_docente != "" && dia_select != "" && blockfree_select != ""){
+            //Cadena para el filtro de los horarios por el dia y estado seleccionado y el nombre del docente
+            cadena_fetch += `/${input_docente}/${dia_select}/${blockfree_select}`
+            console.log("Cadena de la peticion fetch: ", cadena_fetch)
         }
 
         fetch(
-            cadena_fetch,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
+            cadena_fetch
         ).then(
             response => response.json()
         ).then(
