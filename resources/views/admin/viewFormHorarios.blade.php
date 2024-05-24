@@ -151,12 +151,7 @@
         
         if(text){
             //Agregar horarios ocupados en la tabla de informacion
-            fetch('http://127.0.0.1:8000/api/fetch/horarios/'+text,{
-                method:'PUT',
-                headers:{
-                    'Content-Type' : 'application/json'
-                }
-            }).then(
+            fetch('http://127.0.0.1:8000/api/fetch/horarios/'+text).then(
                 response => response.json()
             ).then(
                 data => {
@@ -180,12 +175,7 @@
                 }
             )
             //Agregar horarios libres en la tabla de informacion
-            fetch('http://127.0.0.1:8000/api/fetch/horarios/libres/'+text,{
-                method:'PUT',
-                headers:{
-                    'Content-Type' : 'application/json'
-                }
-            }).then(
+            fetch('http://127.0.0.1:8000/api/fetch/horarios/libres/'+text).then(
                 response => response.json()
             ).then(
                 data => {
@@ -301,6 +291,19 @@
         tabla.removeChild(divLibre)
     }
 
+    function limpiar(){
+        const form = document.getElementById('formHorario')
+        const div = document.getElementById("container-ta")
+        const divs = div.querySelectorAll('[class="col-md-4"]')
+        divs.forEach((element, index) => {
+            if(index > 0){
+                element.remove()
+            }
+        });
+        i = 1
+        form.reset()
+    }
+
     function obtainValues(){
         event.preventDefault()
         let bandera = true
@@ -376,6 +379,16 @@
                 response => {
                     if (!response.ok) {
                         throw new Error('La respuesta al servidor no es correcta')
+                    }else{
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Ambiente creado exitosamente!',
+                            showConfirmButton: false,
+                            timer: 1500 // Cerrar automáticamente después de 1.5 segundos
+                        }).then(() => {
+                            // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
+                            limpiar();
+                        })
                     }
                     return response.json()
                 }

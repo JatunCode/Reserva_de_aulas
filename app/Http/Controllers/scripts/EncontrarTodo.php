@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Ambiente;
 use App\Models\Admin\Docente;
 use App\Models\Admin\Materia;
-use Illuminate\Http\Request;
 
 class EncontrarTodo extends Controller
 {
@@ -35,6 +34,16 @@ class EncontrarTodo extends Controller
      */
     public function getIdMateria($materia){
         return Materia::where('NOMBRE', $materia)->first()->ID_MATERIA;
+    }
+
+    /**
+     * Encuentra el nombre de la materia segun el id de la materia
+     * else
+     * Devolvera nada
+     * Todos en formato json
+     */
+    public function getNombreMateria($materia){
+        return Materia::where('ID_MATERIA', $materia)->first()->NOMBRE;
     }
 
     /**
@@ -67,9 +76,11 @@ class EncontrarTodo extends Controller
         $iterables = json_decode($json);
         $list = [];
         foreach($iterables as $iterable){
-            $list[] = Docente::where('ID_DOCENTE', $iterable)->first()->NOMBRE;
+            $list[] = [
+               "Nombre_docente" => Docente::where('ID_DOCENTE', $iterable)->first()->NOMBRE
+            ];
         }
-        return json_encode($list);
+        return $list;
     }
 
     /**
@@ -78,7 +89,7 @@ class EncontrarTodo extends Controller
      * Devolvera solo el primer nombre
      * Todos en formato json
      */
-    public function getNombreDocentesporNombre($json){
+    public function getIdDocentesporNombre($json){
         $iterables = json_decode($json);
         $list = [];
         foreach($iterables as $iterable){

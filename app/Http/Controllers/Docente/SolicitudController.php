@@ -94,102 +94,108 @@ class SolicitudController extends Controller
 
      public function store(Request $request)
      {
-        $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d';
+        // $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d';
         $buscardor = new EncontrarTodo();
          // Validar los datos del formulario
-        $request->validate([
-            'nombre' => 'required|string',
-            'nombre1' => 'nullable|string',
-            'nombre2' => 'nullable|string',
-            'nombre3' => 'nullable|string',
-            'nombre4' => 'nullable|string',
-            'nombre5' => 'nullable|string',
-            'materia' => 'required|string',
-            'grupo' => 'required|string',
-            'cantidad_estudiantes' => 'required|integer',
-            'motivo' => 'required|string',
-            'modo' => 'required|string',
-            'aula' => 'required|string',
-            'fecha' => 'required|date',
-            'horario' => 'required|string',
+        // $request->validate([
+        //     'nombre' => 'required|string',
+        //     'nombre1' => 'nullable|string',
+        //     'nombre2' => 'nullable|string',
+        //     'nombre3' => 'nullable|string',
+        //     'nombre4' => 'nullable|string',
+        //     'nombre5' => 'nullable|string',
+        //     'materia' => 'required|string',
+        //     'grupo' => 'required|string',
+        //     'cantidad_estudiantes' => 'required|integer',
+        //     'motivo' => 'required|string',
+        //     'modo' => 'required|string',
+        //     'aula' => 'required|string',
+        //     'fecha' => 'required|date',
+        //     'horario' => 'required|string',
 
-        ]);
+        // ]);
         $uuid = Uuid::uuid4();
         
-        try {
-            // Crear una nueva instancia de la solicitud
-            
-            $solicitud = new Solicitudes;
-            $solicitud->nombre = $request->input('nombre');
-            $solicitud->nombre1 = $request->input('nombre1');
-            $solicitud->nombre2 = $request->input('nombre2');
-            $solicitud->nombre3 = $request->input('nombre3');
-            $solicitud->nombre4 = $request->input('nombre4');
-            $solicitud->nombre5 = $request->input('nombre5');
-            $solicitud->materia = $request->input('materia');
-            $solicitud->grupo = $request->input('grupo');
-            $solicitud->cantidad_estudiantes = $request->input('cantidad_estudiantes');
-            $solicitud->motivo = $request->input('motivo');
-            $solicitud->modo = $request->input('modo');
-            $solicitud->razon = $request->input('razon');
-            $solicitud->aula = $request->input('aula');
-            $solicitud->horario = $request->input('horario');
-            $solicitud->fecha = $request->input('fecha'); // Asegúrate de obtener correctamente el valor de 'fecha'
-            $solicitud->estado = $request->input('fecha');
-            $solicitud->estado = 'Solicitando';
-            $solicitud->ID_Docente = $idDocente;
-            // Guardar la solicitud en la base de datos
-            $solicitud->save();
-
-            // Redirigir con un mensaje de éxito
-            return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
-        } catch (\Exception $e) {
-            // Capturar cualquier excepción que pueda ocurrir durante el proceso de guardado
-            // Puedes registrar el error o devolver una respuesta de error personalizada
-            // Por ejemplo:
-            return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
-        }
-
         // try {
-        //     $request->validate([
-        //         'NOMBRES' => ['required', 
-        //             function($attribute, $value, $fail){
-        //                 $decoder = json_decode($attribute, true);
-        //                 if(!is_array($decoder) || count($decoder) < 1 || count($decoder) > 4){
-        //                     $fail($attribute.' debe contener un docente al menos.');
-        //                 }
-        //             }],
-        //         'CANTIDAD' => 'required|integer',
-        //         'FECHA_RESERVA' => 'required|date_format:Y-m-d H:i:s',
-        //         'HORA_INICIO' => 'required|date_format:H:i:s',
-        //         'HORA_FIN' => 'required|date_format:H:i:s',
-        //         'PRIORIDAD' => 'required',
-        //         'MOTIVO' => 'required|string',
-        //         'MATERIA' => 'required|string',
-        //         'AMBIENTE' => 'required|string'
-        //     ]);
+        //     // Crear una nueva instancia de la solicitud
+            
+        //     $solicitud = new Solicitudes;
+        //     $solicitud->nombre = $request->input('nombre');
+        //     $solicitud->nombre1 = $request->input('nombre1');
+        //     $solicitud->nombre2 = $request->input('nombre2');
+        //     $solicitud->nombre3 = $request->input('nombre3');
+        //     $solicitud->nombre4 = $request->input('nombre4');
+        //     $solicitud->nombre5 = $request->input('nombre5');
+        //     $solicitud->materia = $request->input('materia');
+        //     $solicitud->grupo = $request->input('grupo');
+        //     $solicitud->cantidad_estudiantes = $request->input('cantidad_estudiantes');
+        //     $solicitud->motivo = $request->input('motivo');
+        //     $solicitud->modo = $request->input('modo');
+        //     $solicitud->razon = $request->input('razon');
+        //     $solicitud->aula = $request->input('aula');
+        //     $solicitud->horario = $request->input('horario');
+        //     $solicitud->fecha = $request->input('fecha'); // Asegúrate de obtener correctamente el valor de 'fecha'
+        //     $solicitud->estado = $request->input('fecha');
+        //     $solicitud->estado = 'Solicitando';
+        //     $solicitud->ID_Docente = $idDocente;
+        //     // Guardar la solicitud en la base de datos
+        //     $solicitud->save();
 
-        //     $idsygruposDocente = $buscardor->getGruposyIdsDocentes($request->NOMBRES);
-        //     Solicitud::create([
-        //         'ID_SOLICITUD' => $uuid->toString(),
-        //         'ID_DOCENTES' => $idsygruposDocente[0],
-        //         'CANTIDAD_EST' => $request->CANTIDAD,
-        //         'FECHA_RE' => $request->FECHA_RESERVA,
-        //         'HORAINI' => $request->HORA_INICIO,
-        //         'HORAFIN' => $request->HORA_FIN,
-        //         'FECHAHORA_SOLI' => Date::now(),
-        //         'MOTIVO' => $request->MOTIVO,
-        //         'PRIORIDAD' => json_encode($request->PRIORIDAD),
-        //         'ID_MATERIA' => $buscardor->getIdMateria($request->MATERIA),
-        //         'GRUPOS' => $idsygruposDocente[1],
-        //         'ID_AMBIENTE' => $buscardor->getIdAmbiente($request->AMBIENTE),
-        //         'ESTADO' => 'PENDIENTE'
-        //     ]);
-        //     return response()->json(["message" => "Horario creado exitosamente"], 200);
+        //     // Redirigir con un mensaje de éxito
+        //     return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
         // } catch (\Exception $e) {
-        //     //return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
-        //     return response()->json(["message" => "Hubo un error en el servidor: \n $e"], 500);
+        //     // Capturar cualquier excepción que pueda ocurrir durante el proceso de guardado
+        //     // Puedes registrar el error o devolver una respuesta de error personalizada
+        //     // Por ejemplo:
+        //     return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
         // }
+
+        try {
+            $request->validate([
+                'NOMBRES' => ['required', 
+                    function($attribute, $value, $fail){
+                        $decoder = json_decode($value);
+                        if(!is_array($decoder) || count($decoder) < 1 || count($decoder) > 4){
+                            $fail($attribute.' debe contener al menos uno a cuatro docentes.');
+                        }
+                    }],
+                'CANTIDAD' => 'required|integer',
+                'FECHA_RESERVA' => 'required|date_format:Y-m-d H:i:s',
+                'HORA_INICIO' => 'required|date_format:H:i:s',
+                'HORA_FIN' => 'required|date_format:H:i:s',
+                'PRIORIDAD' => ['required', 
+                    function($attribute, $value, $fail){
+                        $decoder = json_decode($value, true);
+                        if(!is_array($decoder) || count($decoder) < 1 || count($decoder) > 1){
+                            $fail($attribute.' Nos hackearon señor xd.');
+                        }
+                    }],
+                'MOTIVO' => 'required|string',
+                'MATERIA' => 'required|string',
+                'AMBIENTE' => 'required|string'
+            ]);
+
+            $idsygruposDocente = $buscardor->getGruposyIdsDocentes($request->NOMBRES);
+            Solicitud::create([
+                'ID_SOLICITUD' => $uuid->toString(),
+                'ID_DOCENTES' => $idsygruposDocente[0],
+                'CANTIDAD_EST' => $request->CANTIDAD,
+                'FECHA_RE' => $request->FECHA_RESERVA,
+                'HORAINI' => $request->HORA_INICIO,
+                'HORAFIN' => $request->HORA_FIN,
+                'FECHAHORA_SOLI' => Date::now(),
+                'MOTIVO' => $request->MOTIVO,
+                'PRIORIDAD' => json_encode($request->PRIORIDAD),
+                'ID_MATERIA' => $buscardor->getIdMateria($request->MATERIA),
+                'GRUPOS' => $idsygruposDocente[1],
+                'ID_AMBIENTE' => $buscardor->getIdAmbiente($request->AMBIENTE),
+                'ESTADO' => 'PENDIENTE'
+            ]);
+            return response()->json(["message" => "Horario creado exitosamente"], 200);
+        } catch (\Exception $e) {
+            //return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
+            return response()->json(["message" => "Hubo un error en el servidor: $e"], 500);
+        }
      }
      
     //Se debe realizar dos uno en el que se sepa que es admin y otro para docente
@@ -220,6 +226,52 @@ class SolicitudController extends Controller
         }
         
         return view('docente.solicitud.normal', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
+    }
+
+    /**
+     * Muestra todas las solicitudes en estado pendiente para la atencuin de una solicitud
+     * @param Materia el nombre de la materia a buscar
+     * @param Modo el modo en el que se encuentra la solicitud
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showAtencion($materia, $modo)
+    {
+        $buscador =  new EncontrarTodo();
+        $modo = strtoupper($modo);
+        $solicitudes = Solicitud::with(
+                        'solicitud_relacion_ambiente',
+                        'solicitud_relacion_materia'
+                        )->whereHas(
+                            'solicitud_relacion_ambiente',
+                            function ($query) use ($materia, $modo, $buscador){
+                                if($materia != " "){
+                                    $query->where('ID_MATERIA', $buscador->getIdMateria($materia));
+                                }
+                                if($modo != " "){
+                                    $query->where('PRIORIDAD', 'LIKE', "%$modo%");
+                                }
+                            }
+                        )->where('ESTADO', 'PENDIENTE')->orderBy('FECHA_RE')->get();
+        $solicitudes_estructuradas = [];
+        $nombre_docentes = [];
+        foreach($solicitudes as $solicitud){
+            $nombre_docentes = $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s);
+            
+            $solicitudes_estructuradas[] = [
+                'NOMBRE_DOCENTES' => $nombre_docentes,
+                'CANTIDAD' => $solicitud->CANTIDAD_EST,
+                'FECHA_RESERVA' => $solicitud->FECHA_RE,
+                'HORARIO' => $solicitud->HORAINI." - ".$solicitud->HORAFIN,
+                'FECHA_HORASOLI' => $solicitud->FECHAHORA_SOLI,
+                'MOTIVO' => $solicitud->MOTIVO,
+                'MODO' => json_decode($solicitud->PRIORIDAD, true),
+                'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
+                'GRUPOS' => json_decode($solicitud->GRUPOS, true),
+                'AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
+                'ESTADO' => $solicitud->ESTADO
+            ];
+        }
+        return $solicitudes_estructuradas;
     }
 
     /**
@@ -290,7 +342,7 @@ class SolicitudController extends Controller
             'ESTADO' => 'required|string'
         ]);
 
-        $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICUTD)->update('ESTADO', $request->ESTADO);
+        $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICUTD)->update(['ESTADO', $request->ESTADO]);
 
         return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
     }

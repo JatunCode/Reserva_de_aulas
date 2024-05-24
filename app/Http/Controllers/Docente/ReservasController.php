@@ -74,17 +74,13 @@ class ReservasController extends Controller
         ->get();
         $materiasAsociadas = [];
         foreach ($relaciones as $relacion) {
-    // Obtener la colección de materias asociadas a través de la relación
-    $materias = $relacion->dahm_relacion_materia;
-    // Iterar sobre las materias para obtener sus nombres
-    foreach ($materias as $materia) {
-        // Obtener el nombre de la materia y agregarlo al array si no existe aún
-        $nombreMateria = $materia->NOMBRE;
-        if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-            $materiasAsociadas[] = $nombreMateria;
+            // Obtener la colección de materias asociadas a través de la relación
+            // Iterar sobre las materias para obtener sus nombres
+            $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
+            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                $materiasAsociadas[] = $nombreMateria;
+            }
         }
-    }
-}
            // Devolver las solicitudes como respuesta en formato JSON
         return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
     }
@@ -102,17 +98,12 @@ class ReservasController extends Controller
         ->get();
         $materiasAsociadas = [];
         foreach ($relaciones as $relacion) {
-    // Obtener la colección de materias asociadas a través de la relación
-    $materias = $relacion->dahm_relacion_materia;
-    // Iterar sobre las materias para obtener sus nombres
-    foreach ($materias as $materia) {
-        // Obtener el nombre de la materia y agregarlo al array si no existe aún
-        $nombreMateria = $materia->NOMBRE;
-        if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-            $materiasAsociadas[] = $nombreMateria;
+            // Obtener la colección de materias asociadas a través de la relación
+            $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
+            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                $materiasAsociadas[] = $nombreMateria;
+            }
         }
-    }
-}
            // Devolver las solicitudes como respuesta en formato JSON
         return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
     }
@@ -126,21 +117,16 @@ class ReservasController extends Controller
                                     ->get();
         // Construir la consulta base
         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
-        ->where('estado', 'Reservado')
-        ->get();
+                ->where('estado', 'Reservado')
+                ->get();
         $materiasAsociadas = [];
         foreach ($relaciones as $relacion) {
-    // Obtener la colección de materias asociadas a través de la relación
-    $materias = $relacion->dahm_relacion_materia;
-    // Iterar sobre las materias para obtener sus nombres
-    foreach ($materias as $materia) {
-        // Obtener el nombre de la materia y agregarlo al array si no existe aún
-        $nombreMateria = $materia->NOMBRE;
-        if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-            $materiasAsociadas[] = $nombreMateria;
+            // Obtener la colección de materias asociadas a través de la relación
+            $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
+            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                $materiasAsociadas[] = $nombreMateria;
+            }
         }
-    }
-}
            // Devolver las solicitudes como respuesta en formato JSON
         return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
     }
@@ -156,18 +142,16 @@ class ReservasController extends Controller
         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)->get();
         $materiasAsociadas = [];
         foreach ($relaciones as $relacion) {
-    // Obtener la colección de materias asociadas a través de la relación
-    $materias = $relacion->dahm_relacion_materia;
-    // Iterar sobre las materias para obtener sus nombres
-    foreach ($materias as $materia) {
-        // Obtener el nombre de la materia y agregarlo al array si no existe aún
-        $nombreMateria = $materia->NOMBRE;
-        if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-            $materiasAsociadas[] = $nombreMateria;
+            // Iterar sobre las materias para obtener sus nombres
+            foreach ($relaciones as $relacion) {
+                // Obtener la colección de materias asociadas a través de la relación
+                $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
+                if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+                    $materiasAsociadas[] = $nombreMateria;
+                }
+            }
         }
-    }
-}
-        
+                
 
         
 
