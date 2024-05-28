@@ -313,93 +313,60 @@ return [
            'text' => 'Inicio',
            'route'  => 'docente.inicio',
            'icon' => 'fa fa-home',
-        //    'can'  => ['admin'],
+           'can'  => 'docente',
         ],
-       // [
-         //   'text'       => 'inicio',
-         //   'icon_color' => 'fas fa fa-home',
-         //   'route'        => 'docente.solicitudes.disponibles',
-       // ],
-
-
-
-        // [
-        //     'text'    => 'multilevel',
-        //     'icon'    => 'fas fa-fw fa-share',
-        //     'submenu' => [
-        //         [
-        //             'text' => 'level_one',
-        //             'url'  => '#',
-        //         ],
-        //         [
-        //             'text'    => 'level_one',
-        //             'url'     => '#',
-        //             'submenu' => [
-        //                 [
-        //                     'text' => 'level_two',
-        //                     'url'  => '#',
-        //                 ],
-        //                 [
-        //                     'text'    => 'level_two',
-        //                     'url'     => '#',
-        //                     'submenu' => [
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url'  => '#',
-        //                         ],
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url'  => '#',
-        //                             'submenu_icon' => null, // Esto quitará el icono del submenú de nivel_three
-        //                         ],
-        //                     ],
-        //                 ],
-        //             ],
-        //             'icon' => null, // Esto quitará el icono del submenú de level_one
-        //         ],
-        //         [
-        //             'text' => 'level_one',
-        //             'url'  => '#',
-        //         ],
-        //     ],
-
-        // ],
-        ['header' => 'Realizar solicitud'],
+      
+        ['header' => 'Realizar solicitud',
+         'can'    => 'docente',
+        ],
         [
             'text'       => 'Registrar una solicitud',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
             'route'      => ($role != 'Usuario') ? 'admin.solicitud.normal':'docente.solicitud.normal',
+            'can'    => 'docente',
         ],
         
 
-        ['header' => ' Listar'],
+        ['header' => ' Listar' ,
+        'can'    => 'docente',
+        ],
         [
             'text'       => 'Visualizar mis solicitudes',
             'icon'       => 'fas fa-list',
             'icon_color' => 'green',
             'route'      => 'docente.solicitud.filtrar.datos',
+            'can'    => 'docente',
+        
         ],
         [
             'text'       => 'Cancelar Solicitud',
             'icon'       => 'fas fa-solid fa-ban',
             'icon_color' => 'red',
             'route'      => 'docente.solicitud.cancelar',
+            'can'    => 'docente',
+        
         ],
 
-        ['header' => 'Razon no asignacion'],
+        ['header' => 'Razon no asignacion',
+        'can'    => 'admin',
+        ],
         [
             'text'       => 'Razon',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
             'route'      => 'docente.registroRazonDenoAsignacion',
+            'can'    => 'admin',
         ],
-        ['header' => 'Registro de Reservas'],
+        ['header' => 'Registro de Reservas',
+        'can'    => 'admin',
+        ],
         [
             'text'       => 'Reservas',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
             'route'      => 'docente.registroReservas',
+            'can'    => 'admin',
         ],
     ],
 

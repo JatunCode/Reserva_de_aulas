@@ -38,7 +38,7 @@ Route::group(['prefix' => '/'], function () {
 
 Auth::routes();
 
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth','can:admin')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
     Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
@@ -75,7 +75,7 @@ Route::prefix('admin')->group(function () {
 });
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
-Route::prefix('docente')->group(function () {
+Route::prefix('docente')->middleware('auth','can:docente')->group(function () {
     Route::get('/', [CalendarioController::class, 'index'])->name('docente.inicio');
     Route::get('/solicitud/normal/hola', [SolicitudController::class, 'fecha'])->name('docente.solicitud.fecha');
     Route::get('/solicitud/normal/', [SolicitudController::class, 'docente_datos'])->name('docente.solicitud.normal');
