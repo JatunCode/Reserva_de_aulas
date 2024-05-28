@@ -24,7 +24,7 @@
         </div>
         <div class="col-md-3">
             <select class="form-select" name="blockfree">
-                <option value="TODOS">Todos los ambientes</option>
+                <option value="">Todos los ambientes</option>
                 <option value="NO HABILITADO">Ambientes bloqueados</option>
                 <option value="HABILITADO" selected>Ambientes libres</option>
             </select>

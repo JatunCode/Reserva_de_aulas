@@ -234,21 +234,26 @@ class SolicitudController extends Controller
      * @param Modo el modo en el que se encuentra la solicitud
      * @return \Illuminate\Http\JsonResponse
      */
-    public function showAtencion($materia, $modo)
+    public function showAtencion($docente, $materia, $modo)
     {
         $buscador =  new EncontrarTodo();
         $modo = strtoupper($modo);
         $solicitudes = Solicitud::with(
                         'solicitud_relacion_ambiente',
-                        'solicitud_relacion_materia'
+                        'solicitud_relacion_materia',
                         )->whereHas(
                             'solicitud_relacion_ambiente',
-                            function ($query) use ($materia, $modo, $buscador){
+                            function ($query) use ($docente, $materia, $modo, $buscador){
                                 if($materia != " "){
                                     $query->where('ID_MATERIA', $buscador->getIdMateria($materia));
                                 }
                                 if($modo != " "){
                                     $query->where('PRIORIDAD', 'LIKE', "%$modo%");
+                                }
+                                if($docente != " "){
+                                    $query->where(
+                                        'ID_DOCENTE_s', 'LIKE', "%{$buscador->getIdDocenteporNombre($docente)}%"
+                                    );
                                 }
                             }
                         )->where('ESTADO', 'PENDIENTE')->orderBy('FECHA_RE')->get();
@@ -256,13 +261,15 @@ class SolicitudController extends Controller
         $nombre_docentes = [];
         foreach($solicitudes as $solicitud){
             $nombre_docentes = $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s);
+            $data_reservar = date_create($solicitud->FECHA_RE.str_split(" ")[0]);
+            $data_solicitar = date_create($solicitud->FECHAHORA_SOLI.str_split(" ")[0]);
             
             $solicitudes_estructuradas[] = [
                 'NOMBRE_DOCENTES' => $nombre_docentes,
                 'CANTIDAD' => $solicitud->CANTIDAD_EST,
-                'FECHA_RESERVA' => $solicitud->FECHA_RE,
+                'FECHA_RESERVA' => date_format($data_reservar, 'd/m/Y'),
                 'HORARIO' => $solicitud->HORAINI." - ".$solicitud->HORAFIN,
-                'FECHA_HORASOLI' => $solicitud->FECHAHORA_SOLI,
+                'FECHA_HORASOLI' => date_format($data_solicitar, 'd/m/Y'),
                 'MOTIVO' => $solicitud->MOTIVO,
                 'MODO' => json_decode($solicitud->PRIORIDAD, true),
                 'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
