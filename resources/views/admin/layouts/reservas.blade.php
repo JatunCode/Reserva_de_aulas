@@ -3,7 +3,7 @@
 @section('title', 'Ambientes de la facultad')
 
 @section('content_header')
-<h1>Ambientes registrados</h1>
+<h1>Atencion de solicitudes</h1>
 @stop
 
 @section('content')
@@ -14,24 +14,15 @@
     <div class="card-header row">
         <div class="col-md-3" id="containerBusqueda">
             <label class="form-label" for="busqueda">Busqueda</label>
-            <input class="form-control" type="text" name="busqueda">
+            <input class="form-control" type="text" name="busqueda" placeholder="Buscar solicitud por ...">
             <p id="messageErrorBusqueda" style="display: none; color: red">*No se encontro resultados</p>
         </div>
         <div class="col-md-2">
             <label class="form-label" for="modo">Modo</label>
             <select class="form-select" name="modo">
-                <option>Seleccione una opcion</option>
-                <option value="URGENTE">Lunes</option>
-                <option value="NORMAL">Martes</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label" for="estado">Estado</label>
-            <select class="form-select" name="estado">
-                <option>Seleccione una opcion</option>
-                <option value="PENDIENTE">Pendiente</option>
-                <option value="ACEPTADO">Aceptado</option>
-                <option value="CANCELADO">Cancelado</option>
+                <option value=" ">Todos</option>
+                <option value="URGENTE">Urgente</option>
+                <option value="NORMAL">Normal</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -53,16 +44,18 @@
                 </tr>
             </thead>
             <tbody id="tableAmbientes">
-                @foreach($solicituds as $solicitud)
+                @foreach($solis_no_reser as $solicitud)
                     <tr>
-                        <td style="width: 35px">{{ $solicitud->FECHA_RE }}</td>
-                        <td style="width: 35px">{{ $solicitud->AMBIENTE }}</td>
-                        <td style="width: 150px">{{ $solicitud->MATERIA }}</td>
-                        <td style="width: 20px">{{ $solicitud->FECHAHORA_SOLI }}</td>
-                        <td style="width: 20px">{{ $solicitud->HORARIO }}</td>
-                        <td style="width: 40px">{{ $solicitud->MODO }}</td>
-                        <td style="width: 20px">{{ $solicitud->ESTADO }}</td>
-                        <td style="width: 40px"><button button class="btn btn-primary d-inline-block w-7" style="background-color:green">Atender</button></td>
+                        <td style="width: 35px">{{ $solicitud['FECHA_RESERVA'] }}</td>
+                        <td style="width: 35px">{{ $solicitud['AMBIENTE'] }}</td>
+                        <td style="width: 150px">{{ $solicitud['MATERIA'] }}</td>
+                        <td style="width: 20px">{{ $solicitud['FECHA_HORASOLI'] }}</td>
+                        <td style="width: 20px">{{ $solicitud['HORARIO'] }}</td>
+                        <td style="width: 40px">{{ $solicitud['MODO'] }}</td>
+                        <td style="width: 20px">{{ $solicitud['ESTADO'] }}</td>
+                        <td style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+                            data-id="{{ $solicitud['ID'] }}" style="background-color:green" onclick="pressAtention(this)" value="{{$solicitud['ID']}}">Atender</button></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -72,6 +65,8 @@
 </div>
 
 @stop
+
+@include('admin.viewRespondSolicitud')
 
 @section('css')
 <link rel="stylesheet" href="/css/admin/home.css">
@@ -88,147 +83,163 @@
 </script>
 
 <script>
-    ambientes = []
-    materias = []
-    ambientesfiltro = []
+    let razones = []
+    let razonesfiltro = []
+    let soli_aten = null
+    soli_pend = @json($solis_no_reser)
 
-    fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
+    fetch('http://127.0.0.1:8000/api/fetch/razones').then(
         response => response.json()
     ).then(
         data => {
-            ambientes = data
+            razones = data
         }
     ).catch(
         error => {
             console.log("Error encontrado: ", error)
         }
     )
-
-    fetch('http://127.0.0.1:8000/api/fetch/materias').then(
-        response => response.json()
-    ).then(
-        data => {
-            materias = data
-        }
-    ).catch(
-        error => {
-            console.log("Error encontrado: ", error)
-        }
-    )
-
-    document.querySelector('[name="ambiente"]').addEventListener('change', 
-        function(event){
-            let text =  event.target.value
-            const message = document.getElementById("messageErrorAmbiente")
-            const content = document.getElementById("containerAmbiente")
-            const lista = document.createElement('ul')
-            ambientes.forEach(ambiente => {
-                lista.innerHTML += `<li>${ambiente['NOMBRE']}</li>`
+    
+    function pressAtention(button){
+        const id = button.value
+        const canva = document.getElementById('offcanvasRight')
+        soli_aten = soli_pend.find(elemento => elemento['ID'] == id)
+        console.log('Solicitud: ', soli_aten)
+        if(soli_aten){
+            const docentes = document.getElementById('docentes')
+            const fechasoli = document.querySelector('[name="fechasoli"]')
+            const fechares = document.querySelector('[name="fechares"]')
+            const capacidad = document.querySelector('[name="capacidad"]')
+            const grupos = document.querySelector('[name="grupos"]')
+            const materia = document.querySelector('[name="materia"]')
+            const ambiente = document.querySelector('[name="ambiente"]')
+            const horario = document.querySelector('[name="horario"]')
+            const motivo = document.querySelector('[name="motivo"]')
+            const modo = document.querySelector('[name="modo"]')
+            const desc = document.querySelector('[name="desc"]')
+            const div = document.getElementById('desc-modo');
+            docentes.innerHTML = ''
+            soli_aten['NOMBRE_DOCENTES'].forEach(element => {
+                docentes.innerHTML +=`<input type="text" class="form-control" value="${element['Nombre_docente']}" readonly>`
             });
-            if(ambientes.find((ambiente) => ambiente['NOMBRE'].includes(text.toUpperCase()))){
-                message.style.display = "none"
-                console.log("Cadena del input: ", text)
-            }else{
-                message.style.display = "block"
-                console.log("Cadena del input no encontrada: ", text)
-            }
-        }
-    )
-
-    document.querySelector('[name="materia"]').addEventListener('change', 
-        function(event){
-            let text =  event.target.value
-            const message = document.getElementById("messageErrorMateria")
-            const content = document.getElementById("containerMateria")
-            const lista = document.createElement('ul')
-            materias.forEach(materia => {
-                lista.innerHTML += `<li>${materia['NOMBRE']}</li>`
-            });
-            if(materias.find((materia) => materia['NOMBRE'].includes(text.toUpperCase()))){
-                message.style.display = "none"
-                console.log("Cadena del input: ", text)
-            }else{
-                message.style.display = "block"
-                console.log("Cadena del input no encontrada: ", text)
-            }
-        }
-    )
-
-    function agregarTabla(lista, tabla){
-        lista.forEach(elemento => {
-            tabla.innerHTML += 
-            `<tr>
-                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']}</td>
-                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['TIPO']}</td>
-                <td style="width: 150px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['REFERENCIAS']}</td>
-                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['CAPACIDAD']}</td>
-                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['DATA']}</td>
-                <td style="width: 40px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['ESTADO']}</td>
-            </tr>`
-            console.log('Ingresando al inner')
-        })
-    }
-
-    function findAmbiente(){
-        tipo = ""
-        tabla  =  document.getElementById('tableAmbientes')
-
-        input_materia = document.querySelector('[name="materia"]').value
-        input_ambiente = document.querySelector('[name="ambiente"]').value
-
-        input_dia = document.querySelector('[name="dia"]')
-        dia_select = input_dia.options[input_dia.selectedIndex].value
-
-        input_libres_ocupados = document.querySelector('[name="blockfree"]')
-        blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
-
-        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/ambientes'
-
-        if(input_materia == "" && input_ambiente != ""){
-            cadena_fetch += `/${input_ambiente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-            console.log('Cadena de ambiente', cadena_fetch)
+            fechasoli.value = soli_aten['FECHA_HORASOLI']
+            fechares.value = soli_aten['FECHA_RESERVA']
+            capacidad.value = soli_aten['CANTIDAD']
+            grupos.value = soli_aten['GRUPOS']
+            materia.value = soli_aten['MATERIA']
+            ambiente.value = soli_aten['AMBIENTE']
+            horario.value = soli_aten['HORARIO']
+            motivo.value = soli_aten['MOTIVO']
+            modo.value = soli_aten['MODO']
+            desc.value = soli_aten['DESC'].split(':')[1]
+            div.style.display = (soli_aten['MODO'] == 'Normal') ? 'none':'block'
         }else{
-            if(input_materia != "" && input_ambiente == ""){
-                cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-                console.log('Cadena de materia', cadena_fetch)
-            }else{
-                if(input_materia != "" && input_ambiente != ""){
-                    cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-                    console.log('Cadena de todo', cadena_fetch)
-                }else{
-                    cadena_fetch += `todosin/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-                }
-            }
+            console.log("Fallo al obtener los datos alv no puede ser >:VVVVVVVV")
         }
 
-        fetch(
-            cadena_fetch,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        ).then(
-            response => response.json()
-        ).then(
-            data => {
-                ambientesfiltro = data
-                while(tabla.rows.length > 0){
-                    tabla.deleteRow(0)
-                }
-                try{
-                    agregarTabla(ambientesfiltro, tabla)
-                }catch(error){
-                    console.log('Erro: ', error)
-                }
-            }
-        ).catch(
-            error => {
-                console.log("Error encontrado: ", error)
-            }
-        )
     }
+    
+    // document.querySelector('[name="ambiente"]').addEventListener('click', 
+    //     function(event){
+    //         let text =  event.target.value
+            
+    //     }
+    // )
+
+    // document.querySelector('[name="materia"]').addEventListener('change', 
+    //     function(event){
+    //         let text =  event.target.value
+    //         const message = document.getElementById("messageErrorMateria")
+    //         const content = document.getElementById("containerMateria")
+    //         const lista = document.createElement('ul')
+    //         materias.forEach(materia => {
+    //             lista.innerHTML += `<li>${materia['NOMBRE']}</li>`
+    //         });
+    //         if(materias.find((materia) => materia['NOMBRE'].includes(text.toUpperCase()))){
+    //             message.style.display = "none"
+    //             console.log("Cadena del input: ", text)
+    //         }else{
+    //             message.style.display = "block"
+    //             console.log("Cadena del input no encontrada: ", text)
+    //         }
+    //     }
+    // )
+
+    // function agregarTabla(lista, tabla){
+    //     lista.forEach(elemento => {
+    //         tabla.innerHTML += 
+    //         `<tr>
+    //             <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']}</td>
+    //             <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['TIPO']}</td>
+    //             <td style="width: 150px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['REFERENCIAS']}</td>
+    //             <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['CAPACIDAD']}</td>
+    //             <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['DATA']}</td>
+    //             <td style="width: 40px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['ESTADO']}</td>
+    //         </tr>`
+    //         console.log('Ingresando al inner')
+    //     })
+    // }
+
+    // function findAmbiente(){
+    //     tipo = ""
+    //     tabla  =  document.getElementById('tableAmbientes')
+
+    //     input_materia = document.querySelector('[name="materia"]').value
+    //     input_ambiente = document.querySelector('[name="ambiente"]').value
+
+    //     input_dia = document.querySelector('[name="dia"]')
+    //     dia_select = input_dia.options[input_dia.selectedIndex].value
+
+    //     input_libres_ocupados = document.querySelector('[name="blockfree"]')
+    //     blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
+
+    //     cadena_fetch = 'http://127.0.0.1:8000/api/fetch/ambientes'
+
+    //     if(input_materia == "" && input_ambiente != ""){
+    //         cadena_fetch += `/${input_ambiente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+    //         console.log('Cadena de ambiente', cadena_fetch)
+    //     }else{
+    //         if(input_materia != "" && input_ambiente == ""){
+    //             cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+    //             console.log('Cadena de materia', cadena_fetch)
+    //         }else{
+    //             if(input_materia != "" && input_ambiente != ""){
+    //                 cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+    //                 console.log('Cadena de todo', cadena_fetch)
+    //             }else{
+    //                 cadena_fetch += `todosin/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
+    //             }
+    //         }
+    //     }
+
+    //     fetch(
+    //         cadena_fetch,
+    //         {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         }
+    //     ).then(
+    //         response => response.json()
+    //     ).then(
+    //         data => {
+    //             ambientesfiltro = data
+    //             while(tabla.rows.length > 0){
+    //                 tabla.deleteRow(0)
+    //             }
+    //             try{
+    //                 agregarTabla(ambientesfiltro, tabla)
+    //             }catch(error){
+    //                 console.log('Erro: ', error)
+    //             }
+    //         }
+    //     ).catch(
+    //         error => {
+    //             console.log("Error encontrado: ", error)
+    //         }
+    //     )
+    // }
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">

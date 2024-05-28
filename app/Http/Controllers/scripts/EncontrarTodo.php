@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Ambiente;
 use App\Models\Admin\Docente;
 use App\Models\Admin\Materia;
+use App\Models\Docente\Razones;
 
 class EncontrarTodo extends Controller
 {
@@ -96,5 +97,45 @@ class EncontrarTodo extends Controller
             $list[] = Docente::where('NOMBRE', $iterable)->first()->ID_DOCENTE;
         }
         return json_encode($list);
+    }
+
+    /**
+     * Encuentra el id de un docente por el nombre del docente
+     * else
+     * Devolvera solo el primer nombre
+     * Todos en formato json
+     */
+    public function getIdDocenteporNombre($nombre){
+        return Docente::where('NOMBRE', $nombre)->first()->ID_DOCENTE;
+    }
+
+    /**
+     * Encuentra la razon para una reserva por su id
+     * Todos en formato json
+     */
+    public function getRazonesporID($json){
+        $iterables = json_decode($json);
+        $list = [];
+        foreach($iterables as $iterable){
+            $list[] = [
+               "Razon" => Razones::where('id_razon', $iterable)->first()->RAZON
+            ];
+        }
+        return $list;
+    }
+
+    /**
+     * Encuentra el id de la razon para una reserva por su razon
+     * Todos en formato json
+     */
+    public function getRazonesporRazon($json){
+        $iterables = json_decode($json);
+        $list = [];
+        foreach($iterables as $iterable){
+            $list[] = [
+               "Razon" => Razones::where('id_razon', $iterable)->first()->RAZON
+            ];
+        }
+        return $list;
     }
 }

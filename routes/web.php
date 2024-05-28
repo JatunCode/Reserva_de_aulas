@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\NotificacionController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
+use App\Http\Controllers\RazonesController;
 use App\Models\Admin\Docente;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,6 +67,11 @@ Route::prefix('admin')->group(function () {
     Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
     Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
     Route::put('/docentes/show/{caracter}', [DocenteController::class, 'show'])->name('docente.put');
+
+    //Mostrar las solicitudes pendientes
+    Route::get('/reservas', [ReservasController::class, 'index'])->name('reservas.index');
+    Route::put('/reservas/store', [ReservasController::class, 'store'])->name('reserva.store');
+
 });
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
@@ -87,7 +93,7 @@ Route::prefix('docente')->group(function () {
     Route::get('/solicitudes/listar_filtro', [ReservasController::class, 'datos_filtro'])->name('docente.solicitud.filtrar.datos_filtro');
     
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
-    Route::get('/reservas', [ReservasController::class, 'index'])->name('docente.reservas');
+    //Route::get('/reservas', [ReservasController::class, 'index'])->name('docente.reservas');
     Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
     Route::get('/solicitudes/cancelar', [ReservasController::class, 'cancelar_solicitud'])->name('docente.solicitud.cancelar');
     Route::put('/solicitudes/{solicitud}/cancelar', [ReservasController::class, 'cancelar'])->name('docente.reservas.cancelar');

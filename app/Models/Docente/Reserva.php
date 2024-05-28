@@ -9,7 +9,7 @@ class Reserva extends Model
 {
     use HasFactory;
     protected $table = 'reserva';
-    protected $fillable = ['ID_RESERVA', 'ID_SOLICITUD', 'FECHAHORA_RESER'];
+    protected $fillable = ['ID_RESERVA', 'ID_SOLICITUD', 'RAZONES', 'FECHAHORA_RESER'];
 
     public function reserva_relacion_solicitud(){
         return $this->hasOne(Solicitud::class, 'ID_SOLICITUD', 'ID_SOLICITUD');

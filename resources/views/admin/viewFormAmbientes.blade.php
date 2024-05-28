@@ -55,17 +55,21 @@
     let regex = /^[a-z0-9\s]+$/i
     let ambientes = []
     
-    fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
-        response => response.json()
-    ).then(
-        data => {
-            ambientes = data
-        }
-    ).catch(
-        error => {
-            console.log("Error encontrado: ", error)
-        }
-    )
+    function fetchAmbientes(){
+        fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
+            response => response.json()
+        ).then(
+            data => {
+                ambientes = data
+            }
+        ).catch(
+            error => {
+                console.log("Error encontrado: ", error)
+            }
+        )
+    }
+
+    fetchAmbientes()
 
     function agregarCampos(){
         document.getElementById('ref-add').addEventListener('click', function(){
@@ -194,6 +198,7 @@
         });
         i = 1
         form.reset()
+        fetchAmbientes()
     }
 
     function obtainValues(event){
