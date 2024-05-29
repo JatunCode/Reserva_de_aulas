@@ -149,10 +149,9 @@ class SolicitudController extends Controller
         //     // Por ejemplo:
         //     return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
         // }
-
         try {
             $request->validate([
-                'NOMBRES' => ['required', 
+                'NOMBRES' => ['required', 'json',  
                     function($attribute, $value, $fail){
                         $decoder = json_decode($value);
                         if(!is_array($decoder) || count($decoder) < 1 || count($decoder) > 4){
@@ -160,25 +159,25 @@ class SolicitudController extends Controller
                         }
                     }],
                 'CANTIDAD' => 'required|integer',
-                'FECHA_RESERVA' => 'required|date_format:Y-m-d H:i:s',
-                'HORA_INICIO' => 'required|date_format:H:i:s',
-                'HORA_FIN' => 'required|date_format:H:i:s',
-                'PRIORIDAD' => ['required', 
-                    function($attribute, $value, $fail){
-                        $decoder = json_decode($value, true);
-                        if(!is_array($decoder) || count($decoder) < 1 || count($decoder) > 1){
-                            $fail($attribute.' Nos hackearon señor xd.');
-                        }
-                    }],
+                'FECHA_RESERVA' => 'required|date_format:Y-m-d H:i',
+                'HORA_INICIO' => 'required|date_format:H:i',
+                'HORA_FIN' => 'required|date_format:H:i',
+                'PRIORIDAD' => ['required', 'json',
+                        function($attribute, $value, $fail){
+                            $decoder = json_decode($value, true);
+                            if (!is_array($decoder) || count($decoder) != 1) {
+                                $fail($attribute.' debe ser un objeto JSON con un solo par clave-valor.');
+                            }
+                        }],
                 'MOTIVO' => 'required|string',
                 'MATERIA' => 'required|string',
                 'AMBIENTE' => 'required|string'
             ]);
 
-            $idsygruposDocente = $buscardor->getGruposyIdsDocentes($request->NOMBRES);
+            $idsygruposDocente = $buscardor->getGruposyIdsDocentes(json_decode($request->NOMBRES));
             Solicitud::create([
                 'ID_SOLICITUD' => $uuid->toString(),
-                'ID_DOCENTES' => $idsygruposDocente[0],
+                'ID_DOCENTE_s' => $idsygruposDocente[0],
                 'CANTIDAD_EST' => $request->CANTIDAD,
                 'FECHA_RE' => $request->FECHA_RESERVA,
                 'HORAINI' => $request->HORA_INICIO,
@@ -191,7 +190,7 @@ class SolicitudController extends Controller
                 'ID_AMBIENTE' => $buscardor->getIdAmbiente($request->AMBIENTE),
                 'ESTADO' => 'PENDIENTE'
             ]);
-            return response()->json(["message" => "Horario creado exitosamente"], 200);
+            return response()->json(["message" => "Solicitud creada exitosamente"], 200);
         } catch (\Exception $e) {
             //return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
             return response()->json(["message" => "Hubo un error en el servidor: $e"], 500);

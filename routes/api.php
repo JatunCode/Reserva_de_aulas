@@ -54,6 +54,7 @@ Route::controller(HorarioController::class)->group(
         Route::get('/fetch/horariostodos/{docente}/{dia}/{estado}', 'showTodo');
         Route::get('/fetch/horariostodossin/{docente}/{dia}/{estado}', 'showTodo');
         Route::post('/horarios/store', 'store');
+        Route::get('/fetch/horariosupdate', 'indexMod');
         // Route::post('/putambiente', 'show');
     }
 );

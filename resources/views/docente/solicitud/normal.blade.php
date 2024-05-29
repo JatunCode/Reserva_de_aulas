@@ -171,9 +171,6 @@ document.addEventListener("DOMContentLoaded", function() {
             // Verificar si hay campos vacíos
             const inputs = this.querySelectorAll('input, select, textarea');
             const input_nombre = this.querySelectorAll('[name="nombre"]');
-
-            let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
-
             const input_materia = this.querySelector('[name="materia"]');
             const dato_materia = input_materia.options[input_materia.selectedIndex].value;
             const input_cant = this.querySelector('[name="cantidad_estudiantes"]').value;
@@ -181,15 +178,14 @@ document.addEventListener("DOMContentLoaded", function() {
             const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
             const input_fecha = this.querySelector('[name="filtroFecha"]').value;
             const input_razon = this.querySelector('[name="razon"]').value;
-            let prioridad = 
-            (input_razon != "") ? {
-                "URGENTE" : input_razon
-            } : {
-                "NORMAL" : "Normal"
-            };
+            let prioridad = (input_razon != "") ? {"URGENTE" : input_razon} : {"NORMAL" : "Normal"};
             const input_aula = this.querySelector('[name="aula"]').value;
             const input_horario = this.querySelector('[name="horario"]').value;
             let arreglo_horario = input_horario.split(" - ");
+            let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
+
+            let json_prioridad = JSON.stringify(prioridad);
+            let json_nombres = JSON.stringify(arreglo_nombres);
 
             let isValid = true;
             inputs.forEach(input => {
@@ -216,18 +212,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Asignar un valor predeterminado al campo "modo"
             document.getElementById('modo').value = 'Normal';
-
-            const json_send = {
-                'NOMBRES':JSON.stringify(arreglo_nombres),
-                'CANTIDAD':input_cant,
-                'FECHA_RESERVA':input_fecha,
-                'HORA_INICIO':arreglo_horario[0],
-                'HORA_FIN':arreglo_horario[1],
-                'PRIORIDAD':JSON.stringify(prioridad),
-                'MOTIVO':dato_motivo,
-                'MATERIA':dato_materia,
-                'AMBIENTE':input_aula
-            };
             // Obtener los datos del formulario y convertirlos en un objeto
             const formData = new FormData(this);
             const formDataObject = {};
@@ -248,6 +232,18 @@ document.addEventListener("DOMContentLoaded", function() {
             const modalContent = Object.entries(formDataObject).map(([key, value]) => {
                 return `<p><strong>${key}:</strong> ${value}</p>`;
             }).join('');
+
+            const json_send = JSON.stringify({
+                'NOMBRES':json_nombres,
+                'CANTIDAD':parseInt(input_cant, 10),
+                'FECHA_RESERVA':input_fecha+' '+arreglo_horario[0],
+                'HORA_INICIO':arreglo_horario[0],
+                'HORA_FIN':arreglo_horario[1],
+                'PRIORIDAD':json_prioridad,
+                'MOTIVO':dato_motivo,
+                'MATERIA':dato_materia,
+                'AMBIENTE':input_aula
+            });
 
             // Mostrar el modal de confirmación con los datos del formulario
             Swal.fire({
@@ -272,10 +268,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         fetch(document.getElementById('solicitudForm').action, {
             method: 'POST',
-            body: formData,
             headers: {
+                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken
-            }
+            },
+            body: formData,
         })
         .then(response => {
             if (response.ok) {
@@ -284,12 +281,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     title: '¡Solicitud enviada correctamente!',
                     showConfirmButton: false,
                     timer: 1500 // Cerrar automáticamente después de 1.5 segundos
-                }).then(() => {
-                    // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
-                    document.getElementById('solicitudForm').reset();
-                    var offcanvasElement = document.getElementById('offcanvasRight');
-                    var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
-                    offcanvas.hide();
                 });
             } else {
                 Swal.fire({
@@ -298,8 +289,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     text: 'Error al enviar la solicitud',
                 });
             }
-        })
-        .catch(error => {
+            return response.json();
+        }).then(
+            data => {
+                console.log('Formulario sin enviar: ', data);
+            }
+        ).catch(error => {
             console.error('Error:', error);
             alert('Error al enviar la solicitud');
         });
