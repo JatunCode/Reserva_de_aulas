@@ -35,6 +35,40 @@ class HorarioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function indexMod()
+    {
+        // $horarios = Horario::with(
+        //     'horario_relacion_dahm.dahm_relacion_ambiente',
+        //     'horario_relacion_dahm.dahm_relacion_materia',
+        //     'horario_relacion_dahm.dahm_relacion_docente')->get();
+        $horarios = Relacion_DAHM::with('dahm_relacion_docente.docente_relacion_dahm.dahm_relacion_horario', 'dahm_relacion_materia')->get();
+        $horarios_estructurados = [];
+        $horarios_docente = [];
+        foreach ($horarios as $horario) {
+            // foreach($horario['dahm_relacion_docente']['docente_relacion_dahm'] as $value){
+            //     $objeto_horario = $value['dahm_relacion_horario'];
+            //     $horarios_docente[] = [
+            //         'ID' => $objeto_horario['ID_HORARIO'],
+            //         'DIA' => $objeto_horario['DIA'],
+            //         'INICIO' => $objeto_horario['INICIO'],
+            //         'FIN' => $objeto_horario['FIN']
+            //     ];
+            // }
+            $horarios_estructurados[] = [
+                'ID' => $horario['dahm_relacion_docente']['ID_DOCENTE'],
+                'NOMBRE' => $horario['dahm_relacion_docente']['NOMBRE'],
+                'MATERIA' => $horario['dahm_relacion_materia']['NOMBRE'],
+                'HORARIOS_DOCENTE' => $horarios_docente
+            ];
+        }
+        return $horarios_estructurados;
+        //return view('admin.layouts.horariosModificacion', ['horarios' => $horarios]);
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function indexFetch()
     {
         $horarios = Horario::with(
