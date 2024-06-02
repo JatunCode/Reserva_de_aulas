@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -36,5 +36,23 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * Handle user authentication and redirect based on user role.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $user
+     * @return \Illuminate\Http\Response
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->cargo === 'docente') {
+            return redirect()->route('docente.inicio');
+        } elseif ($user->cargo === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect($this->redirectTo);
     }
 }
