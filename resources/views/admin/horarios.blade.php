@@ -178,11 +178,11 @@
             console.log("Cadena de la peticion fetch: ", cadena_fetch)
         }else if(input_docente != "" && dia_select == "" && blockfree_select == ""){
             //Cadena para el filtro de los horarios por el nombre de doncente
-            cadena_fetch += `/${input_docente}/ / `
+            cadena_fetch += `/${input_docente}/ /%20`
             console.log("Cadena de la peticion fetch: ", cadena_fetch)
         }else if(input_docente == "" && dia_select != "" && blockfree_select == ""){
             //Cadena para el filtro de los horarios por el dia
-            cadena_fetch += `/ /${dia_select}/ `
+            cadena_fetch += `/ /${dia_select}/%20`
             console.log("Cadena de la peticion fetch: ", cadena_fetch)
         }else if(input_docente == "" && dia_select == "" && blockfree_select != ""){
             //Cadena para el filtro de los horarios por el estado del ambiente
@@ -190,7 +190,7 @@
             console.log("Cadena de la peticion fetch: ", cadena_fetch)
         }else if(input_docente != "" && dia_select != "" && blockfree_select == ""){
             //Cadena para el filtro de los horarios por el nombre del docente y el dia seleccionado
-            cadena_fetch += `/${input_docente}/${dia_select}/ `
+            cadena_fetch += `/${input_docente}/${dia_select}/%20`
             console.log("Cadena de la peticion fetch: ", cadena_fetch)
         }else if(input_docente == "" && dia_select != "" && blockfree_select != ""){
             //Cadena para el filtro de los horarios por el dia y estado seleccionado

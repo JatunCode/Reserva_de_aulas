@@ -70,8 +70,8 @@ Route::controller(MateriaController::class)->group(
 
 Route::controller(NotificacionController::class)->group(
     function(){
-        Route::get('/notificaciones', 'index');
-        //Route::post('/horarios/store', 'store');
+        Route::get('/fetch/notificaciones', 'index');
+        Route::post('/fetch/notificacion/store', 'store');
         // Route::post('/putambiente', 'show');
     }
 );

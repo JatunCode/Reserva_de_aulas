@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Admin\Docente;
-use App\Models\Admin\Notificacion;
+use App\Models\Admin\Notificacion as AdminNotificacion;
+use App\Notifications\Notificacion;
+use Dotenv\Repository\Adapter\EnvConstAdapter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Ramsey\Uuid\Uuid;
 
 class NotificacionController extends Controller
@@ -17,9 +21,10 @@ class NotificacionController extends Controller
      */
     public function index()
     {
-        $notificaciones = Notificacion::with('docente_relacion_notificacion.notificaion_relacion_docente')->get();
-        return view('admin.mail.mailbox', ['notificaciones'=>$notificaciones]);
+        // $notificaciones = AdminNotificacion::with('docente_relacion_notificacion.notificaion_relacion_docente')->get();
+        // return view('admin.mail.mailbox', ['notificaciones'=>$notificaciones]);
         //return $notificaciones;
+        //return view('vendor.mail.html.layout', ['slot' => 'Nombre de la persona que creo q es']);
     }
 
     /**
@@ -30,13 +35,25 @@ class NotificacionController extends Controller
      */
     public function store(Request $request)
     {
-        Notificacion::create([
-            'ID_NOTIFICACION' => Uuid::uuid4(),
-            'CUERPO' => $request->cuerpo,
-            'ID_DOCENTE' => Docente::where('NOMBRE', $request->docente)->ID_DOCENTE
-        ]);
-
-
+        $buscador = new EncontrarTodo();
+        $request = json_decode($request->getContent(), true);
+        $nombres = json_decode($request['NOMBRES']);
+        try {
+            foreach($nombres as $nombre){
+                $docenteId = $buscador->getIdDocenteporNombre($nombre);
+                $docente = Docente::where('ID_DOCENTE',$docenteId)->first();
+                Notification::route('mail', (($docente->EMAIL != '') ? $docente->EMAIL :'nombre@universidad.edu.bo'))->notify(new Notificacion($request['TIPO'], 'No sé qué ponerle :P'));
+                AdminNotificacion::create([
+                    'ID_NOTIFICACION' => Uuid::uuid4(),
+                    'CUERPO' => json_encode('Cuerpo inicial'),
+                    'ID_DOCENTE' => $buscador->getIdDocenteporNombre($nombre)
+                ]);
+            }
+    
+            return response()->json(['message' => 'Notificacion creada exitosamente.'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => "Error al crear la notificacion. $th"], 500);
+        }
     }
 
     /**
