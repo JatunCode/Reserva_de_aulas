@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Http\Controllers\scripts\GeneradorHorariosNoRegistrados;
 use App\Models\Admin\Ambiente;
 use App\Models\Admin\Docente;
@@ -37,32 +38,36 @@ class HorarioController extends Controller
      */
     public function indexMod()
     {
-        // $horarios = Horario::with(
-        //     'horario_relacion_dahm.dahm_relacion_ambiente',
-        //     'horario_relacion_dahm.dahm_relacion_materia',
-        //     'horario_relacion_dahm.dahm_relacion_docente')->get();
-        $horarios = Relacion_DAHM::with('dahm_relacion_docente.docente_relacion_dahm.dahm_relacion_horario', 'dahm_relacion_materia')->get();
-        $horarios_estructurados = [];
-        $horarios_docente = [];
+        $horarios = Docente::with(
+            'docente_relacion_dahm.dahm_relacion_materia', 
+            'docente_relacion_dahm.dahm_relacion_horario',
+            'docente_relacion_dahm.dahm_relacion_ambiente')->get();
         foreach ($horarios as $horario) {
-            // foreach($horario['dahm_relacion_docente']['docente_relacion_dahm'] as $value){
-            //     $objeto_horario = $value['dahm_relacion_horario'];
-            //     $horarios_docente[] = [
-            //         'ID' => $objeto_horario['ID_HORARIO'],
-            //         'DIA' => $objeto_horario['DIA'],
-            //         'INICIO' => $objeto_horario['INICIO'],
-            //         'FIN' => $objeto_horario['FIN']
-            //     ];
-            // }
-            $horarios_estructurados[] = [
-                'ID' => $horario['dahm_relacion_docente']['ID_DOCENTE'],
-                'NOMBRE' => $horario['dahm_relacion_docente']['NOMBRE'],
-                'MATERIA' => $horario['dahm_relacion_materia']['NOMBRE'],
-                'HORARIOS_DOCENTE' => $horarios_docente
-            ];
+            if(isset($horario->docente_relacion_dahm)){
+                $horarios_docente = [];
+                foreach($horario->docente_relacion_dahm as $value){
+                    if(isset($value)){
+                        $horarios_docente[] = [
+                            'ID_HORARIO' => $value['dahm_relacion_horario']['ID_HORARIO'],
+                            'DIA' => $value['dahm_relacion_horario']['DIA'],
+                            'INICIO' => $value['dahm_relacion_horario']['INICIO'],
+                            'FIN' => $value['dahm_relacion_horario']['FIN'],
+                            'AMBIENTE' => $value['dahm_relacion_ambiente']['NOMBRE'],
+                            'MATERIA' => $value['dahm_relacion_materia']['NOMBRE']
+                        ];
+                    }
+
+                }
+                $horarios_estructurados[] = [
+                    'ID_DOCENTE' => $horario['ID_DOCENTE'],
+                    'NOMBRE' => $horario['NOMBRE'],
+                    'GRUPO_MATERIA' => $horario['GRUPO'],
+                    'HORARIOS_DOCENTE' => $horarios_docente
+                ];
+            }
         }
-        return $horarios_estructurados;
-        //return view('admin.layouts.horariosModificacion', ['horarios' => $horarios]);
+        return view('admin.layouts.horariosModificacion', ['horarios' => $horarios_estructurados]);
+        //return $horarios;
     }
     /**
      * Display a listing of the resource.
@@ -149,16 +154,20 @@ class HorarioController extends Controller
      */
     public function show($ambiente)
     {
-        $horarios = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente',
-            'horario_relacion_dahm.dahm_relacion_materia',
-            'horario_relacion_dahm.dahm_relacion_docente'
-            )->whereHas(
+        try {
+            $horarios = Horario::with(
                 'horario_relacion_dahm.dahm_relacion_ambiente',
-                function ($query) use ($ambiente){
-                    $query->where('ambiente.NOMBRE', $ambiente);
-                })->orderBy('INICIO')->get();
-        return json_encode($horarios);
+                'horario_relacion_dahm.dahm_relacion_materia',
+                'horario_relacion_dahm.dahm_relacion_docente'
+                )->whereHas(
+                    'horario_relacion_dahm.dahm_relacion_ambiente',
+                    function ($query) use ($ambiente){
+                        $query->where('ambiente.NOMBRE', $ambiente);
+                    })->orderBy('INICIO')->get();
+            return json_encode($horarios);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => "Error al mostrar el horario por ambiente. $th"], 500);
+        }
     }
 
     /**
@@ -167,15 +176,19 @@ class HorarioController extends Controller
      * @return json_List
      */
     public function indexList($ambiente){
-        $horarios = Horario::whereHas(
+        try {
+            $horarios = Horario::whereHas(
                 'horario_relacion_dahm.dahm_relacion_ambiente',
                 function ($query) use ($ambiente){
                     $query->where('ambiente.NOMBRE', $ambiente);
                 })->orderBy('INICIO')->get();
-        
-        $horarios_libres = new GeneradorHorariosNoRegistrados();
-        $horarios_nuevo = $horarios_libres->horarios_no_reg("horarios", $horarios, $ambiente);
-        return json_encode($horarios_nuevo);
+            
+            $horarios_libres = new GeneradorHorariosNoRegistrados();
+            $horarios_nuevo = $horarios_libres->horarios_no_reg("horarios", $horarios, $ambiente);
+            return json_encode($horarios_nuevo);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => "Error en el servidor al mostrar la lista de horarios por ambiente. $th"], 500);
+        }
     }
 
     /**
@@ -186,29 +199,33 @@ class HorarioController extends Controller
      */
     public function showTodo($docente, $dia, $estado)
     {
-        $horarios = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente',
-            'horario_relacion_dahm.dahm_relacion_materia',
-            'horario_relacion_dahm.dahm_relacion_docente'
-            )->whereHas(
+        try {
+            $horarios = Horario::with(
                 'horario_relacion_dahm.dahm_relacion_ambiente',
-                function ($query) use ($dia, $estado) {
-                    if($dia != " "){
-                        $query->where('DIA', $dia);
+                'horario_relacion_dahm.dahm_relacion_materia',
+                'horario_relacion_dahm.dahm_relacion_docente'
+                )->whereHas(
+                    'horario_relacion_dahm.dahm_relacion_ambiente',
+                    function ($query) use ($dia, $estado) {
+                        if($dia != " "){
+                            $query->where('DIA', $dia);
+                        }
+                        if($estado != " "){
+                            $query->where('ambiente.ESTADO', $estado);
+                        }
                     }
-                    if($estado != " "){
-                        $query->where('ambiente.ESTADO', $estado);
+                )->whereHas(
+                    'horario_relacion_dahm.dahm_relacion_docente',
+                    function ($query) use ($docente){
+                        if($docente != " "){
+                            $query->where('docente.NOMBRE', $docente);
+                        }
                     }
-                }
-            )->whereHas(
-                'horario_relacion_dahm.dahm_relacion_docente',
-                function ($query) use ($docente){
-                    if($docente != " "){
-                        $query->where('docente.NOMBRE', $docente);
-                    }
-                }
-            )->orderBy('INICIO')->get();
-        return json_encode($horarios);
+                )->orderBy('INICIO')->get();
+            return json_encode($horarios);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => "Error en el servidor al mostrar la lista de horarios filtrados. $th"], 500);
+        }
     }
 
     /**
@@ -218,9 +235,25 @@ class HorarioController extends Controller
      * @param  uuid  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $buscador = new EncontrarTodo();
+        try {
+            $horarios = json_decode($request);
+            foreach($horarios as $horario){
+                $update = Horario::where('ID_HORARIO', $horario->ID_HORARIO);
+                $update->update([
+                    'DIA' => $horario->DIA, 
+                    'INICIO' => $horario->INICIO,
+                    'FIN' => $horario->FIN
+                ]);
+                $update = Relacion_DAHM::where('ID_HORARIO', $horario->ID_HORARIO);
+                $update->update(['ID_AMBIENTE', $buscador->getIdAmbiente($horario->AMBIENTE)]);
+            }
+            return response()->json(['message' => 'Actualizacion de horario exitosa.'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => "Error en el servidor al actualizar el horario. $th"], 500);
+        }
     }
 
     /**

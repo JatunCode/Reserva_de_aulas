@@ -79,11 +79,11 @@
         const id_solicitud = document.getElementById('docentes')
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
-        let ob_json = {
+        let ob_json = JSON.stringify({
             'ID_SOLICITUD':soli_aten['ID'],
             'ESTADO':button.value,
             'ACTUALIZACIONES':actualizacion
-        }
+        })
         fetch(
             'reservas/store',
             {
