@@ -32,7 +32,6 @@
             <thead>
                 <tr>
                     <th style="width: 40px">Docente</th>
-                    <th style="width: 100px">Materia</th>
                     <th style="width: 40px">Acciones</th>
                 </tr>
             </thead>
@@ -42,7 +41,7 @@
                         <th style="width: 40px">{{ $horario['NOMBRE'] ?? '' }}</td>
                         <th style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                            data-id="{{ $horario['ID_DOCENTE'] }}" style="background-color:green" onclick="pressEdicion(this)" value="{{$horario['ID_DOCENTE']}}">Atender</button></td>
+                            data-id="{{ $horario['NOMBRE'] }}" style="background-color:green" onclick="pressEdicion(this)" value="{{$horario['NOMBRE']}}">Seleccionar</button></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -93,59 +92,61 @@
         const id = button.value
         const canva = document.getElementById('offcanvasRight')
         let i = 1
-        let horario = horarios_estr.find(elemento => elemento['ID_DOCENTE'] == id)
+        let horario = horarios_estr.find(elemento => elemento['NOMBRE'] == id)
         console.log('Horario: ', horario)
         if(horario){
             const docente = document.querySelector('[name="docente"]')
-            const grupo = document.querySelector('[name="grupo"]')
             const div = document.getElementById('horarios');
             docente.value = horario['NOMBRE']
-            grupo.value = horario['GRUPO_MATERIA']
             div.innerHTML = ''
             horario['HORARIOS_DOCENTE'].forEach(
                 element => {
                     div.innerHTML += 
                     `
                         <div class="card body">
-                            <div class="col-md-12" id="${horario['ID_DOCENTE']}">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label for="dia" class="form-label">Dia</label>
-                                        <input type="text" class="form-control" name="dia" value="${element['DIA']}" readonly>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="materia" class="form-label">Materia</label>
-                                        <input type="text" class="form-control" name="materia" value="${element['MATERIA']}" onchange="validateMateria(this)" readonly>
-                                        <p id="messageErrorMateria" style="display: none; color: red"></p>
-                                    </div>
-                                </div>
-                                
-                                <div class="row" id="container-ta">
-                                    <div class="col-md-4">
-                                        <label for="inicio" class="form-label">Inicio</label>
-                                        <input type="time" class="form-control" name="inicio" value="${element['INICIO']}" onchange="validateHoras(this)" readonly>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="fin" class="form-label">Salida</label>
-                                        <input type="time" class="form-control" name="fin" value="${element['FIN']}" onchange="validateHoras(this)" readonly>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="ambiente" class="form-label">Ambiente</label>
-                                        <input type="text" class="form-control" name="ambiente" value="${element['AMBIENTE']}" onchange="validateAmbiente(this)" readonly>
-                                    </div>
-                                    <div>
-                                        <div class="row">
-                                            <p id="messageErrorHorario" style="display: none; color: red"></p>
-                                            <p id="messageErrorAmbiente" style="display: none; color: red"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <label class="form-label">Materia: ${element['NOMBRE_MATERIA']}</label>
+                            <label class="form-label">Grupo: ${element['GRUPO_MATERIA']}</label>
                         </div>
                     `
-                    i += 1
-                })
-                i = 0
+                    const div_horas = document.createElement('div')
+                    element['HORARIOS_MATERIA'].forEach(
+                        horario => {
+                            div_horas.innerHTML += 
+                            `
+                            <div class="col-md-12">
+                                        <div class="row" id="${horario['ID_HORARIO']}">
+                                            <div class="col-md-3">
+                                                <label for="dia" class="form-label">Dia</label>
+                                                <input type="text" class="form-control" name="dia" value="${horario['DIA']}" readonly>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label for="inicio" class="form-label">Inicio</label>
+                                                <input type="time" class="form-control" name="inicio" value="${horario['INICIO']}" onchange="validateHoras(this)" readonly>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label for="fin" class="form-label">Salida</label>
+                                                <input type="time" class="form-control" name="fin" value="${horario['FIN']}" onchange="validateHoras(this)" readonly>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label for="ambiente" class="form-label">Ambiente</label>
+                                                <input type="text" class="form-control" name="ambiente" value="${horario['AMBIENTE']}" onchange="validateAmbiente(this)" readonly>
+                                            </div>
+                                            <div>
+                                                <div class="row">
+                                                    <p id="messageErrorHorario" style="display: none; color: red"></p>
+                                                    <p id="messageErrorAmbiente" style="display: none; color: red"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            `
+                            i += 1
+                        }
+                    )
+                    div.appendChild(div_horas)
+                }
+            )
+            i = 0
         }else{
             console.log("Fallo al obtener los datos alv no puede ser >:VVVVVVVV")
         }

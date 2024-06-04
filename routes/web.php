@@ -1,17 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AmbienteController;
-use App\Http\Controllers\Admin\DocenteController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Admin\NotificacionController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
-use App\Http\Controllers\RazonesController;
-use App\Models\Admin\Docente;
 use Illuminate\Support\Facades\Auth;
 
 /*
