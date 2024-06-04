@@ -38,36 +38,55 @@ class HorarioController extends Controller
      */
     public function indexMod()
     {
-        $horarios = Docente::with(
-            'docente_relacion_dahm.dahm_relacion_materia', 
-            'docente_relacion_dahm.dahm_relacion_horario',
-            'docente_relacion_dahm.dahm_relacion_ambiente')->get();
+        $horarios = Docente::select('ID_DOCENTE', 'NOMBRE')
+                    ->with([
+                        'docente_relacion_dahm' => function ($query) {
+                            $query->select('ID_DOCENTE', 'ID_HORARIO', 'ID_AMBIENTE', 'ID_MATERIA')
+                                ->with([
+                                    'dahm_relacion_horario' => function ($query) {
+                                        $query->select('ID_HORARIO', 'DIA', 'INICIO', 'FIN');
+                                    }, 
+                                    'dahm_relacion_ambiente' => function ($query) {
+                                        $query->select('ID_AMBIENTE', 'NOMBRE', 'TIPO');
+                                    }
+                                ]);
+                        },
+                        'docente_relacion_materia.dm_relacion_materia' => function ($query) {
+                            $query->select('ID_MATERIA', 'NOMBRE');
+                        }
+                    ])
+                    ->get();
         foreach ($horarios as $horario) {
-            if(isset($horario->docente_relacion_dahm)){
+            $horario_materia = $horario['docente_relacion_materia'];
+            if(isset($horario_materia)){
                 $horarios_docente = [];
-                foreach($horario->docente_relacion_dahm as $value){
-                    if(isset($value)){
-                        $horarios_docente[] = [
-                            'ID_HORARIO' => $value['dahm_relacion_horario']['ID_HORARIO'],
-                            'DIA' => $value['dahm_relacion_horario']['DIA'],
-                            'INICIO' => $value['dahm_relacion_horario']['INICIO'],
-                            'FIN' => $value['dahm_relacion_horario']['FIN'],
-                            'AMBIENTE' => $value['dahm_relacion_ambiente']['NOMBRE'],
-                            'MATERIA' => $value['dahm_relacion_materia']['NOMBRE']
-                        ];
+                $horarios_materia= [];
+                foreach ($horario_materia as $h_materia) {
+                    foreach($horario->docente_relacion_dahm as $value){
+                        if(isset($value) && $h_materia['ID_MATERIA'] == $value['ID_MATERIA']){
+                            $horarios_materia[] = [
+                                'ID_HORARIO' => $value['dahm_relacion_horario']['ID_HORARIO'],
+                                'DIA' => $value['dahm_relacion_horario']['DIA'],
+                                'INICIO' => $value['dahm_relacion_horario']['INICIO'],
+                                'FIN' => $value['dahm_relacion_horario']['FIN'],
+                                'AMBIENTE' => $value['dahm_relacion_ambiente']['NOMBRE'],
+                            ];
+                        }
                     }
-
+                    $horarios_docente[] = [
+                        'GRUPO_MATERIA' => $h_materia['GRUPO'],
+                        'NOMBRE_MATERIA' => $h_materia['dm_relacion_materia']['NOMBRE'],
+                        'HORARIOS_MATERIA' => $horarios_materia
+                    ];
                 }
                 $horarios_estructurados[] = [
-                    'ID_DOCENTE' => $horario['ID_DOCENTE'],
                     'NOMBRE' => $horario['NOMBRE'],
-                    'GRUPO_MATERIA' => $horario['GRUPO'],
                     'HORARIOS_DOCENTE' => $horarios_docente
                 ];
             }
         }
         return view('admin.layouts.horariosModificacion', ['horarios' => $horarios_estructurados]);
-        //return $horarios;
+        //return $horarios_estructurados;
     }
     /**
      * Display a listing of the resource.
@@ -239,16 +258,16 @@ class HorarioController extends Controller
     {
         $buscador = new EncontrarTodo();
         try {
-            $horarios = json_decode($request);
+            $horarios = json_decode($request->getContent(), true);
             foreach($horarios as $horario){
-                $update = Horario::where('ID_HORARIO', $horario->ID_HORARIO);
+                $update = Horario::where('ID_HORARIO', $horario['ID_HORARIO']);
                 $update->update([
-                    'DIA' => $horario->DIA, 
-                    'INICIO' => $horario->INICIO,
-                    'FIN' => $horario->FIN
+                    'DIA' => $horario['DIA'],
+                    'INICIO' => $horario['INICIO'],
+                    'FIN' => $horario['FIN']
                 ]);
-                $update = Relacion_DAHM::where('ID_HORARIO', $horario->ID_HORARIO);
-                $update->update(['ID_AMBIENTE', $buscador->getIdAmbiente($horario->AMBIENTE)]);
+                $update = Relacion_DAHM::where('ID_HORARIO', $horario['ID_HORARIO']);
+                $update->update(['ID_AMBIENTE' => $buscador->getIdAmbiente($horario['AMBIENTE'])]);
             }
             return response()->json(['message' => 'Actualizacion de horario exitosa.'], 200);
         } catch (\Throwable $th) {

@@ -7,21 +7,17 @@
     <div class="offcanvas-body">
         @csrf
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <label for="docente">Docente</label>
                 <input type="text" class="form-control" name="docente" readonly>
-            </div>
-            <div class="col-md-3">
-                <label for="docente">Grupo</label>
-                <input type="text" class="form-control" name="grupo" readonly>
             </div>
         </div>
         <div id="horarios">
 
         </div>
         <div class="col-md-12 mt-3 text-center">
-            <button type="submit" class="btn btn-primary d-inline-block w-75" id="boton-sub" onclick="cambiar()" style="background-color: green" value="CANCELADO">Cambiar horarios</button>
-            <button class="btn btn-primary d-inline-block w-75" type="button" style="background-color:red" onclick="limpiar()" >Atras</button>
+            <button class="btn btn-primary d-inline-block w-75" id="boton-sub" style="background-color: green" onclick="cambiar()" value="">Cambiar Horarios</button>
+            <button class="btn btn-primary d-inline-block w-75" id="boton-cancel" type="button" style="background-color:red" onclick="limpiar()" >Atras</button>
         </div>
     </div>
 </div>
@@ -31,43 +27,48 @@
     let materia = []
 
     function cambiar(){
+        const button_cambio = document.getElementById('boton-sub')
+        const button_cancelar = document.getElementById('boton-cancel')
         const divs = document.querySelectorAll('div > input[name="dia"]')
         const dias = document.querySelectorAll('[name="dia"]')
         const horas = document.querySelectorAll('input[type="time"]')
         const ambientes = document.querySelectorAll('[name="ambiente"]')
         const nombres_dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']
+
         let i = 0
-        divs.forEach(
-            element => {
-                const select = document.createElement('select')
-                select.name = 'dia'
-                select.className = 'form-control'
-                nombres_dias.forEach(
-                    element => {
-                        const elementUp = element.toUpperCase()
-                        if(elementUp == dias[i].value){
-                            select.innerHTML += `<option value="${elementUp}" selected>${element}</option>`
-                        }else{
-                            select.innerHTML += `<option value="${elementUp}">${element}</option>`
+        if(button_cambio.value != 'UPDATE'){
+            divs.forEach(
+                element => {
+                    const select = document.createElement('select')
+                    select.name = 'dia'
+                    select.className = 'form-control'
+                    nombres_dias.forEach(
+                        element => {
+                            const elementUp = element.toUpperCase()
+                            if(elementUp == dias[i].value){
+                                select.innerHTML += `<option value="${elementUp}" selected>${element}</option>`
+                            }else{
+                                select.innerHTML += `<option value="${elementUp}">${element}</option>`
+                            }
                         }
-                    }
-                )
-                i += 1
-                element.parentNode.appendChild(select)
-                element.remove()
-                console.log("Elemento de la lsta de divs: ",element)
-            }
-
-        )
-        
-        horas.forEach(element => {
-            element.readOnly = !element.readOnly
-        });
-        ambientes.forEach(element => {
-            element.readOnly = !element.readOnly
-        });
-
-        console.log('Listas de elementos: \n', '-> Lista de dias: ', dias[0], '\n-> Lista de horas: ', horas, '\n-> Lista de ambientes: ', ambientes)
+                    )
+                    i += 1
+                    element.parentNode.appendChild(select)
+                    element.remove()
+                    console.log("Elemento de la lsta de divs: ",element)
+                }
+            )
+            
+            horas.forEach(element => {
+                element.readOnly = !element.readOnly
+            });
+            ambientes.forEach(element => {
+                element.readOnly = !element.readOnly
+            });
+            button_cambio.textContent = 'Guardar Cambios'
+        }
+        button_cancelar.textContent = 'Cancelar'
+        button_cambio.value = 'UPDATE'
     }
 
     function validateHoras(){
@@ -120,4 +121,31 @@
             message.style.display = 'block'
         }
     }
+
+    document.getElementById('boton-sub').addEventListener('click', 
+        function(event){
+            if(event.target.value == "UPDATE"){
+                const divs = document.querySelectorAll('div.row[id]')
+
+                const array_update = []
+                divs.forEach(
+                    element => {
+                        const dia = element.querySelector('[name="dia"]')
+                        const dia_select = dia.options[dia.selectedIndex]
+                        array_update.push({
+                            'ID_HORARIO': element.id,
+                            'DIA':element.querySelector('[name="dia"]').value,
+                            'INICIO': element.querySelector('[name="inicio"]').value,
+                            'FIN': element.querySelector('[name="fin"]').value,
+                            'AMBIENTE': element.querySelector('[name="ambiente"]').value
+                        })
+                    }
+                )
+                let json_array_update = JSON.stringify(array_update)
+                console.log(json_array_update)
+                event.target.textContent = 'Cambiar Horarios'
+                event.target.value = ''
+            }
+        }
+    )
 </script>
