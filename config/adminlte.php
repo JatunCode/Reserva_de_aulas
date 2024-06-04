@@ -347,7 +347,14 @@ return [
             'can'    => 'docente',
         
         ],
-
+        
+        [
+            'text'       => 'Visualizar solicitudes',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'docente.registroRazonDenoAsignacion',
+            'can'    => 'admin',
+        ],
         ['header' => 'Razon no asignacion',
         'can'    => 'admin',
         ],
@@ -363,6 +370,16 @@ return [
         ],
         [
             'text'       => 'Reservas',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'docente.registroReservas',
+            'can'    => 'admin',
+        ],
+        ['header' => 'Reportes',
+        'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Ambientes',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
             'route'      => 'docente.registroReservas',

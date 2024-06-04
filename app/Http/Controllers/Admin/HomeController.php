@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Models\Admin\Ambiente;
 class HomeController extends Controller
 {
         /**
@@ -14,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth');
+         $this->middleware('auth');
     }
 
     /**
@@ -24,6 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin.home');
+        $ambientes = Ambiente::all();
+        return view('admin.ambientes', ['ambientes' => $ambientes]);
     }
 }
