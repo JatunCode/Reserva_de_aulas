@@ -16,7 +16,7 @@
         
         <div class="col-md-4" id="containerDocente">
             <label class="form-label" for="docente">Docente</label>
-            <input class="form-control" type="text" name="docente" placeholder="Buscar docente">
+            <input class="form-control" type="text" name="docente-buscar" placeholder="Buscar docente">
             <p id="messageErrorDocente" style="display: none; color: red">*No se encontro el docente</p>
         </div>
         <div class="col-md-2">
@@ -68,13 +68,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 
 <script>
     let docentes = []
-    let horarios = []
-    let horariosFiltro = []
+    
+    let docentesFiltro = []
 
     let horarios_estr = @json($horarios)
+
+    let horario_actual = null
 
     fetch('http://127.0.0.1:8000/api/fetch/docentes').then(
         response => response.json()
@@ -97,6 +100,7 @@
         if(horario){
             const docente = document.querySelector('[name="docente"]')
             const div = document.getElementById('horarios');
+            horario_actual = horario
             docente.value = horario['NOMBRE']
             div.innerHTML = ''
             horario['HORARIOS_DOCENTE'].forEach(
@@ -104,7 +108,7 @@
                     div.innerHTML += 
                     `
                         <div class="card body">
-                            <label class="form-label">Materia: ${element['NOMBRE_MATERIA']}</label>
+                            <label id="materia" class="form-label">Materia: ${element['NOMBRE_MATERIA']}</label>
                             <label class="form-label">Grupo: ${element['GRUPO_MATERIA']}</label>
                         </div>
                     `
@@ -184,43 +188,29 @@
     }
 
     function findDocente(){
-        tipo = ""
-        tabla  =  document.getElementById('tableHorarios')
+        const tabla  =  document.getElementById('tableHorarios')
+        const message = document.getElementById('messageErrorDocente')
+        const input_docente = document.querySelector('[name="docente-buscar"]')
+        const docentes_encontrado = docentes.filter(docente => docente['NOMBRE'].includes(input_docente.value.toUpperCase()))
 
-        input_docente = document.querySelector('[name="docente"]').value
-
-        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/horariosdocente'
-
-        if(input_docente == ""){
-            cadena_fetch += `sin/%20`
-            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+        if(!docentes_encontrado){
+            message.style.display = 'block'
+            console.log("No encontro al docente: ", input_docente)
+            console.log("No encontro al docente: ", docentes_encontrado)
+            console.log("Docentes filtro: ", docentesFiltro,"Docentes: ",docentes)
         }else{
-            cadena_fetch += `/${input_docente}`
-            console.log("Cadena de la peticion fetch: ", cadena_fetch)
+            message.style.display = 'none'
+            console.log("Encontro al docente: ", input_docente,docentes_encontrado)
+            while(tabla.rows.length > 0){
+                tabla.deleteRow(0)
+            }
+            try{
+                agregarTabla(docentes_encontrado, tabla)
+                console.log('Formato del objeto: ', docentes_encontrado)
+            }catch(error){
+                console.log('Erro: ', error)
+            }
         }
-
-        fetch(
-            cadena_fetch
-        ).then(
-            response => response.json()
-        ).then(
-            data => {
-                horariosFiltro = data
-                while(tabla.rows.length > 0){
-                    tabla.deleteRow(0)
-                }
-                try{
-                    agregarTabla(horariosFiltro, tabla)
-                    console.log('Formato del objeto: ', horariosFiltro)
-                }catch(error){
-                    console.log('Erro: ', error)
-                }
-            }
-        ).catch(
-            error => {
-                console.log("Error encontrado: ", error)
-            }
-        )
     }
 </script>
 

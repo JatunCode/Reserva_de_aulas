@@ -42,11 +42,11 @@ class NotificacionController extends Controller
             foreach($nombres as $nombre){
                 $docenteId = $buscador->getIdDocenteporNombre($nombre);
                 $docente = Docente::where('ID_DOCENTE',$docenteId)->first();
-                Notification::route('mail', (($docente->EMAIL != '') ? $docente->EMAIL :'nombre@universidad.edu.bo'))->notify(new Notificacion($request['TIPO'], 'No sé qué ponerle :P'));
+                Notification::route('mail', (($docente->EMAIL != '') ? $docente->EMAIL :'nombre@universidad.edu.bo'))->notify(new Notificacion($request['TIPO'], ['NOMBRE' => $nombre, 'FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE']]));
                 AdminNotificacion::create([
                     'ID_NOTIFICACION' => Uuid::uuid4(),
-                    'CUERPO' => json_encode('Cuerpo inicial'),
-                    'ID_DOCENTE' => $buscador->getIdDocenteporNombre($nombre)
+                    'CUERPO' => json_encode(['FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE']]),
+                    'ID_DOCENTE' => $docenteId
                 ]);
             }
     

@@ -36,6 +36,7 @@
 <script>
     const regex = /[^0-9]/
     function limpiar(){
+        const razon = document.querySelector('[name="razon"]')
         const lista_razones = document.querySelectorAll('[name="razonli"]')
         lista_razones.forEach(element => {
             if(!element.value){
@@ -44,7 +45,9 @@
             }
             console.log('Se borro')
         });
+        razon.textContent = ''
         console.log('Terminar funcion')
+        cerrarRazones()
     }
 
     function agregarRazon(){
@@ -75,5 +78,9 @@
         })
 
         return {'LISTA_NO_REG': lista_no_reg, 'LISTA_REG':lista_reg}
+    }
+
+    function cerrarRazones(){
+        canvas_razones_instance.hide()
     }
 </script>
