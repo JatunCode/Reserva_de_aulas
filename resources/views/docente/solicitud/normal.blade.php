@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return `<p><strong>${key}:</strong> ${value}</p>`;
             }).join('');
 
-            const json_send = JSON.stringify({
+            const json_send = {
                 'NOMBRES':json_nombres,
                 'CANTIDAD':parseInt(input_cant, 10),
                 'FECHA_RESERVA':input_fecha+' '+arreglo_horario[0],
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 'MOTIVO':dato_motivo,
                 'MATERIA':dato_materia,
                 'AMBIENTE':input_aula
-            });
+            };
 
             // Mostrar el modal de confirmación con los datos del formulario
             Swal.fire({
@@ -265,20 +265,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function sendForm(formData) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
+        const body = {'NOMBRES': formData['NOMBRES'],
+                        'TIPO' : 'Solicitud'}
+        const json_send = JSON.stringify(formData)
         fetch(document.getElementById('solicitudForm').action, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken
             },
-            body: formData,
+            body: json_send,
         })
         .then(response => {
+
             if (response.ok) {
                 Swal.fire({
                     icon: 'success',
                     title: '¡Solicitud enviada correctamente!',
+                    text: 'Enviando notificacion a su correo.',
                     showConfirmButton: false,
                     timer: 1500 // Cerrar automáticamente después de 1.5 segundos
                 });
@@ -289,15 +293,53 @@ document.addEventListener("DOMContentLoaded", function() {
                     text: 'Error al enviar la solicitud',
                 });
             }
-            return response.json();
-        }).then(
-            data => {
-                console.log('Formulario sin enviar: ', data);
+            return sendNotificacion({
+                                'TOKEN':csrfToken, 
+                                'BODY': body
+                            });
+        }).then(notificationResponse => {
+            if (notificationResponse) {
+                console.log('Notificación enviada correctamente');
+            } else {
+                console.error('Error al enviar la notificación: ', notificationResponse.body);
             }
-        ).catch(error => {
+        }).catch(error => {
             console.error('Error:', error);
             alert('Error al enviar la solicitud');
         });
+    }
+
+    function sendNotificacion(data){
+        const cuerpo = JSON.stringify(data['BODY'])
+        fetch('http://127.0.0.1:8000/api/fetch/notificacion/store',
+            {
+                method:'POST', 
+                headers:{
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': data['TOKEN']
+                },
+                body:cuerpo
+            }
+        ).then(
+            response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
+        ).then(
+            response => {
+                    if (response.status == 200) {
+                        return response;
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Error al enviar la notificación',
+                        });
+                        console.log('Response: ', response);
+                    }
+            }
+        ).catch(
+            error => {
+                console.log('Error del servidor: ', error)
+            }
+        )
     }
 </script>
 
@@ -343,44 +385,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('container');
-    const addButton = container.querySelector('.agregar-nombre');
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('container');
+        const addButton = container.querySelector('.agregar-nombre');
 
-    addButton.addEventListener('click', function() {
-        const inputs = container.querySelectorAll('.nombre-input');
-        let lastVisibleIndex = -1;
+        addButton.addEventListener('click', function() {
+            const inputs = container.querySelectorAll('.nombre-input');
+            let lastVisibleIndex = -1;
 
-        inputs.forEach((input, index) => {
-            if (!input.classList.contains('invisible')) {
-                lastVisibleIndex = index;
+            inputs.forEach((input, index) => {
+                if (!input.classList.contains('invisible')) {
+                    lastVisibleIndex = index;
+                }
+            });
+
+            if (lastVisibleIndex < 4) {
+                const nextIndex = lastVisibleIndex + 1;
+                const newInput = document.createElement('div');
+                newInput.classList.add('input-group', 'mb-2');
+                newInput.innerHTML = `
+                    <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre" id="nombre${nextIndex}">
+                    <button class="btn btn-danger eliminar-nombre" type="button">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
+                insertAfter(newInput, inputs[lastVisibleIndex].parentNode);
+
+                // Agregar event listener al botón de eliminar
+                const deleteButton = newInput.querySelector('.eliminar-nombre');
+                deleteButton.addEventListener('click', function() {
+                    newInput.remove();
+                });
             }
         });
-
-        if (lastVisibleIndex < 4) {
-            const nextIndex = lastVisibleIndex + 1;
-            const newInput = document.createElement('div');
-            newInput.classList.add('input-group', 'mb-2');
-            newInput.innerHTML = `
-                <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre" id="nombre${nextIndex}">
-                <button class="btn btn-danger eliminar-nombre" type="button">
-                    <i class="bi bi-trash"></i>
-                </button>
-            `;
-            insertAfter(newInput, inputs[lastVisibleIndex].parentNode);
-
-            // Agregar event listener al botón de eliminar
-            const deleteButton = newInput.querySelector('.eliminar-nombre');
-            deleteButton.addEventListener('click', function() {
-                newInput.remove();
-            });
-        }
     });
-});
 
-function insertAfter(newNode, referenceNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
+    function insertAfter(newNode, referenceNode) {
+        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    }
 </script>
 
 <script>

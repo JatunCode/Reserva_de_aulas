@@ -37,8 +37,8 @@ class ListarController extends Controller
      */
     public function index()
     {
-        $ambientes = Ambiente::all();
-        return view('admin.listar.solicitudes', ['ambientes' => $ambientes]);
+        // $ambientes = Ambiente::all();
+        // return view('admin.listar.solicitudes', ['ambientes' => $ambientes]);
     }
     public function datos(Request $request)
     {

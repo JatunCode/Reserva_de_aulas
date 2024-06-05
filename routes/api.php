@@ -23,9 +23,9 @@ use App\Models\Docente\Solicitud;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::controller(AmbienteController::class)->group(
     function(){
@@ -55,6 +55,7 @@ Route::controller(HorarioController::class)->group(
         Route::get('/fetch/horariostodossin/{docente}/{dia}/{estado}', 'showTodo');
         Route::post('/horarios/store', 'store');
         Route::get('/fetch/horariosupdate', 'indexMod');
+        Route::put('/fetch/horarios/update', 'update');
         // Route::post('/putambiente', 'show');
     }
 );
@@ -70,8 +71,8 @@ Route::controller(MateriaController::class)->group(
 
 Route::controller(NotificacionController::class)->group(
     function(){
-        Route::get('/notificaciones', 'index');
-        //Route::post('/horarios/store', 'store');
+        Route::get('/fetch/notificaciones', 'index');
+        Route::post('/fetch/notificacion/store', 'store');
         // Route::post('/putambiente', 'show');
     }
 );

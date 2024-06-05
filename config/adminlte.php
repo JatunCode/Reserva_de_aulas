@@ -380,9 +380,9 @@ return [
         ],
         [
             'text'       => 'Ambientes',
-            'icon'       => 'fa fa-book',
-            'icon_color' => 'green',
-            'route'      => 'docente.registroReservas',
+            'icon'       => 'fa fa-chart-line',
+            'icon_color' => 'yellow',
+            'route'      => 'admin.reportes',
             'can'    => 'admin',
         ],
     ],

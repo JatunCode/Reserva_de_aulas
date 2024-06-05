@@ -1,16 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\AmbienteController;
-use App\Http\Controllers\Admin\DocenteController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Admin\NotificacionController;
+use App\Http\Controllers\Admin\ListarController;
+use App\Http\Controllers\Admin\ReportesController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
 use App\Http\Controllers\RazonesController;
-use App\Http\Controllers\Admin\ListarController;
 use App\Models\Admin\Docente;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,18 +63,27 @@ Route::prefix('admin')->middleware('auth','can:admin')->group(function () {
     Route::get('/horarios/registro', [HorarioController::class, 'store'])->name('horario.list');
     //Crea un registro nuevo en el servidor de los horarios
     Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
+    //Muestra los horarios para modificarlos
+    Route::get('/horariosupdate', [HorarioController::class, 'indexMod'])->name('admin.horarios');
+
+    Route::get('/notificacion', [NotificacionController::class, 'index'])->name('send.notificaciones');
     //comprobar si estas rutas se usan
-    Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
-    Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
-    Route::put('/docentes/show/{caracter}', [DocenteController::class, 'show'])->name('docente.put');
+    // Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
+    // Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
+    // Route::put('/docentes/show/{caracter}', [DocenteController::class, 'show'])->name('docente.put');
 
     //Mostrar las solicitudes pendientes
     Route::get('/reservas', [ReservasController::class, 'index'])->name('reservas.index');
     Route::put('/reservas/store', [ReservasController::class, 'store'])->name('reserva.store');
     //Listar
     Route::get('/listar', [ListarController::class, 'datos'])->name('admin.listar.solicitudes');
-    Route::get('/reservas/{id}', [ListarController::class, 'show'])->name('admin.reservas.show');
+    Route::get('/listar/{id}', [ListarController::class, 'show'])->name('admin.reservas.show');
     Route::get('/solicitudes/listar_filtro', [ListarController::class, 'datos_filtro'])->name('admin.solicitud.filtrar.datos_filtro');
+    //Reportes
+    Route::get('/reportes', [ReportesController::class, 'datos'])->name('admin.reportes');
+    Route::get('/reportes/listar_filtro', [ReportesController::class, 'datos_filtro'])->name('admin.reportes.filtrar.datos_filtro');
+    Route::get('/reportes/pdf', [ReportesController::class, 'exportarPDF'])->name('admin.exportarPDF');
+
 });
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
@@ -98,7 +106,7 @@ Route::prefix('docente')->middleware('auth','can:docente')->group(function () {
     
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     //Route::get('/reservas', [ReservasController::class, 'index'])->name('docente.reservas');
-    Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
+    //Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
     Route::get('/solicitudes/cancelar', [ReservasController::class, 'cancelar_solicitud'])->name('docente.solicitud.cancelar');
     Route::put('/solicitudes/{solicitud}/cancelar', [ReservasController::class, 'cancelar'])->name('docente.reservas.cancelar');
  //Hu registro reservas

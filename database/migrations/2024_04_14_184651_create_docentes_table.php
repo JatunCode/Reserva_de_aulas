@@ -16,7 +16,6 @@ class CreateDocentesTable extends Migration
         Schema::create('docente', function (Blueprint $table) {
             $table->uuid('ID_DOCENTE')->primary()->unique();
             $table->string('NOMBRE', 30)->nullable(false);
-            $table->string('GRUPO', 5);
             $table->integer('CELULAR');
             $table->string('EMAIL',50);
             $table->timestamps();
