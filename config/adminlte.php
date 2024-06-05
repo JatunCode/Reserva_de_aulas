@@ -352,7 +352,7 @@ return [
             'text'       => 'Visualizar solicitudes',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
-            'route'      => 'docente.registroRazonDenoAsignacion',
+            'route'      => 'admin.listar.solicitudes',
             'can'    => 'admin',
         ],
         ['header' => 'Razon no asignacion',
