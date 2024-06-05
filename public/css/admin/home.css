@@ -19,3 +19,22 @@
     background-color: #dc3545; /* Rojo, ajusta según tu preferencia */
 }
 
+.suggestions-container {
+  position: absolute;
+  width: calc(100% - 2px); /* Ancho igual al del campo de entrada */
+  max-height: 200px; /* Altura máxima para la ventana de sugerencias */
+  overflow-y: auto; /* Habilitar desplazamiento vertical si hay muchas sugerencias */
+  border: 1px solid #ccc; /* Borde para la ventana de sugerencias */
+  border-top: none; /* Eliminar borde superior para que coincida con el campo de entrada */
+  border-radius: 0 0 5px 5px; /* Borde redondeado en la parte inferior */
+  background-color: #fff; /* Color de fondo */
+  z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
+}
+.suggestions-item {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.suggestions-item:hover {
+  background-color: #f2f2f2; /* Cambiar el color de fondo al pasar el cursor sobre la sugerencia */
+}

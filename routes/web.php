@@ -4,9 +4,13 @@ use App\Http\Controllers\Admin\AmbienteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Admin\NotificacionController;
+use App\Http\Controllers\Admin\ListarController;
+use App\Http\Controllers\Admin\ReportesController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
+use App\Http\Controllers\RazonesController;
+use App\Models\Admin\Docente;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -34,10 +38,7 @@ Route::group(['prefix' => '/'], function () {
 
 Auth::routes();
 
-Route::prefix('admin')
-//!!Autorizacion para administrador se descomenta para tener la autorizacion
-//->middleware('auth','can:admin')
-->group(function () {
+Route::prefix('admin')->middleware('auth','can:admin')->group(function () {
     Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
     Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
@@ -73,8 +74,15 @@ Route::prefix('admin')
 
     //Mostrar las solicitudes pendientes
     Route::get('/reservas', [ReservasController::class, 'index'])->name('reservas.index');
-    Route::put('/reservas/store', [ReservasController::class, 'store'])->name('reservas.store');
-
+    Route::put('/reservas/store', [ReservasController::class, 'store'])->name('reserva.store');
+    //Listar
+    Route::get('/listar', [ListarController::class, 'datos'])->name('admin.listar.solicitudes');
+    Route::get('/listar/{id}', [ListarController::class, 'show'])->name('admin.reservas.show');
+    Route::get('/solicitudes/listar_filtro', [ListarController::class, 'datos_filtro'])->name('admin.solicitud.filtrar.datos_filtro');
+    //Reportes
+    Route::get('/reportes', [ReportesController::class, 'datos'])->name('admin.reportes');
+    Route::get('/reportes/listar_filtro', [ReportesController::class, 'datos_filtro'])->name('admin.reportes.filtrar.datos_filtro');
+    Route::get('/reportes/pdf', [ReportesController::class, 'exportarPDF'])->name('admin.exportarPDF');
 
 });
 
