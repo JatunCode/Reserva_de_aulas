@@ -65,7 +65,7 @@
             </div>
         </div>
         <div>
-            <button type="button" class="btn btn-primary d-inline-block w-75" name="atras" style="background-color:red" >Atras</button>
+            <button type="button" class="btn btn-primary d-inline-block w-75" name="atras" style="background-color:red" onclick="cerrarMain()">Atras</button>
         </div>
     </div>
 </div>
@@ -73,17 +73,32 @@
 @include('admin.components.formularioRazones')
 
 <script>
+    const canvas_main = document.getElementById('offcanvasRight')
+    const canvas_razones = document.getElementById('offcanvasRightRa')
+    const canvas_main_instance = bootstrap.Offcanvas.getInstance(canvas_main)
+    const canvas_razones_instance = bootstrap.Offcanvas.getInstance(canvas_razones)
+
     function cambiarEstado(button){
         let text = button.value
         let actualizacion = obtainValues()
         const id_solicitud = document.getElementById('docentes')
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
 
-        let ob_json = JSON.stringify({
+        const ob_json = JSON.stringify({
             'ID_SOLICITUD':soli_aten['ID'],
             'ESTADO':button.value,
             'ACTUALIZACIONES':actualizacion
         })
+
+        const body = {
+            'NOMBRES': soli_aten['NOMBRES'],
+            'TIPO': 'Reserva',
+            'ESTADO':button.value,
+            'FECHA':soli_aten['FECHA_RESERVA'],
+            'MATERIA':soli_aten['MATERIA'],
+            'AMBIENTE':soli_aten['AMBIENTE'],
+            'RAZONES':actualizacion
+        }
         fetch(
             'reservas/store',
             {
@@ -107,7 +122,12 @@
                         timer: 1500 // Cerrar automáticamente después de 1.5 segundos
                     }).then(() => {
                         // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
-                        limpiar();
+                        sendNotificacion({
+                            'TOKEN':token,
+                            'BODY': body
+                        })
+                        limpiar()
+                        cerrarMain()
                     })
                 }
             }
@@ -121,6 +141,41 @@
             }
         )
     }
-    
 
+    function sendNotificacion(data){
+        const cuerpo = JSON.stringify(data['BODY'])
+        fetch('http://127.0.0.1:8000/api/fetch/notificacion/store',
+            {
+                method:'POST', 
+                headers:{
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': data['TOKEN']
+                },
+                body:cuerpo
+            }
+        ).then(
+            response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
+        ).then(
+            response => {
+                    if (response.status == 200) {
+                        return response;
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Error al enviar la notificación',
+                        });
+                        console.log('Response: ', response);
+                    }
+            }
+        ).catch(
+            error => {
+                console.log('Error del servidor: ', error)
+            }
+        )
+    }
+
+    function cerrarMain(){
+        canvas_main_instance.hide()
+    }
 </script>

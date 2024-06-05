@@ -265,8 +265,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function sendForm(formData) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const body = {'NOMBRES': formData['NOMBRES'],
-                        'TIPO' : 'Solicitud'}
+        const body = {
+            'NOMBRES': formData['NOMBRES'],
+            'TIPO': 'Solicitud',
+            'FECHA':formData['FECHA_RESERVA'],
+            'MATERIA':formData['MATERIA'],
+            'AMBIENTE':formData['AMBIENTE']
+        }
         const json_send = JSON.stringify(formData)
         fetch(document.getElementById('solicitudForm').action, {
             method: 'POST',
