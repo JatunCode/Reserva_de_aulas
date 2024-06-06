@@ -139,8 +139,14 @@ function actualizarTabla(data) {
         var rowSolicitudes = document.createElement('tr');
         var cellSolicitudes = document.createElement('td');
         cellSolicitudes.colSpan = "5"; // Colspan para que ocupe toda la fila
+        
+        // Crear la tabla secundaria con clases de Bootstrap
         var tablaSolicitudes = document.createElement('table');
+        tablaSolicitudes.classList.add('table', 'table-bordered', 'w-100');
+
         var thead = document.createElement('thead');
+        thead.classList.add('thead-light');
+
         var tbodySolicitudes = document.createElement('tbody');
 
         // Crear encabezados de columna para la tabla de solicitudes
@@ -159,7 +165,7 @@ function actualizarTabla(data) {
             var fechaCell = document.createElement('td');
             fechaCell.innerText = solicitud.fecha;
             var docenteCell = document.createElement('td');
-            docenteCell.innerText = solicitud.nombre;
+            docenteCell.innerText = solicitud.nombre; // Asegúrate de usar nombre_docente aquí
             var motivoCell = document.createElement('td');
             motivoCell.innerText = solicitud.motivo;
             var estadoCell = document.createElement('td');
@@ -185,6 +191,7 @@ function actualizarTabla(data) {
         tbody.appendChild(rowSolicitudes);
     });
 }
+
 
 // Función para formatear las solicitudes en un formato legible
 function formatSolicitudes(solicitudes) {
