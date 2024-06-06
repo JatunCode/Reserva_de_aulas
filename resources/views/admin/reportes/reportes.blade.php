@@ -3,7 +3,7 @@
 @section('title', 'Reportes')
 
 @section('content_header')
-    <h1>Lista de Solicitudes </h1>
+    <h1>Reporte Ambientes</h1>
 @stop
 
 @section('content')
@@ -120,11 +120,11 @@ function actualizarTabla(data) {
     
     // Iterar sobre los nuevos datos y agregar cada ambiente como una fila en la tabla
     data.forEach(ambiente => {
-        // Crear una nueva fila
-        var row = document.createElement('tr');
+        // Crear una nueva fila para el ambiente
+        var rowAmbiente = document.createElement('tr');
         
         // Agregar las celdas con los datos del ambiente a la fila
-        row.innerHTML = `
+        rowAmbiente.innerHTML = `
             <td>${contador++}</td>
             <td>${ambiente.TIPO}</td>
             <td>${ambiente.NOMBRE}</td>
@@ -132,9 +132,69 @@ function actualizarTabla(data) {
             <td>${ambiente.ESTADO}</td>
         `;
         
-        // Agregar la fila al cuerpo de la tabla
-        tbody.appendChild(row);
+        // Agregar la fila del ambiente al cuerpo de la tabla
+        tbody.appendChild(rowAmbiente);
+
+        // Crear una fila para las solicitudes con una tabla secundaria
+        var rowSolicitudes = document.createElement('tr');
+        var cellSolicitudes = document.createElement('td');
+        cellSolicitudes.colSpan = "5"; // Colspan para que ocupe toda la fila
+        var tablaSolicitudes = document.createElement('table');
+        var thead = document.createElement('thead');
+        var tbodySolicitudes = document.createElement('tbody');
+
+        // Crear encabezados de columna para la tabla de solicitudes
+        var encabezados = ['Fecha', 'Docente', 'Motivo', 'Estado'];
+        var encabezadosRow = document.createElement('tr');
+        encabezados.forEach(header => {
+            var th = document.createElement('th');
+            th.innerText = header;
+            encabezadosRow.appendChild(th);
+        });
+        thead.appendChild(encabezadosRow);
+
+        // Iterar sobre las solicitudes y agregarlas como filas en la tabla de solicitudes
+        ambiente.solicitudes.forEach(solicitud => {
+            var solicitudRow = document.createElement('tr');
+            var fechaCell = document.createElement('td');
+            fechaCell.innerText = solicitud.fecha;
+            var docenteCell = document.createElement('td');
+            docenteCell.innerText = solicitud.nombre;
+            var motivoCell = document.createElement('td');
+            motivoCell.innerText = solicitud.motivo;
+            var estadoCell = document.createElement('td');
+            estadoCell.innerText = solicitud.estado; // Asumiendo que tienes el estado de la solicitud
+            solicitudRow.appendChild(fechaCell);
+            solicitudRow.appendChild(docenteCell);
+            solicitudRow.appendChild(motivoCell);
+            solicitudRow.appendChild(estadoCell);
+            tbodySolicitudes.appendChild(solicitudRow);
+        });
+
+        // Agregar el encabezado y el cuerpo de la tabla de solicitudes a la tabla secundaria
+        tablaSolicitudes.appendChild(thead);
+        tablaSolicitudes.appendChild(tbodySolicitudes);
+
+        // Agregar la tabla secundaria al cuerpo de la celda
+        cellSolicitudes.appendChild(tablaSolicitudes);
+
+        // Agregar la celda al cuerpo de la fila de solicitudes
+        rowSolicitudes.appendChild(cellSolicitudes);
+
+        // Agregar la fila de solicitudes al cuerpo de la tabla
+        tbody.appendChild(rowSolicitudes);
     });
+}
+
+// Función para formatear las solicitudes en un formato legible
+function formatSolicitudes(solicitudes) {
+    if (!solicitudes || solicitudes.length === 0) {
+        return 'Sin solicitudes';
+    }
+    
+    // Formatear las solicitudes en una lista de nombres de docentes
+    var nombresDocentes = solicitudes.map(solicitud => solicitud.nombre).join(', ');
+    return nombresDocentes;
 }
 function exportarPDF() {
     filtrarAmbientes(); // Primero, filtramos los ambientes para obtener los datos actualizados en la tabla
@@ -145,31 +205,14 @@ function exportarPDF() {
     // Obtenemos los datos de la tabla actualizados
     var tabla = document.getElementById("resultadosTabla");
     var filas = tabla.getElementsByTagName("tr");
-    var datosTabla = [];
-
-    // Recorremos las filas de la tabla y obtenemos los datos de cada celda
-    for (var i = 0; i < filas.length; i++) {
-        var fila = filas[i];
-        var celdas = fila.getElementsByTagName("td");
-        var datosFila = {};
-
-        // Agregamos los datos de cada celda al objeto datosFila
-        datosFila['ID'] = celdas[0].innerText;
-        datosFila['Tipo'] = celdas[1].innerText;
-        datosFila['Nombre'] = celdas[2].innerText;
-        datosFila['Capacidad'] = celdas[3].innerText;
-        datosFila['Estado'] = celdas[4].innerText;
-
-        // Agregamos el objeto datosFila a la matriz datosTabla
-        datosTabla.push(datosFila);
-    }
+    
 
     // Construir el objeto de datos para el PDF
     var data = {
         nombre: nombre,
         estado: estado,
         capacidad: capacidad,
-        tabla: datosTabla // Pasamos los datos de la tabla al objeto de datos
+        
     };
 
     // Generar el PDF

@@ -20,10 +20,28 @@
         tr:hover {
             background-color: #f5f5f5;
         }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .contact-info {
+            text-align: right;
+        }
     </style>
 </head>
 <body>
-    <h1>Ambientes</h1>
+<header>
+        <div class="contact-info">
+            <strong>JatunCODE</strong><br>
+            UMSS<br>
+            JatunCODE@gmail.com
+        </div>
+    </header>
+    <h1>Reporte Ambientes</h1>
     <table>
         <thead>
             <tr>
@@ -35,14 +53,41 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($datos['tabla'] as $dato)
+        @php
+            $contador = 1; // Inicializamos el contador en 1
+        @endphp
+            @foreach ($tabla as $ambiente)
                 <tr>
-                    <td>{{ $dato['ID'] }}</td>
-                    <td>{{ $dato['Tipo'] }}</td>
-                    <td>{{ $dato['Nombre'] }}</td>
-                    <td>{{ $dato['Capacidad'] }}</td>
-                    <td>{{ $dato['Estado'] }}</td>
+                    <td>{{ $contador++ }}</td>
+                    <td>{{ $ambiente->TIPO }}</td>
+                    <td>{{ $ambiente->NOMBRE }}</td>
+                    <td>{{ $ambiente->CAPACIDAD }}</td>
+                    <td>{{ $ambiente->ESTADO }}</td>
                 </tr>
+                <tr>
+        <td colspan="5">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Docente</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($ambiente->solicitudes as $solicitud)
+                    <tr>
+                        <td>{{ $solicitud->fecha }}</td>
+                        <td>{{ $solicitud->nombre }}</td>
+                        <td>{{ $solicitud->motivo }}</td>
+                        <td>{{ $solicitud->estado }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </td>
+    </tr>
             @endforeach
         </tbody>
     </table>
