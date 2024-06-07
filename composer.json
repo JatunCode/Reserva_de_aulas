@@ -19,7 +19,7 @@
     "laravel/tinker": "^2.5",
     "laravel/ui": "^3.4",
     "twilio/sdk": "*",
-    "cornford/googlmapper":"2.*"
+    "cornford/googlmapper": "3.*"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

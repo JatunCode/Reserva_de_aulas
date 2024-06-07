@@ -9,9 +9,11 @@ use App\Http\Controllers\Admin\ReportesController;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
+use App\Http\Controllers\MapaControler;
 use App\Http\Controllers\RazonesController;
 use App\Models\Admin\Docente;
 use Illuminate\Support\Facades\Auth;
+use Cornford\Googlmapper\Facades\MapperFacade;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,8 +34,6 @@ Route::group(['prefix' => '/'], function () {
     Route::get('/', function () {
         return view('welcome');
     });
-
-
 });
 
 Auth::routes();
@@ -66,12 +66,8 @@ Route::prefix('admin')->middleware('auth','can:admin')->group(function () {
     //Muestra los horarios para modificarlos
     Route::get('/horariosupdate', [HorarioController::class, 'indexMod'])->name('admin.horarios');
 
-    Route::get('/notificacion', [NotificacionController::class, 'index'])->name('send.notificaciones');
-    //comprobar si estas rutas se usan
-    // Route::put('/horarios/show/{materia}', [HorarioController::class, 'show_materia'])->name('horario.put.materia');
-    // Route::put('/horarios/show/{ambiente}', [HorarioController::class, 'show_ambiente'])->name('horario.put.ambiente');
-    // Route::put('/docentes/show/{caracter}', [DocenteController::class, 'show'])->name('docente.put');
-
+    Route::get('/notificacion', [NotificacionController::class, 'index'])->name('see.notificaciones');
+    Route::post('/notificacion/store', [NotificacionController::class, 'store'])->name('send.notificaciones');
     //Mostrar las solicitudes pendientes
     Route::get('/reservas', [ReservasController::class, 'index'])->name('reservas.index');
     Route::put('/reservas/store', [ReservasController::class, 'store'])->name('reserva.store');
@@ -84,6 +80,7 @@ Route::prefix('admin')->middleware('auth','can:admin')->group(function () {
     Route::get('/reportes/listar_filtro', [ReportesController::class, 'datos_filtro'])->name('admin.reportes.filtrar.datos_filtro');
     Route::get('/reportes/pdf', [ReportesController::class, 'exportarPDF'])->name('admin.exportarPDF');
 
+    Route::get('/mapa', [MapaControler::class, 'index'])->name('mapa.index');
 });
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
@@ -112,10 +109,13 @@ Route::prefix('docente')
     //Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
     Route::get('/solicitudes/cancelar', [ReservasController::class, 'cancelar_solicitud'])->name('docente.solicitud.cancelar');
     Route::put('/solicitudes/{solicitud}/cancelar', [ReservasController::class, 'cancelar'])->name('docente.reservas.cancelar');
- //Hu registro reservas
- Route::get('/registroReservas', [ReservasController::class, 'registroReservas'])->name('docente.registroReservas');
- Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
- Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
+
+    //Hu registro reservas
+    Route::get('/registroReservas', [ReservasController::class, 'registroReservas'])->name('docente.registroReservas');
+    Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
+    Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
+        
+    Route::get('/mapa', [MapaControler::class, 'index'])->name('mapa.index');
 });
 
 

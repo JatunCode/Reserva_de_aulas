@@ -77,9 +77,12 @@ class EncontrarTodo extends Controller
         $iterables = json_decode($json);
         $list = [];
         foreach($iterables as $iterable){
-            $list[] = [
-               "Nombre_docente" => Docente::where('ID_DOCENTE', $iterable)->first()->NOMBRE
-            ];
+            $docente = Docente::where('ID_DOCENTE', $iterable)->first();
+            if(isset($docente)){
+                $list[] = [
+                    "Nombre_docente" => $docente->NOMBRE
+                 ];
+            }
         }
         return $list;
     }

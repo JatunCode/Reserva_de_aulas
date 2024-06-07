@@ -14,40 +14,36 @@
     <div class="card-header">
         <form class="row">
         <div class="form-group col-lg-4 col-md-3 align-self-center">
-    <label for="inputSearch" class="mr-2">Materia:</label>
-    <select type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
-    <option value="" disabled selected>Seleccione una materia</option>
-        @foreach($materias as $materia)
-            <option value="{{ $materia }}">{{ $materia }}</option>
-        @endforeach
-    </select>
-</div>
+            <label for="inputSearch" class="mr-2">Materia:</label>
+            <select type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
+            <option value="" disabled selected>Seleccione una materia</option>
+                @foreach($materias as $materia)
+                    <option value="{{ $materia }}">{{ $materia }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group col-lg-2 col-md-3 align-self-center">
+            <label for="selectMode" class="mr-2">Modo:</label>
+            <select class="form-control" id="selectMode">
+                <option value="Todos" selected>Todos</option>
+                <option value="Normal">Normal</option>
+                <option value="Urgente">Urgente</option>
+            </select>
+        </div>
+        <div class="form-group col-lg-2 col-md-3 align-self-center">
+            <label for="selectStatus" class="mr-2">Estado:</label>
+            <select class="form-control" id="selectStatus">
+                <option value="Todos" selected>Todos</option>
+                <option value="Reservado">Reservado</option>
+                <option value="Solicitando">Solicitando</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+        <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
+            <label for="selectMode" class="mr-2"></label>
+            <button type="button" id="btnBuscar" class="btn btn-primary w-100">Buscar</button>
 
-
-
-
-            <div class="form-group col-lg-2 col-md-3 align-self-center">
-                <label for="selectMode" class="mr-2">Modo:</label>
-                <select class="form-control" id="selectMode">
-                    <option value="Todos" selected>Todos</option>
-                    <option value="Normal">Normal</option>
-                    <option value="Urgente">Urgente</option>
-                </select>
-            </div>
-            <div class="form-group col-lg-2 col-md-3 align-self-center">
-                <label for="selectStatus" class="mr-2">Estado:</label>
-                <select class="form-control" id="selectStatus">
-                    <option value="Todos" selected>Todos</option>
-                    <option value="Reservado">Reservado</option>
-                    <option value="Solicitando">Solicitando</option>
-                    <option value="Cancelado">Cancelado</option>
-                </select>
-            </div>
-            <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
-                <label for="selectMode" class="mr-2"></label>
-                <button type="button" id="btnBuscar" class="btn btn-primary w-100">Buscar</button>
-
-            </div>
+        </div>
         </form>
     </div>
     <div class="card-body table-responsive">

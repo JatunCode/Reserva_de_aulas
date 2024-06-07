@@ -34,55 +34,53 @@
 
     document.getElementById('boton-sub').addEventListener('click', 
         function(event){
-            if(event.target.value == "UPDATE"){
-                const materia = document.getElementById('materia').textContent
-                const docente = document.querySelector('[name="docente"]').value
-                const divs = document.querySelectorAll('div.row[id]')
-                
-                const array_update = []
-                divs.forEach(
-                    element => {
-                        const dia = element.querySelector('[name="dia"]')
-                        const dia_select = dia.options[dia.selectedIndex]
-                        array_update.push({
-                            'ID_HORARIO': element.id,
-                            'DIA':element.querySelector('[name="dia"]').value,
-                            'INICIO': element.querySelector('[name="inicio"]').value,
-                            'FIN': element.querySelector('[name="fin"]').value,
-                            'AMBIENTE': element.querySelector('[name="ambiente"]').value
-                        })
-                    }
-                )
-                let json_array_update = JSON.stringify(array_update)
-                console.log(array_update)
+            const materia = document.getElementById('materia').textContent
+            const docente = document.querySelector('[name="docente"]').value
+            const divs = document.querySelectorAll('div.row[id]')
+            
+            const array_update = []
+            divs.forEach(
+                element => {
+                    const dia = element.querySelector('[name="dia"]')
+                    const dia_select = dia.options[dia.selectedIndex]
+                    array_update.push({
+                        'ID_HORARIO': element.id,
+                        'DIA':element.querySelector('[name="dia"]').value,
+                        'INICIO': element.querySelector('[name="inicio"]').value,
+                        'FIN': element.querySelector('[name="fin"]').value,
+                        'AMBIENTE': element.querySelector('[name="ambiente"]').value
+                    })
+                }
+            )
+            let json_array_update = JSON.stringify(array_update)
+            console.log(array_update)
 
-                let content = `
-                    <p><strong>Docente</strong>${docente}</p>
-                    <p><strong>Materia</strong>${materia}</p>
-                    <div>
-                        <p><strong>Dia</strong> <strong>Inicio</strong> <strong>Salida</strong> <strong>Ambiente</strong></p>
-                    </div>`
-                const modalContent = content+Object.entries(array_update).map(([key, value]) => {                    
-                    return `<div>
-                        <p><strong>Horario ${String(parseInt(key, 10)+1)}:</strong> ${value['DIA']} ${value['INICIO']} ${value['FIN']} ${value['AMBIENTE']}</p>
-                    </div>`
-                }).join('')
+            let content = `
+                <p><strong>Docente</strong>${docente}</p>
+                <p><strong>Materia</strong>${materia}</p>
+                <div>
+                    <p><strong>Dia</strong> <strong>Inicio</strong> <strong>Salida</strong> <strong>Ambiente</strong></p>
+                </div>`
+            const modalContent = content+Object.entries(array_update).map(([key, value]) => {                    
+                return `<div>
+                    <p><strong>Horario ${String(parseInt(key, 10)+1)}:</strong> ${value['DIA']} ${value['INICIO']} ${value['FIN']} ${value['AMBIENTE']}</p>
+                </div>`
+            }).join('')
 
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Confirmación de envío',
-                    html: modalContent,
-                    showCancelButton: true,
-                    confirmButtonText: 'Enviar',
-                    cancelButtonText: 'Cancelar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Enviar el formulario si se confirma la acción
-                        console.log("Formato del json: ", json_array_update)
-                        sendForm(json_array_update)
-                    }
-                })
-            }
+            Swal.fire({
+                icon: 'info',
+                title: 'Confirmación de modificacion',
+                html: modalContent,
+                showCancelButton: true,
+                confirmButtonText: 'Enviar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar el formulario si se confirma la acción
+                    console.log("Formato del json: ", json_array_update)
+                    sendForm(json_array_update)
+                }
+            })
         }
     )
 
@@ -103,7 +101,7 @@
                 if(response.ok){
                     Swal.fire({
                         icon: 'success',
-                        title: '¡Ambiente modificado exitosamente!',
+                        title: '¡Horarios modificados exitosamente!',
                         showConfirmButton: false,
                         timer: 1500 // Cerrar automáticamente después de 1.5 segundos
                     }).then(() => {
@@ -164,7 +162,6 @@
             ambientes.forEach(element => {
                 element.readOnly = !element.readOnly
             });
-            button_cambio.textContent = 'Guardar Cambios'
         }
         button_atras.style.display = 'none'
         button_cambio.style.display = 'none'

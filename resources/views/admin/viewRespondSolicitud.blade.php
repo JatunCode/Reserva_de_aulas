@@ -144,7 +144,7 @@
 
     function sendNotificacion(data){
         const cuerpo = JSON.stringify(data['BODY'])
-        fetch('http://127.0.0.1:8000/api/fetch/notificacion/store',
+        fetch('http://127.0.0.1:8000/admin/notificacion/store',
             {
                 method:'POST', 
                 headers:{
@@ -157,14 +157,10 @@
             response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
         ).then(
             response => {
+                    window.location.reload();
                     if (response.status == 200) {
                         return response;
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Error al enviar la notificación',
-                        });
                         console.log('Response: ', response);
                     }
             }
