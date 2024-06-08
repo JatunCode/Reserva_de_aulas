@@ -38,8 +38,10 @@ Route::group(['prefix' => '/'], function () {
 
 Auth::routes();
 
-Route::prefix('admin')->middleware('auth','can:admin')->group(function () {
-    Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
+Route::prefix('admin')
+//->middleware('auth','can:admin')
+->group(function () {
+    //Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
     Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     /**

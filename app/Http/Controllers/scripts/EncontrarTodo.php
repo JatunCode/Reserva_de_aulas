@@ -112,6 +112,17 @@ class EncontrarTodo extends Controller
         return Docente::where('NOMBRE', $nombre)->first()->ID_DOCENTE;
     }
 
+     /**
+     * Encuentra el id de un docente por el nombre del docente
+     * else
+     * Devolvera solo el primer nombre
+     * Todos en formato json
+     */
+    public function getNombreDocenteporId($id_docente){
+        return Docente::where('ID_DOCENTE', $id_docente)->first()->NOMBRE;
+    }
+
+
     /**
      * Encuentra la razon para una reserva por su id
      * Todos en formato json

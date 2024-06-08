@@ -1,17 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Docente;
-use DateTime;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Http\Controllers\scripts\GeneradorHorariosNoRegistrados;
-use App\Models\Admin\Docente;
-use App\Models\Admin\Horario;
 use App\Models\Admin\Materia;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
 use App\Models\Docente\Solicitud;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Ramsey\Uuid\Uuid;
 
@@ -24,31 +22,48 @@ class SolicitudController extends Controller
      */
     public function index()
     {
+        //$usuario = Auth::user();
         $buscador = new EncontrarTodo();
-        $solicitudes_fetch = Solicitud::all();
+        $solicitudes_fetch = 
+        //(isset($usuario) && $usuario->cargo == 'docente') ? Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get() : 
+        Solicitud::all();
+        $materias = Materia::all(['NOMBRE']);
         $solicitudes_estructuradas = [];
-
+        
         foreach($solicitudes_fetch as $solicitud){
             $prio = (strpos($solicitud->PRIORIDAD, 'URGENTE')) ? json_decode($solicitud->PRIORIDAD) : 'NORMAL';
-            $solicitudes_estructuradas[] = [
-                'NOMBRES_DOCENTES' => $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s),
-                'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
-                'AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
-                'GRUPOS' => $solicitud->GRUPOS,
-                'CANTIDAD' => $solicitud->CANTIDAD_EST,
-                'FECHA_RESERVA' => $solicitud->FECHA_RE,
-                'FECHA_SOLICITUD' => $solicitud->FECHAHORA_SOLI,
-                'HORA_INICIO' => $solicitud->HORAINI,
-                'HORA_FIN' => $solicitud->HORAFIN,
-                'MOTIVO' => $solicitud->MOTIVO,
-                'MODO' => $prio,
-                'ESTADO' => $solicitud->ESTADO
-
-            ];
+            if(isset($solicitud)){
+                $solicitudes_estructuradas[] = [
+                    'ID' => $solicitud->ID_SOLICITUD,
+                    'NOMBRES_DOCENTES' => $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s),
+                    'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
+                    'AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
+                    'GRUPOS' => $solicitud->GRUPOS,
+                    'CANTIDAD' => $solicitud->CANTIDAD_EST,
+                    'FECHA_RESERVA' => $solicitud->FECHA_RE,
+                    'FECHA_SOLICITUD' => $solicitud->FECHAHORA_SOLI,
+                    'HORARIO' => $solicitud->HORAINI.' - '.$solicitud->HORAFIN,
+                    'MOTIVO' => $solicitud->MOTIVO,
+                    'MODO' => $prio,
+                    'ESTADO' => $solicitud->ESTADO
+                ];
+            }
         }
-        //return $solicitudes_fetch;
-        //return $solicitudes_estructuradas;
-        return view('admin.listar.solicitudes', ['solicitudes' => $solicitudes_estructuradas]);
+        
+        // return [
+        //     'solicitudes' => $solicitudes_estructuradas, 
+        //     // 'nombre' => 
+        //     //     ($usuario->cargo == 'admin') ? 
+        //     //         $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '',
+        //     'materias' => $materias];
+
+        return view('admin.listar.solicitudes', 
+        [
+            'solicitudes' => $solicitudes_estructuradas, 
+            // 'nombre' => 
+            //     ($usuario->cargo == 'docente') ? 
+            //         $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '',
+            'materias' => $materias]);
     }
 
     public function solicitudes_libres($ambiente, $fecha){
@@ -160,6 +175,11 @@ class SolicitudController extends Controller
      */
     public function docente_datos(Request $request)
     { 
+        $usuario = Auth::user();
+        $buscador = new EncontrarTodo();
+        $solicitudes_fetch = ($usuario->cargo == 'admin') ? Solicitud::all() : Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get();
+        $materias = Materia::all(['NOMBRE']);
+        $solicitudes_estructuradas = [];
         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
 
         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
