@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Admin\Docente;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,6 +24,7 @@ class User extends Authenticatable
         'password',
         'cargo',
         'foto',
+        'ID_DOCENTE'
     ];
 
     /**
@@ -57,5 +59,9 @@ class User extends Authenticatable
     public function adminlte_profile_url()
     {
         return 'profile/' . $this->username; // Asegúrate de tener un campo 'username' en tu tabla de usuarios
+    }
+
+    public function user_relacion_docente(){
+        return $this->hasOne(Docente::class, 'ID_DOCENTE', 'ID_DOCENTE');
     }
 }

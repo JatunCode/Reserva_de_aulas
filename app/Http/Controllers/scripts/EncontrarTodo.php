@@ -77,9 +77,12 @@ class EncontrarTodo extends Controller
         $iterables = json_decode($json);
         $list = [];
         foreach($iterables as $iterable){
-            $list[] = [
-               "Nombre_docente" => Docente::where('ID_DOCENTE', $iterable)->first()->NOMBRE
-            ];
+            $docente = Docente::where('ID_DOCENTE', $iterable)->first();
+            if(isset($docente)){
+                $list[] = [
+                    "Nombre_docente" => $docente->NOMBRE
+                 ];
+            }
         }
         return $list;
     }
@@ -108,6 +111,17 @@ class EncontrarTodo extends Controller
     public function getIdDocenteporNombre($nombre){
         return Docente::where('NOMBRE', $nombre)->first()->ID_DOCENTE;
     }
+
+     /**
+     * Encuentra el id de un docente por el nombre del docente
+     * else
+     * Devolvera solo el primer nombre
+     * Todos en formato json
+     */
+    public function getNombreDocenteporId($id_docente){
+        return Docente::where('ID_DOCENTE', $id_docente)->first()->NOMBRE;
+    }
+
 
     /**
      * Encuentra la razon para una reserva por su id

@@ -60,7 +60,7 @@ class Notificacion extends Notification
         $mensajes = [""];
         return (new MailMessage)
                     ->greeting("Buenos dias ".$this->cuerpo['NOMBRE'])
-                    ->level('success')
+                    ->level((!isset($this->cuerpo['ESTADO']) || $this->cuerpo['ESTADO'] == 'ACEPTADO') ? 'error':'success')
                     ->line("Su $this->tipo_mensaje ha sido completada con exito")
                     ->line("Los datos de su $this->tipo_mensaje son:")
                     ->line("Hora de reserva: ".$this->cuerpo['FECHA'])

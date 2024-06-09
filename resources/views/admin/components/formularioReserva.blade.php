@@ -8,9 +8,8 @@
 
             <div class="col-md-12">
                 <label for="nombre" class="form-label">Docente(s)</label>
-
-                <input type="text" class="form-control nombre-input" name="nombre" id="nombre" readonly>
-
+                <div id="nombre">
+                </div>
             </div>
 
             <div class="col-md-12">
@@ -58,11 +57,6 @@
                 <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario"
                     readonly>
             </div>
-
-            <!-- <div class="col-12 mt-3 text-center">
-                <button id="cancelarBtn" class="btn btn-danger d-inline-block w-75"
-                    data-id="{{ $solicitud->id }}">Cancelar</button>
-            </div> -->
 
             <input type="hidden" id="solicitudId">
 

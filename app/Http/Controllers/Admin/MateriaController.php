@@ -16,7 +16,7 @@ class MateriaController extends Controller
      */
     public function index()
     {
-        return json_encode(Materia::all());
+        return Materia::all(['NOMBRE']);
     }
 
     /**

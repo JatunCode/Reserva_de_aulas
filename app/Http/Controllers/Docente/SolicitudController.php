@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Docente;
-use DateTime;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Http\Controllers\scripts\GeneradorHorariosNoRegistrados;
-use App\Models\Admin\Docente;
-use App\Models\Admin\Horario;
+use App\Models\Admin\Materia;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
 use App\Models\Docente\Solicitud;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Ramsey\Uuid\Uuid;
 
@@ -23,23 +22,48 @@ class SolicitudController extends Controller
      */
     public function index()
     {
+        //$usuario = Auth::user();
         $buscador = new EncontrarTodo();
-        $nombres = [];
-        $nombres_ambiente = [];
-        $solicitudes_fetch = Solicitud::all();
-
+        $solicitudes_fetch = 
+        //(isset($usuario) && $usuario->cargo == 'docente') ? Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get() : 
+        Solicitud::all();
+        $materias = Materia::all(['NOMBRE']);
+        $solicitudes_estructuradas = [];
+        
         foreach($solicitudes_fetch as $solicitud){
-            $nombres[] = $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s);
-            $nombres_ambiente[] = $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE);
+            $prio = (strpos($solicitud->PRIORIDAD, 'URGENTE')) ? json_decode($solicitud->PRIORIDAD) : 'NORMAL';
+            if(isset($solicitud)){
+                $solicitudes_estructuradas[] = [
+                    'ID' => $solicitud->ID_SOLICITUD,
+                    'NOMBRES_DOCENTES' => $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s),
+                    'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
+                    'AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
+                    'GRUPOS' => $solicitud->GRUPOS,
+                    'CANTIDAD' => $solicitud->CANTIDAD_EST,
+                    'FECHA_RESERVA' => $solicitud->FECHA_RE,
+                    'FECHA_SOLICITUD' => $solicitud->FECHAHORA_SOLI,
+                    'HORARIO' => $solicitud->HORAINI.' - '.$solicitud->HORAFIN,
+                    'MOTIVO' => $solicitud->MOTIVO,
+                    'MODO' => $prio,
+                    'ESTADO' => $solicitud->ESTADO
+                ];
+            }
         }
+        
+        // return [
+        //     'solicitudes' => $solicitudes_estructuradas, 
+        //     // 'nombre' => 
+        //     //     ($usuario->cargo == 'admin') ? 
+        //     //         $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '',
+        //     'materias' => $materias];
 
-        $json = [
-            "solicitudes de un docente" => $solicitudes_fetch,
-            "Nombres de los docentes por solicitud" => $nombres,
-            "Nombre de los ambientes" => $nombres_ambiente
-        ];
-        return json_encode($json);
-        //return view('docente.home', compact('eventos_json', 'solicitudes','pendientesCount', 'urgentesCount', 'reservadasCount'));
+        return view('admin.listar.solicitudes', 
+        [
+            'solicitudes' => $solicitudes_estructuradas, 
+            // 'nombre' => 
+            //     ($usuario->cargo == 'docente') ? 
+            //         $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '',
+            'materias' => $materias]);
     }
 
     public function solicitudes_libres($ambiente, $fecha){
@@ -94,61 +118,8 @@ class SolicitudController extends Controller
 
      public function store(Request $request)
      {
-        // $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d';
         $buscardor = new EncontrarTodo();
-         // Validar los datos del formulario
-        // $request->validate([
-        //     'nombre' => 'required|string',
-        //     'nombre1' => 'nullable|string',
-        //     'nombre2' => 'nullable|string',
-        //     'nombre3' => 'nullable|string',
-        //     'nombre4' => 'nullable|string',
-        //     'nombre5' => 'nullable|string',
-        //     'materia' => 'required|string',
-        //     'grupo' => 'required|string',
-        //     'cantidad_estudiantes' => 'required|integer',
-        //     'motivo' => 'required|string',
-        //     'modo' => 'required|string',
-        //     'aula' => 'required|string',
-        //     'fecha' => 'required|date',
-        //     'horario' => 'required|string',
-
-        // ]);
         $uuid = Uuid::uuid4();
-        
-        // try {
-        //     // Crear una nueva instancia de la solicitud
-            
-        //     $solicitud = new Solicitudes;
-        //     $solicitud->nombre = $request->input('nombre');
-        //     $solicitud->nombre1 = $request->input('nombre1');
-        //     $solicitud->nombre2 = $request->input('nombre2');
-        //     $solicitud->nombre3 = $request->input('nombre3');
-        //     $solicitud->nombre4 = $request->input('nombre4');
-        //     $solicitud->nombre5 = $request->input('nombre5');
-        //     $solicitud->materia = $request->input('materia');
-        //     $solicitud->grupo = $request->input('grupo');
-        //     $solicitud->cantidad_estudiantes = $request->input('cantidad_estudiantes');
-        //     $solicitud->motivo = $request->input('motivo');
-        //     $solicitud->modo = $request->input('modo');
-        //     $solicitud->razon = $request->input('razon');
-        //     $solicitud->aula = $request->input('aula');
-        //     $solicitud->horario = $request->input('horario');
-        //     $solicitud->fecha = $request->input('fecha'); // Asegúrate de obtener correctamente el valor de 'fecha'
-        //     $solicitud->estado = $request->input('fecha');
-        //     $solicitud->estado = 'Solicitando';
-        //     $solicitud->ID_Docente = $idDocente;
-        //     // Guardar la solicitud en la base de datos
-        //     $solicitud->save();
-
-        //     // Redirigir con un mensaje de éxito
-        //     return redirect()->route('docente.home')->with('success', 'Solicitud creada exitosamente');
-        // } catch (\Exception $e) {
-        //     // Capturar cualquier excepción que pueda ocurrir durante el proceso de guardado
-        //     // Puedes registrar el error o devolver una respuesta de error personalizada
-        //     // Por ejemplo:
-        //     return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
-        // }
         try {
             $request->validate([
                 'NOMBRES' => ['required', 'json',  
@@ -204,6 +175,11 @@ class SolicitudController extends Controller
      */
     public function docente_datos(Request $request)
     { 
+        $usuario = Auth::user();
+        $buscador = new EncontrarTodo();
+        $solicitudes_fetch = ($usuario->cargo == 'admin') ? Solicitud::all() : Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get();
+        $materias = Materia::all(['NOMBRE']);
+        $solicitudes_estructuradas = [];
         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
 
         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
@@ -255,7 +231,7 @@ class SolicitudController extends Controller
                                     );
                                 }
                             }
-                        )->where('ESTADO', 'PENDIENTE')->orderBy('FECHA_RE')->get();
+                        )->where('ESTADO', 'CANCELADO')->orderBy('FECHA_RE')->get();
         $solicitudes_estructuradas = [];
         $nombre_docentes = [];
         foreach($solicitudes as $solicitud){
@@ -304,41 +280,11 @@ class SolicitudController extends Controller
         return $solicitudes;
     }
 
-    // /**
-    //  * Update the specified resource in storage.
-    //  *
-    //  * @param  \Illuminate\Http\Request  $request
-    //  * @param  \App\Models\Admin\Solicitud  $solicitud
-    //  * !!!!!!!!se debe encontrar la solicitud por el id es un error 
-    //  * !!!!!!!!de seguridad mandar toda la solicitud al servidor es mucha carga
-    //  * !!!!!!!!para el servidor en que mierda piensas >:v
-    //  * @return \Illuminate\Http\JsonResponse
-    //  */
-    // public function update(Request $request, Solicitud $solicitud)
-    // {
-    //     $request->validate([
-    //         'nombre' => 'required|string',
-    //         'materia' => 'required|string',
-    //         'grupo' => 'required|string',
-    //         'cantidad_estudiantes' => 'required|integer',
-    //         'motivo' => 'required|string',
-    //         'modo' => 'required|string',
-    //         'razon' => 'nullable|string',
-    //     ]);
-
-    //     $solicitud->update($request->all());
-
-    //     return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
-    // }
-
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Admin\Solicitud  $solicitud
-     * !!!!!!!!se debe encontrar la solicitud por el id es un error 
-     * !!!!!!!!de seguridad mandar toda la solicitud al servidor es mucha carga
-     * !!!!!!!!para el servidor en que mierda piensas >:v
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request)
