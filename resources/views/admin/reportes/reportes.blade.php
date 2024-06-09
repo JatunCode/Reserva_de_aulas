@@ -3,7 +3,7 @@
 @section('title', 'Reportes')
 
 @section('content_header')
-    <h1>Lista de Solicitudes </h1>
+    <h1>Reporte Ambientes</h1>
 @stop
 
 @section('content')
@@ -12,29 +12,38 @@
 
 <div class="card">
     <div class="card-header">
-        <form class="row" id="filtroForm">
-        <div class="form-group col-lg-4 col-md-3 align-self-center">
-    <label for="inputSearch" class="mr-2">Nombre del Ambiente:</label>
-    <input type="text" class="form-control w-100" id="inputSearch" name="ambiente" placeholder="Ingrese nombre del ambiente">
-    <div id="suggestionsContainer" class="suggestions-container"></div>
-</div>
-            <div class="form-group col-lg-2 col-md-3 align-self-center">
-                <label for="selectMode" class="mr-2">Estado:</label>
-                <select class="form-control" id="selectMode" name="estado">
-                    <option value="Todos" selected>Todos</option>
-                    <option value="Habilitado">Habilitado</option>
-                    <option value="No Habilitado">No Habilitado</option>
-                </select>
-            </div>
-            <div class="form-group col-lg-2 col-md-3 align-self-center">
-    <label for="selectStatus" class="mr-2">Capacidad:</label>
-    <input type="number" class="form-control" id="selectStatus" name="capacidad" placeholder="Ingrese capacidad">
-</div>
-<div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
-    <label for="selectMode" class="mr-2"></label>
-    <button type="button" id="btnExportar" class="btn btn-primary w-100" onclick="exportarPDF()">Exportar PDF</button>
-</div>
-        </form>
+    <form class="row" id="filtroForm">
+    <div class="form-group col-lg-2 col-md-3 align-self-center position-relative">
+        <label for="inputSearch" class="mr-2">Ambiente:</label>
+        <input type="text" class="form-control w-100" id="inputSearch" name="ambiente" placeholder="Ingrese nombre">
+        <div id="suggestionsContainer" class="suggestions-container"></div>
+    </div>
+    <div class="form-group col-lg-2 col-md-3 align-self-center">
+        <label for="selectMode" class="mr-2">Estado:</label>
+        <select class="form-control" id="selectMode" name="estado">
+            <option value="Todos" selected>Todos</option>
+            <option value="Habilitado">Habilitado</option>
+            <option value="No Habilitado">No Habilitado</option>
+        </select>
+    </div>
+    <div class="form-group col-lg-2 col-md-3 align-self-center">
+        <label for="selectStatus" class="mr-2">Capacidad:</label>
+        <input type="number" class="form-control" id="selectStatus" name="capacidad" placeholder="Ingrese capacidad">
+    </div>
+    <div class="form-group col-lg-2 col-md-3 align-self-center">
+        <label for="fechaDesde" class="mr-2">Desde:</label>
+        <input type="date" class="form-control" id="fechaDesde" name="fechaDesde">
+    </div>
+    <div class="form-group col-lg-2 col-md-3 align-self-center">
+        <label for="fechaHasta" class="mr-2">Hasta:</label>
+        <input type="date" class="form-control" id="fechaHasta" name="fechaHasta">
+    </div>
+    <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
+        <label for="selectMode" class="mr-2"></label>
+        <button type="button" id="btnExportar" class="btn btn-primary w-100" onclick="exportarPDF()">Exportar PDF</button>
+    </div>
+</form>
+
     </div>
     <div class="card-body table-responsive">
         <table class="table table-bordered">
@@ -87,13 +96,17 @@ function filtrarAmbientes() {
     var nombre = document.getElementById("inputSearch").value;
     var estado = document.getElementById("selectMode").value;
     var capacidad = document.getElementById("selectStatus").value;
+    var fechaDesde = document.getElementById("fechaDesde").value;
+    var fechaHasta = document.getElementById("fechaHasta").value;
     console.log("Nombre:", nombre);
     console.log("Estado:", estado);
     console.log("Capacidad:", capacidad);
+    console.log("Fecha Desde:", fechaDesde);
+    console.log("Fecha Hasta:", fechaHasta);
     
     // Enviar solicitud al servidor
-    const url = `{{ route("admin.reportes.filtrar.datos_filtro") }}?nombre=${nombre}&estado=${estado}&capacidad=${capacidad}`;
-console.log("URL enviada al servidor:", url);
+    const url = `{{ route("admin.reportes.filtrar.datos_filtro") }}?nombre=${nombre}&estado=${estado}&capacidad=${capacidad}&fechaDesde=${fechaDesde}&fechaHasta=${fechaHasta}`;
+    console.log("URL enviada al servidor:", url);
 fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -120,11 +133,11 @@ function actualizarTabla(data) {
     
     // Iterar sobre los nuevos datos y agregar cada ambiente como una fila en la tabla
     data.forEach(ambiente => {
-        // Crear una nueva fila
-        var row = document.createElement('tr');
+        // Crear una nueva fila para el ambiente
+        var rowAmbiente = document.createElement('tr');
         
         // Agregar las celdas con los datos del ambiente a la fila
-        row.innerHTML = `
+        rowAmbiente.innerHTML = `
             <td>${contador++}</td>
             <td>${ambiente.TIPO}</td>
             <td>${ambiente.NOMBRE}</td>
@@ -132,9 +145,76 @@ function actualizarTabla(data) {
             <td>${ambiente.ESTADO}</td>
         `;
         
-        // Agregar la fila al cuerpo de la tabla
-        tbody.appendChild(row);
+        // Agregar la fila del ambiente al cuerpo de la tabla
+        tbody.appendChild(rowAmbiente);
+
+        // Crear una fila para las solicitudes con una tabla secundaria
+        var rowSolicitudes = document.createElement('tr');
+        var cellSolicitudes = document.createElement('td');
+        cellSolicitudes.colSpan = "5"; // Colspan para que ocupe toda la fila
+        
+        // Crear la tabla secundaria con clases de Bootstrap
+        var tablaSolicitudes = document.createElement('table');
+        tablaSolicitudes.classList.add('table', 'table-bordered', 'w-100');
+
+        var thead = document.createElement('thead');
+        thead.classList.add('thead-light');
+
+        var tbodySolicitudes = document.createElement('tbody');
+
+        // Crear encabezados de columna para la tabla de solicitudes
+        var encabezados = ['Fecha', 'Docente', 'Motivo', 'Estado'];
+        var encabezadosRow = document.createElement('tr');
+        encabezados.forEach(header => {
+            var th = document.createElement('th');
+            th.innerText = header;
+            encabezadosRow.appendChild(th);
+        });
+        thead.appendChild(encabezadosRow);
+
+        // Iterar sobre las solicitudes y agregarlas como filas en la tabla de solicitudes
+        ambiente.solicitudes.forEach(solicitud => {
+            var solicitudRow = document.createElement('tr');
+            var fechaCell = document.createElement('td');
+            fechaCell.innerText = solicitud.fecha;
+            var docenteCell = document.createElement('td');
+            docenteCell.innerText = solicitud.nombre; // Asegúrate de usar nombre_docente aquí
+            var motivoCell = document.createElement('td');
+            motivoCell.innerText = solicitud.motivo;
+            var estadoCell = document.createElement('td');
+            estadoCell.innerText = solicitud.estado; // Asumiendo que tienes el estado de la solicitud
+            solicitudRow.appendChild(fechaCell);
+            solicitudRow.appendChild(docenteCell);
+            solicitudRow.appendChild(motivoCell);
+            solicitudRow.appendChild(estadoCell);
+            tbodySolicitudes.appendChild(solicitudRow);
+        });
+
+        // Agregar el encabezado y el cuerpo de la tabla de solicitudes a la tabla secundaria
+        tablaSolicitudes.appendChild(thead);
+        tablaSolicitudes.appendChild(tbodySolicitudes);
+
+        // Agregar la tabla secundaria al cuerpo de la celda
+        cellSolicitudes.appendChild(tablaSolicitudes);
+
+        // Agregar la celda al cuerpo de la fila de solicitudes
+        rowSolicitudes.appendChild(cellSolicitudes);
+
+        // Agregar la fila de solicitudes al cuerpo de la tabla
+        tbody.appendChild(rowSolicitudes);
     });
+}
+
+
+// Función para formatear las solicitudes en un formato legible
+function formatSolicitudes(solicitudes) {
+    if (!solicitudes || solicitudes.length === 0) {
+        return 'Sin solicitudes';
+    }
+    
+    // Formatear las solicitudes en una lista de nombres de docentes
+    var nombresDocentes = solicitudes.map(solicitud => solicitud.nombre).join(', ');
+    return nombresDocentes;
 }
 function exportarPDF() {
     filtrarAmbientes(); // Primero, filtramos los ambientes para obtener los datos actualizados en la tabla
@@ -145,31 +225,14 @@ function exportarPDF() {
     // Obtenemos los datos de la tabla actualizados
     var tabla = document.getElementById("resultadosTabla");
     var filas = tabla.getElementsByTagName("tr");
-    var datosTabla = [];
-
-    // Recorremos las filas de la tabla y obtenemos los datos de cada celda
-    for (var i = 0; i < filas.length; i++) {
-        var fila = filas[i];
-        var celdas = fila.getElementsByTagName("td");
-        var datosFila = {};
-
-        // Agregamos los datos de cada celda al objeto datosFila
-        datosFila['ID'] = celdas[0].innerText;
-        datosFila['Tipo'] = celdas[1].innerText;
-        datosFila['Nombre'] = celdas[2].innerText;
-        datosFila['Capacidad'] = celdas[3].innerText;
-        datosFila['Estado'] = celdas[4].innerText;
-
-        // Agregamos el objeto datosFila a la matriz datosTabla
-        datosTabla.push(datosFila);
-    }
+    
 
     // Construir el objeto de datos para el PDF
     var data = {
         nombre: nombre,
         estado: estado,
         capacidad: capacidad,
-        tabla: datosTabla // Pasamos los datos de la tabla al objeto de datos
+        
     };
 
     // Generar el PDF
@@ -259,6 +322,35 @@ selectStatus.addEventListener("input", function() {
             suggestionsContainer.appendChild(suggestion);
         });
     });
+
+    // Agregar un listener para el evento "blur" al campo de búsqueda
+    inputSearch.addEventListener("blur", function() {
+        // Usar setTimeout para dar tiempo a procesar el clic en una sugerencia antes de limpiar el contenedor
+        setTimeout(() => {
+            suggestionsContainer.innerHTML = '';
+        }, 200);
+    });
+
+    // Agregar un listener para el evento "focus" al campo de búsqueda
+    inputSearch.addEventListener("focus", function() {
+        // Disparar el evento de input para mostrar sugerencias al enfocarse en el campo
+        inputSearch.dispatchEvent(new Event('input'));
+    });
 </script>
+<script>
+    // Obtener referencia a los campos de fecha
+    var fechaDesdeInput = document.getElementById("fechaDesde");
+    var fechaHastaInput = document.getElementById("fechaHasta");
+
+    // Agregar listeners para el evento "change" a los campos de fecha
+    fechaDesdeInput.addEventListener("change", function() {
+        filtrarAmbientes(); // Llamar a la función para filtrar ambientes cuando cambia la fecha desde
+    });
+
+    fechaHastaInput.addEventListener("change", function() {
+        filtrarAmbientes(); // Llamar a la función para filtrar ambientes cuando cambia la fecha hasta
+    });
+</script>
+
 
 @stop
