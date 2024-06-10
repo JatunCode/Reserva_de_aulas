@@ -19,7 +19,7 @@ class AmbienteController extends Controller
     public function index()
     {
         $ambientes = Ambiente::all();
-        return view('admin.ambientes', ['ambientes' => $ambientes]);
+        return view('admin.listar.ambientes', ['ambientes' => $ambientes]);
     }
 
     /**
@@ -101,6 +101,19 @@ class AmbienteController extends Controller
         //return view('search.ambiente');
         return response()->json(['message' => 'Ambiente encontrado', 'data' => $value], 200);
         
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showCantidad($cantidad)
+    {
+        $numero_division = intdiv($cantidad, 10);
+        return json_encode(Ambiente::where('CAPACIDAD', '>=', $numero_division*10-10)
+            ->where('CAPACIDAD', '<=', $numero_division*10+10)->get(['NOMBRE']));
     }
 
     /**

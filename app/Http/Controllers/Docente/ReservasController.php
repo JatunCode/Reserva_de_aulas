@@ -30,6 +30,7 @@ class ReservasController extends Controller
         $solicitudes_estructuradas = [];
         $nombre_docentes = [];
         foreach($solicitudes as $solicitud){
+            $prio = (strpos($solicitud->PRIORIDAD, 'URGENTE')) ? 'URGENTE' : 'NORMAL';
             $nombre_docentes = $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s);
             $data_reservar = date_create($solicitud->FECHA_RE.str_split(" ")[0]);
             $data_solicitar = date_create($solicitud->FECHAHORA_SOLI.str_split(" ")[0]);
@@ -42,7 +43,7 @@ class ReservasController extends Controller
                 'HORARIO' => $solicitud->HORAINI." - ".$solicitud->HORAFIN,
                 'FECHA_HORASOLI' => date_format($data_solicitar, 'd/m/Y'),
                 'MOTIVO' => $solicitud->MOTIVO,
-                'MODO' => (strpos($solicitud->PRIORIDAD, 'URGENTE')) ? 'Urgente' : 'Normal',
+                'MODO' => $prio,
                 'DESC' => $solicitud->PRIORIDAD,
                 'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
                 'GRUPOS' => $solicitud->GRUPOS,
@@ -52,6 +53,41 @@ class ReservasController extends Controller
         }
         $razones = Razones::all();
         return view('admin.layouts.reservas', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]);
+    }
+
+    public function indexCancelar()
+    {
+        $buscador =  new EncontrarTodo();
+        $solicitudes = Solicitud::with(
+                        'solicitud_relacion_ambiente',
+                        'solicitud_relacion_materia',
+                        )->where('ESTADO', 'ACEPTADO')->orderBy('FECHA_RE')->get();
+        $solicitudes_estructuradas = [];
+        $nombre_docentes = [];
+        foreach($solicitudes as $solicitud){
+            $prio = (strpos($solicitud->PRIORIDAD, 'URGENTE')) ? 'URGENTE' : 'NORMAL';
+            $nombre_docentes = $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s);
+            $data_reservar = date_create($solicitud->FECHA_RE.str_split(" ")[0]);
+            $data_solicitar = date_create($solicitud->FECHAHORA_SOLI.str_split(" ")[0]);
+            
+            $solicitudes_estructuradas[] = [
+                'ID' => $solicitud->ID_SOLICITUD,
+                'NOMBRE_DOCENTES' => $nombre_docentes,
+                'CANTIDAD' => $solicitud->CANTIDAD_EST,
+                'FECHA_RESERVA' => date_format($data_reservar, 'd/m/Y'),
+                'HORARIO' => $solicitud->HORAINI." - ".$solicitud->HORAFIN,
+                'FECHA_HORASOLI' => date_format($data_solicitar, 'd/m/Y'),
+                'MOTIVO' => $solicitud->MOTIVO,
+                'MODO' => $prio,
+                'DESC' => $solicitud->PRIORIDAD,
+                'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
+                'GRUPOS' => $solicitud->GRUPOS,
+                'AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
+                'ESTADO' => $solicitud->ESTADO
+            ];
+        }
+        $razones = Razones::all();
+        return view('admin.layouts.reservasCancelar', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]);
     }
    
     public function datos(Request $request)
@@ -224,11 +260,13 @@ class ReservasController extends Controller
 
     public function store(Request $request){
         // Validar los datos del formulario
+        $buscador = new EncontrarTodo();
         $id = Uuid::uuid4();
+
         $razones = new Razones();
         $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICITUD);
         try{
-            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):null;
+            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):[];
             $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg):'Ninguno';
             Reserva::create([
                 'ID_RESERVA' => $id,
@@ -236,7 +274,7 @@ class ReservasController extends Controller
                 'RAZONES' => json_encode($arreglo),
                 'FECHAHORA_RESER' => date('Y-m-d')
             ]);
-            $solicitud->update(['ESTADO'=> $request->ESTADO]);
+            $solicitud->update(['ESTADO'=> $request->ESTADO, 'ID_AMBIENTE' => $buscador->getIdAmbiente($request->AMBIENTE)]);
             return response()->json(['objeto_soli'=>$solicitud, 'message'=>'Reserva guardad con exito'], 200);
         }catch(\Exception $error){
             return response()->json(['objeto_soli'=>$solicitud,'message'=>'Error del servidor.'.$error], 500);
@@ -267,21 +305,20 @@ class ReservasController extends Controller
      * @param  \App\Models\Admin\Solicitud  $solicitud
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Solicitud $solicitud)
+    public function update(Request $request)
     {
+        $razones = new Razones();
         $request->validate([
-            'nombre' => 'required|string',
-            'materia' => 'required|string',
-            'grupo' => 'required|string',
-            'cantidad_estudiantes' => 'required|integer',
-            'motivo' => 'required|string',
-            'modo' => 'required|string',
-            'razon' => 'nullable|string',
+            'ID_SOLICITUD' => 'required|string',
+            'ESTADO' => 'required|string'
         ]);
 
-        $solicitud->update($request->all());
+        $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):[];
+        $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg):'Ninguno';
+        $reserva = Reserva::where('ID_SOLICITUD', $request->ID_SOLICITUD)->update(['RAZONES' => json_encode($arreglo)]);
+        $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICUTD)->update(['ESTADO' => $request->ESTADO]);
 
-        return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
+        return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud, 'reserva' => $reserva], 200);
     }
 
     /**

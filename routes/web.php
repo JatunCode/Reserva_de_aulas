@@ -12,6 +12,7 @@ use App\Http\Controllers\Docente\ReservasController;
 use App\Http\Controllers\MapaControler;
 use App\Http\Controllers\RazonesController;
 use App\Models\Admin\Docente;
+use App\Models\Docente\Solicitud;
 use Illuminate\Support\Facades\Auth;
 use Cornford\Googlmapper\Facades\MapperFacade;
 
@@ -41,40 +42,51 @@ Auth::routes();
 Route::prefix('admin')
 //->middleware('auth','can:admin')
 ->group(function () {
-    //Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
-    Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
+    //*Mostrar el calendario en admin
+    Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
+    //*Lista de solicitudes en admin
+    Route::get('/solicitudes', [SolicitudController::class, 'index'])->name('admin.listar.solicitudes');
+    //*Pagina de creacion de solicitud en admin
+    Route::get('/solicitud', [SolicitudController::class, 'docente_datos'])->name('admin.solicitud.registrar');
+    //*Creacion de una en back solicitud
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     /**
      * Rutas de los ambientes
      */
-    //Muestra todos los ambientes
-    Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes');
-    //Muestra el formulario para los ambientes
-    Route::get('/ambientes/registro', [AmbienteController::class, 'store'])->name('ambiente.list');
-    //Guarda o registra un registro de un nuevo ambiente
+    //*Muestra todos los ambientes
+    Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes.list');
+    //*Muestra el formulario para los ambientes
+    Route::get('/ambientes/registro', [AmbienteController::class, 'store'])->name('admin.ambiente.registrar');
+    //*Guarda o registra un registro de un nuevo ambiente
     Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
-    //
+    //*
     Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
 
     /** 
      * Urls para horarios
     */
-    //Muestra todos los horarios
-    Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios');
-    //Muestra el formulario de horarios
-    Route::get('/horarios/registro', [HorarioController::class, 'store'])->name('horario.list');
-    //Crea un registro nuevo en el servidor de los horarios
+    //*Muestra todos los horarios
+    Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios.list');
+    //*Muestra el formulario de horarios
+    Route::get('/horarios/registro', [HorarioController::class, 'store'])->name('admin.horario.registrar');
+    //*Crea un registro nuevo en el servidor de los horarios
     Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
-    //Muestra los horarios para modificarlos
-    Route::get('/horariosupdate', [HorarioController::class, 'indexMod'])->name('admin.horarios');
+    //*Muestra los horarios para modificarlos
+    Route::get('/horarios/update', [HorarioController::class, 'indexMod'])->name('admin.horarios.modificar');
 
     Route::get('/notificacion', [NotificacionController::class, 'index'])->name('see.notificaciones');
     Route::post('/notificacion/store', [NotificacionController::class, 'store'])->name('send.notificaciones');
-    //Mostrar las solicitudes pendientes
-    Route::get('/reservas', [ReservasController::class, 'index'])->name('reservas.index');
+    //*Mostrar las solicitudes pendientes
+    Route::get('/reservas/atencion', [ReservasController::class, 'index'])->name('admin.reservas.atender');
+    //*Cambiar el estado de la solicitud al ser atendida
     Route::put('/reservas/store', [ReservasController::class, 'store'])->name('reserva.store');
+    //*Mostrar reservas para cancelar
+    Route::get('/reservas/cancelar', [ReservasController::class, 'indexCancelar'])->name('admin.reservas.cancelar');
+    //*Cancelar una reserva
+    Route::put('/reservas/update', [ReservasController::class, 'update'])->name('reservas.name');
+
     //Listar
-    Route::get('/listar', [ListarController::class, 'datos'])->name('admin.listar.solicitudes');
+    //Route::get('/listar', [ListarController::class, 'datos'])->name('admin.listar.solicitudes');
     Route::get('/listar/{id}', [ListarController::class, 'show'])->name('admin.reservas.show');
     Route::get('/solicitudes/listar_filtro', [ListarController::class, 'datos_filtro'])->name('admin.solicitud.filtrar.datos_filtro');
     //Reportes

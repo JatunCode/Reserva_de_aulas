@@ -3,7 +3,7 @@
     <div class="col-md-12" id="container">
         <label for="nombre" class="form-label">Docente(s)</label>
         <div class="input-group mb-2">
-        <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre" id="nombre" readonly value="TORRICO TROCHE MILKA MONICA">
+        <input type="text" class="form-control nombre-input" placeholder="Ingrese su nombre" name="nombre" id="nombre" @if (!empty($docente)) readonly @endif value="{{$docente}}">
 
             <button class=" btn btn-success agregar-nombre" type="button">
                 <i class="bi bi-person-plus"></i>
@@ -71,7 +71,8 @@
 
     <div class="col-6">
         <label for="aula" class="form-label">Aula:</label>
-        <input type="text" class="form-control" id="aula" name="aula" placeholder="Ingrese el aula">
+        <select class="form-control" id="aula" name="aula">
+        </select>
     </div>
     <div class="col-6">
         <label for="horario" class="form-label">Horario:</label>

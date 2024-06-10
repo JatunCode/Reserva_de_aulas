@@ -83,7 +83,7 @@
                         </td>
                         <td style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                            data-id="{{ $solicitud['ID'] }}" style="background-color:green" onclick="pressAtention(this)" value="{{$solicitud['ID']}}">Atender</button></td>
+                            data-id="{{ $solicitud['ID'] }}" style="background-color:red" onclick="pressAtention(this)" value="{{$solicitud['ID']}}">Cancelar</button></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -94,7 +94,7 @@
 
 @stop
 
-@include('admin.viewRespondSolicitud')
+@include('admin.viewCancelarReserva')
 
 @section('css')
 <link rel="stylesheet" href="/css/admin/home.css">
@@ -114,31 +114,7 @@
     let razones = []
     let razonesfiltro = []
     let soli_aten = null
-    let ambientes = []
     soli_pend = @json($solis_no_reser)
-
-    fetch(
-        'http://127.0.0.1:8000/api/fetch/ambientes'
-    ).then(
-        response => response.json()
-    ).then(
-        data => {
-            ambientes = data
-            console.log("Ambientes: ", ambientes)
-        }
-    ).catch(
-        error => {
-            console.log("Error encontrado: ", error)
-        }
-    )
-    function obtenerAmbientes(cant){
-        return ambientes.filter(
-            ambiente => {
-                let num_div = cant/10
-                return (ambiente['CAPACIDAD'] <= num_div*10+10 && ambiente['CAPACIDAD'] >= num_div*10-10)
-            }
-        )
-    }
 
     function razonesfetch(){
         fetch('http://127.0.0.1:8000/api/fetch/razones').then(
@@ -158,7 +134,6 @@
         const id = button.value
         const canva = document.getElementById('offcanvasRight')
         soli_aten = soli_pend.find(elemento => elemento['ID'] == id)
-        let ambientes_filtrado = obtenerAmbientes(soli_aten['CANTIDAD'])
         console.log('Solicitud: ', soli_aten)
         if(soli_aten){
             const docentes = document.getElementById('docentes')
@@ -182,16 +157,7 @@
             capacidad.value = soli_aten['CANTIDAD']
             grupos.value = soli_aten['GRUPOS']
             materia.value = soli_aten['MATERIA']
-            ambiente.innerHTML = ''
-            ambiente.innerHTML +=` <option value="${soli_aten['AMBIENTE']}" selected>${soli_aten['AMBIENTE']}</option>
-                    `
-            ambientes_filtrado.forEach(
-                nombre => {
-                    ambiente.innerHTML +=`
-                        <option value="${nombre['NOMBRE']}">${nombre['NOMBRE']}</option>
-                    `
-                }
-            )
+            ambiente.value = soli_aten['AMBIENTE']
             horario.value = soli_aten['HORARIO']
             motivo.value = soli_aten['MOTIVO']
             modo.value = soli_aten['MODO']

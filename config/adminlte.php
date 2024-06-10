@@ -315,8 +315,8 @@ return [
            'icon' => 'fa fa-home',
            'can'  => 'docente',
         ],
-      
-        ['header' => 'Realizar solicitud',
+        
+        ['header' => 'Solicitudes',
          'can'    => 'docente',
         ],
         [
@@ -325,11 +325,6 @@ return [
             'icon_color' => 'green',
             'route'      => ($role != 'Usuario') ? 'admin.solicitud.normal':'docente.solicitud.normal',
             'can'    => 'docente',
-        ],
-        
-
-        ['header' => ' Listar' ,
-        'can'    => 'docente',
         ],
         [
             'text'       => 'Visualizar mis solicitudes',
@@ -347,36 +342,97 @@ return [
             'can'    => 'docente',
         
         ],
-        
+
+        //!!Rutas de Admin
+        [
+            'header' => ' Solicitudes' ,
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Registrar solicitud',
+            'icon'       => 'bi bi-journal-plus',
+            'icon_color' => 'green',
+            'route'      => 'admin.solicitud.registrar',
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Atender solicitud',
+            'icon'       => 'bi bi-journal-bookmark-fill',
+            'icon_color' => 'green',
+            'route'      => 'admin.reservas.atender',
+            'can'    => 'admin',
+        ],
         [
             'text'       => 'Visualizar solicitudes',
-            'icon'       => 'fa fa-book',
-            'icon_color' => 'green',
+            'icon'       => 'bi bi-journal-text',
+            'icon_color' => 'yellow',
             'route'      => 'admin.listar.solicitudes',
             'can'    => 'admin',
         ],
-        ['header' => 'Razon no asignacion',
-        'can'    => 'admin',
-        ],
         [
-            'text'       => 'Razon',
-            'icon'       => 'fa fa-book',
-            'icon_color' => 'green',
-            'route'      => 'docente.registroRazonDenoAsignacion',
+            'header' => 'Ambientes' ,
             'can'    => 'admin',
         ],
-        ['header' => 'Registro de Reservas',
-        'can'    => 'admin',
-        ],
         [
-            'text'       => 'Reservas',
-            'icon'       => 'fa fa-book',
+            'text'       => 'Registrar ambiente',
+            'icon'       => 'bi bi-building-add',
             'icon_color' => 'green',
-            'route'      => 'docente.registroReservas',
+            'route'      => 'admin.ambiente.registrar',
             'can'    => 'admin',
         ],
-        ['header' => 'Reportes',
-        'can'    => 'admin',
+        [
+            'text'       => 'Visualizar ambientes',
+            'icon'       => 'bi bi-building-exclamation',
+            'icon_color' => 'yellow',
+            'route'      => 'admin.ambientes.list',
+            'can'    => 'admin',
+        ],
+        [
+            'header' => 'Horarios' ,
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Registrar horario',
+            'icon'       => 'bi bi-table',
+            'icon_color' => 'green',
+            'route'      => 'admin.horario.registrar',
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Modificar horarios',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'admin.horarios.modificar',
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Visualizar horarios',
+            'icon'       => 'bi bi-table',
+            'icon_color' => 'yellow',
+            'route'      => 'admin.horarios.list',
+            'can'    => 'admin',
+        ],
+        [
+            'header' => 'Reservas',
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Cancelar reserva',
+            'icon'       => 'bi bi-journal-x',
+            'icon_color' => 'red',
+            'route'      => 'admin.reservas.cancelar',
+            'can'    => 'admin',
+        ],
+        // [
+        //     'text'       => 'Visualizar reservas',
+        //     'icon'       => 'bi bi-journal-text',
+        //     'icon_color' => 'yellow',
+        //     'route'      => 'admin.layouts.reservas',
+        //     'can'    => 'admin',
+        // ],
+        [
+            'header' => 'Reportes',
+            'can'    => 'admin',
         ],
         [
             'text'       => 'Ambientes',
