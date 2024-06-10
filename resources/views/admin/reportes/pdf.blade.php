@@ -31,67 +31,72 @@
         .contact-info {
             text-align: right;
         }
+        .subtable {
+            margin-top: 10px;
+            border-top: 1px solid black;
+        }
     </style>
 </head>
 <body>
 <header>
-        <div class="contact-info">
-            <strong>JatunCODE</strong><br>
-            UMSS<br>
-            JatunCODE@gmail.com
-        </div>
-    </header>
-    <h1>Reporte Ambientes</h1>
-    <table>
-        <thead>
+    <div class="contact-info">
+        <strong>JatunCODE</strong><br>
+        UMSS<br>
+        JatunCODE@gmail.com
+    </div>
+</header>
+<h1>Reporte Ambientes</h1>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Nombre</th>
+            <th>Capacidad</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $contador = 1; ?> <!-- Inicializar el contador -->
+        @foreach ($tabla as $relacion)
             <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Nombre</th>
-                <th>Capacidad</th>
-                <th>Estado</th>
+                <td>{{ $contador++ }}</td> <!-- Incrementar y mostrar el contador -->
+                <td>{{ $relacion->dahm_relacion_ambiente->TIPO }}</td>
+                <td>{{ $relacion->dahm_relacion_ambiente->NOMBRE }}</td>
+                <td>{{ $relacion->dahm_relacion_ambiente->CAPACIDAD }}</td>
+                <td>{{ $relacion->dahm_relacion_ambiente->ESTADO }}</td>
             </tr>
-        </thead>
-        <tbody>
-        @php
-            $contador = 1; // Inicializamos el contador en 1
-        @endphp
-            @foreach ($tabla as $ambiente)
+            @if($relacion->solicitudes->isNotEmpty())
                 <tr>
-                    <td>{{ $contador++ }}</td>
-                    <td>{{ $ambiente->TIPO }}</td>
-                    <td>{{ $ambiente->NOMBRE }}</td>
-                    <td>{{ $ambiente->CAPACIDAD }}</td>
-                    <td>{{ $ambiente->ESTADO }}</td>
+                    <td colspan="5">
+                        <table class="subtable">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Docente</th>
+                                    <th>Motivo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($relacion->solicitudes as $solicitud)
+                                    <tr>
+                                        <td>{{ $solicitud->FECHAHORA_SOLI}}</td>
+                                        <td>{{ $relacion->dahm_relacion_docente->NOMBRE }}</td>
+                                        <td>{{ $solicitud->MOTIVO }}</td>
+                                        <td>{{ $solicitud->ESTADO }}</td>
+                                        <!-- Añade más columnas según sea necesario -->
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </td>
                 </tr>
-                <tr>
-        <td colspan="5">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Docente</th>
-                        <th>Motivo</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($ambiente->solicitudes as $solicitud)
-                    <tr>
-                        <td>{{ $solicitud->fecha }}</td>
-                        <td>{{ $solicitud->nombre }}</td>
-                        <td>{{ $solicitud->motivo }}</td>
-                        <td>{{ $solicitud->estado }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </td>
-    </tr>
-            @endforeach
-        </tbody>
-    </table>
-    <!-- <h1>Datos de la Solicitud</h1>
-    <pre>{{ print_r($datos, true) }}</pre> -->
+            @endif
+        @endforeach
+    </tbody>
+</table>
+<!-- <h1>Datos de la Solicitud</h1>
+<pre>{{ print_r($datos, true) }}</pre> -->
 </body>
 </html>

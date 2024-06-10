@@ -139,10 +139,10 @@ function actualizarTabla(data) {
         // Agregar las celdas con los datos del ambiente a la fila
         rowAmbiente.innerHTML = `
             <td>${contador++}</td>
-            <td>${ambiente.TIPO}</td>
-            <td>${ambiente.NOMBRE}</td>
-            <td>${ambiente.CAPACIDAD}</td>
-            <td>${ambiente.ESTADO}</td>
+            <td>${ambiente.dahm_relacion_ambiente.TIPO}</td>
+            <td>${ambiente.dahm_relacion_ambiente.NOMBRE}</td>
+            <td>${ambiente.dahm_relacion_ambiente.CAPACIDAD}</td>
+            <td>${ambiente.dahm_relacion_ambiente.ESTADO}</td>
         `;
         
         // Agregar la fila del ambiente al cuerpo de la tabla
@@ -175,19 +175,19 @@ function actualizarTabla(data) {
         // Iterar sobre las solicitudes y agregarlas como filas en la tabla de solicitudes
         ambiente.solicitudes.forEach(solicitud => {
             var solicitudRow = document.createElement('tr');
-            var fechaCell = document.createElement('td');
-            fechaCell.innerText = solicitud.fecha;
-            var docenteCell = document.createElement('td');
-            docenteCell.innerText = solicitud.nombre; // Asegúrate de usar nombre_docente aquí
-            var motivoCell = document.createElement('td');
-            motivoCell.innerText = solicitud.motivo;
-            var estadoCell = document.createElement('td');
-            estadoCell.innerText = solicitud.estado; // Asumiendo que tienes el estado de la solicitud
-            solicitudRow.appendChild(fechaCell);
-            solicitudRow.appendChild(docenteCell);
-            solicitudRow.appendChild(motivoCell);
-            solicitudRow.appendChild(estadoCell);
-            tbodySolicitudes.appendChild(solicitudRow);
+                var fechaCell = document.createElement('td');
+                fechaCell.innerText = solicitud.FECHAHORA_SOLI;
+                var docenteCell = document.createElement('td');
+                docenteCell.innerText = ambiente.dahm_relacion_docente.NOMBRE; // Nombre del docente obtenido del backend
+                var motivoCell = document.createElement('td');
+                motivoCell.innerText = solicitud.MOTIVO;
+                var estadoCell = document.createElement('td');
+                estadoCell.innerText = solicitud.ESTADO;
+                solicitudRow.appendChild(fechaCell);
+                solicitudRow.appendChild(docenteCell);
+                solicitudRow.appendChild(motivoCell);
+                solicitudRow.appendChild(estadoCell);
+                tbodySolicitudes.appendChild(solicitudRow);
         });
 
         // Agregar el encabezado y el cuerpo de la tabla de solicitudes a la tabla secundaria
@@ -221,7 +221,8 @@ function exportarPDF() {
     var nombre = document.getElementById("inputSearch").value;
     var estado = document.getElementById("selectMode").value;
     var capacidad = document.getElementById("selectStatus").value;
-
+    var fechaDesde = document.getElementById("fechaDesde").value;
+    var fechaHasta = document.getElementById("fechaHasta").value;
     // Obtenemos los datos de la tabla actualizados
     var tabla = document.getElementById("resultadosTabla");
     var filas = tabla.getElementsByTagName("tr");
@@ -229,11 +230,12 @@ function exportarPDF() {
 
     // Construir el objeto de datos para el PDF
     var data = {
-        nombre: nombre,
-        estado: estado,
-        capacidad: capacidad,
-        
-    };
+    nombre: nombre,
+    estado: estado,
+    capacidad: capacidad,
+    fechaDesde: fechaDesde,
+    fechaHasta: fechaHasta
+};
 
     // Generar el PDF
     generarPDF(data);
@@ -295,7 +297,8 @@ selectStatus.addEventListener("input", function() {
 <script>
     // Obtener la lista de nombres de ambientes
     var nombresAmbientes = {!! json_encode($ambientes->pluck('NOMBRE')->toArray()) !!};
-
+    console.log('Nombres de Ambientes:', nombresAmbientes);
+    
     // Obtener referencia al campo de búsqueda y al contenedor de sugerencias
     var inputSearch = document.getElementById("inputSearch");
     var suggestionsContainer = document.getElementById("suggestionsContainer");
@@ -308,10 +311,11 @@ selectStatus.addEventListener("input", function() {
         // Limpiar el contenedor de sugerencias
         suggestionsContainer.innerHTML = '';
 
-        // Mostrar las sugerencias que coincidan con el texto ingresado
-        matches.slice(0, 5).forEach(match => {
+        // Mostrar todas las sugerencias que coincidan con el texto ingresado
+        matches.forEach(match => {
             var suggestion = document.createElement("div");
             suggestion.textContent = match;
+            suggestion.classList.add("suggestion-item"); // Agregar una clase para estilos personalizados
             suggestion.addEventListener("click", function() {
                 // Al hacer clic en una sugerencia, llenar el campo de búsqueda con la sugerencia seleccionada
                 inputSearch.value = match;
@@ -321,6 +325,9 @@ selectStatus.addEventListener("input", function() {
             });
             suggestionsContainer.appendChild(suggestion);
         });
+
+        // Mostrar el contenedor de sugerencias si hay coincidencias
+        suggestionsContainer.style.display = matches.length > 0 ? 'block' : 'none';
     });
 
     // Agregar un listener para el evento "blur" al campo de búsqueda
@@ -328,6 +335,7 @@ selectStatus.addEventListener("input", function() {
         // Usar setTimeout para dar tiempo a procesar el clic en una sugerencia antes de limpiar el contenedor
         setTimeout(() => {
             suggestionsContainer.innerHTML = '';
+            suggestionsContainer.style.display = 'none';
         }, 200);
     });
 
