@@ -24,9 +24,17 @@
                 <label for="capacidad" class="form-label">Capacidad</label>
                 <input type="text" name="capacidad" class="form-control" readonly>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="grupos" class="form-label">Grupos</label>
                 <input type="text" name="grupos" class="form-control" readonly>
+            </div>
+            <div class="col-md-5">
+                <label for="horario" class="form-label">Horario</label>
+                <input type="text" name="horario" class="form-control" readonly>
+            </div>
+            <div class="col-md-4">
+                <label for="modo" class="form-label">Modo</label>
+                <input type="text" name="modo" class="form-control" readonly>
             </div>
             <div class="col-md-12">
                 <label for="materia" class="form-label">Materia</label>
@@ -34,20 +42,14 @@
             </div>
             <div class="col-md-4">
                 <label for="ambiente" class="form-label">Ambiente</label>
-                <input type="text" name="ambiente" class="form-control" readonly>
+                <select name="ambiente" class="form-control" readonly>
+                </select>
             </div>
-            <div class="col-md-5">
-                <label for="horario" class="form-label">Horario</label>
-                <input type="text" name="horario" class="form-control" readonly>
-            </div>
-            <div class="col-md-7">
+            <div class="col-md-8">
                 <label for="motivo" class="form-label">Motivo</label>
                 <input type="text" name="motivo" class="form-control" readonly>
             </div>
-            <div class="col-md-4">
-                <label for="modo" class="form-label">Modo</label>
-                <input type="text" name="modo" class="form-control" readonly>
-            </div>
+            
             <div class="col-md-12" id="desc-modo">
                 <label for="desc" class="form-label">Descripcion</label>
                 <input type="textarea" name="desc" class="form-control" readonly>
@@ -73,19 +75,19 @@
 @include('admin.components.formularioRazones')
 
 <script>
-    const canvas_main = document.getElementById('offcanvasRight')
-    const canvas_razones = document.getElementById('offcanvasRightRa')
-    const canvas_main_instance = bootstrap.Offcanvas.getInstance(canvas_main)
-    const canvas_razones_instance = bootstrap.Offcanvas.getInstance(canvas_razones)
+    const message_razon = document.getElementById('messageErrorRazon')
+    let text = ''
+    let bandera = false
 
     function cambiarEstado(button){
-        let text = button.value
+        text = button.value
         let actualizacion = obtainValues()
         const id_solicitud = document.getElementById('docentes')
-        let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
-
+        const input_select = document.querySelector('select[name="ambiente"]')
+        const ambiente_select = input_select.options[input_select.selectedIndex]
         const ob_json = JSON.stringify({
             'ID_SOLICITUD':soli_aten['ID'],
+            'AMBIENTE':ambiente_select.value,
             'ESTADO':button.value,
             'ACTUALIZACIONES':actualizacion
         })
@@ -93,14 +95,56 @@
         const body = {
             'NOMBRES': soli_aten['NOMBRES'],
             'TIPO': 'Reserva',
-            'ESTADO':button.value,
+            'ESTADO':text,
             'FECHA':soli_aten['FECHA_RESERVA'],
             'MATERIA':soli_aten['MATERIA'],
-            'AMBIENTE':soli_aten['AMBIENTE'],
+            'AMBIENTE':ambiente_select.value,
             'RAZONES':actualizacion
         }
+
+        soli_aten['AMBIENTE'] = ambiente_select.value
+
+        let content = ''
+        soli_aten['NOMBRE_DOCENTES'].forEach(
+            nombre => {
+                content+nombre['Nombre_docente']
+                console.log('Nombre: ', nombre['Nombre_docente'])
+            }
+        )
+
+
+
+        if(bandera == true || text == 'ACEPTADO'){
+            const modalContent = content+Object.entries(soli_aten).map(([key, value]) => {
+                return `<div>
+                    <p><strong>${key}:</strong>${value}</p>
+                </div>`
+            }).join('')
+
+            Swal.fire({
+                icon: 'info',
+                title: 'Confirmación de modificacion',
+                html: modalContent,
+                showCancelButton: true,
+                confirmButtonText: 'Enviar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar el formulario si se confirma la acción
+                    console.log("Formato del json: ", ob_json)
+                    sendForm(ob_json, body)
+                }
+            })
+        }else{
+            message_razon.style.display = 'block'
+        }
+    }
+
+    function sendForm(ob_json, body){
+        let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
+
         fetch(
-            'reservas/store',
+            'store',
             {
                 method: 'PUT',
                 headers: {
@@ -127,6 +171,7 @@
                             'BODY': body
                         })
                         limpiar()
+                        cerrarRazones()
                         cerrarMain()
                     })
                 }
@@ -141,7 +186,6 @@
             }
         )
     }
-
     function sendNotificacion(data){
         const cuerpo = JSON.stringify(data['BODY'])
         fetch('http://127.0.0.1:8000/admin/notificacion/store',
@@ -172,6 +216,8 @@
     }
 
     function cerrarMain(){
+        const canvas_main = document.getElementById('offcanvasRight')
+        const canvas_main_instance = bootstrap.Offcanvas.getInstance(canvas_main)
         canvas_main_instance.hide()
     }
 </script>

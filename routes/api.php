@@ -32,6 +32,7 @@ Route::controller(AmbienteController::class)->group(
         Route::get('/fetch/ambientes', 'indexList');
         Route::get('/fetch/ambientestodos/{ambiente}/{materia}/{estado}', 'showTodo');
         Route::get('/fetch/ambientestodossin/{ambiente}/{materia}/{estado}', 'showTodo');
+        Route::get('/fetch/ambientes/cantidad/{cantidad}', 'showCantidad');
         //Route::get('/fetch/ambientes/{id_ambiente}', 'showId');
         //Route::post('/ambientes/store', 'store');
         //Route::post('/putambiente', 'show');
@@ -91,7 +92,7 @@ Route::controller(SolicitudController::class)->group(
         Route::post('/fetch/solicitudes/store', 'store');
         Route::get('/fetch/solicitudeslibres/{ambiente}/{fecha}', 'solicitudes_libres');
         Route::get('/fetch/solicitudesshow/{ambiente}', 'show');
-        Route::get('/fetch/reservas/{docente}/{materia}/{modo}', 'showAtencion');
+        Route::get('/fetch/solicitudes/{id}', 'showSolicitud');
         //Route::post('/horarios/store', 'store');
         // Route::post('/putambiente', 'show');
     }

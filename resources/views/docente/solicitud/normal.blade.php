@@ -73,12 +73,41 @@
 
 <script>
     let solicitudes = [];
+    let ambientes = [];
+    fetch(
+        'http://127.0.0.1:8000/api/fetch/ambientes'
+    ).then(
+        response => response.json()
+    ).then(
+        data => {
+            ambientes = data;
+            console.log('Datos del fetch: ', ambientes);
+        }
+    ).catch(
+        error => {
+            console.log('Error encontrado: ', error);
+        }
+    )
     document.addEventListener('DOMContentLoaded', function() {
         const filtroFechaInput = document.getElementById('filtroFecha');
         const ambiente = document.getElementById('aula');
         const modoInput = document.getElementById('modo');
+        const cantidad = document.getElementById('cantidad_estudiantes');
         const campoRazon = document.getElementById('campoRazon');
         const tabla = document.getElementById('tablaSolicitudes');
+
+        ambiente.innerHTML = '';
+        cantidad.addEventListener('change', function(event){
+            let ambientes_filtro = obtenerAmbientes(parseInt(event.target.value));
+            ambientes_filtro.forEach(
+                element => {
+                    ambiente.innerHTML += `
+                        <option value="${element['NOMBRE']}">${element['NOMBRE']}</option>
+                    `;
+                    console.log('Ambientes en lista: ', element);
+                }
+            );
+        });
 
         filtroFechaInput.addEventListener('change', function() {
             const fechaSeleccionada = new Date(this.value);
@@ -114,17 +143,9 @@
                         solicitudes.forEach(solicitud =>{
                             tabla.innerHTML += `
                                     <tr>
-                                        <td></td>
                                         <td>${solicitud['AMBIENTE']}</td>
                                         <td>${solicitud['HORARIO']}</td>
                                         <td>${fecha}</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-success solicitar-btn" type="button"
-                                                data-aula="${solicitud['AMBIENTE']}" data-horario="${solicitud['HORARIO']}"
-                                                data-fecha="${fecha.value}">
-                                                Seleccionar
-                                            </button>
-                                        </td>
                                     </tr>`
                         });
                     }
@@ -136,9 +157,21 @@
                 console.log("Solicitudes libres: ", solicitudes);
                 // Mostrar las filas en la tabla
                 // tabla.innerHTML = tablaHTML;
+            }else{
+                //Mostrar mensaje en caso de no seleccionar una fecha
+                
             }
         });
     });
+
+    function obtenerAmbientes(cant){
+        return ambientes.filter(
+            ambiente => {
+                let num_div = cant/10
+                return (ambiente['CAPACIDAD'] <= num_div*10+10 && ambiente['CAPACIDAD'] >= num_div*10-10)
+            }
+        )
+    }
 </script>
 {{-- 
 <script>
@@ -173,7 +206,8 @@ document.addEventListener("DOMContentLoaded", function() {
             const input_nombre = this.querySelectorAll('[name="nombre"]');
             const input_materia = this.querySelector('[name="materia"]');
             const dato_materia = input_materia.options[input_materia.selectedIndex].value;
-            const input_cant = this.querySelector('[name="cantidad_estudiantes"]').value;
+            const input_cant = this.querySelector('[name="cantidad_estudiantes"]');
+            const dato_cant = input_cant.options[input_cant.selectedIndex].value;
             const input_motivo = this.querySelector('[name="motivo"]');
             const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
             const input_fecha = this.querySelector('[name="filtroFecha"]').value;
@@ -235,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const json_send = {
                 'NOMBRES':json_nombres,
-                'CANTIDAD':parseInt(input_cant, 10),
+                'CANTIDAD':parseInt(dato_cant, 10),
                 'FECHA_RESERVA':input_fecha+' '+arreglo_horario[0],
                 'HORA_INICIO':arreglo_horario[0],
                 'HORA_FIN':arreglo_horario[1],

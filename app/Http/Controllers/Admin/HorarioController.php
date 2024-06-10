@@ -28,7 +28,7 @@ class HorarioController extends Controller
             'horario_relacion_dahm.dahm_relacion_materia',
             'horario_relacion_dahm.dahm_relacion_docente')->get();
         //return $horarios;
-        return view('admin.horarios', ['horarios' => $horarios]);
+        return view('admin.listar.horarios', ['horarios' => $horarios]);
     }
 
     /**

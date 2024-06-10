@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Docente;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Http\Controllers\scripts\GeneradorHorariosNoRegistrados;
+use App\Models\Admin\Docente;
 use App\Models\Admin\Materia;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
@@ -25,13 +26,15 @@ class SolicitudController extends Controller
         //$usuario = Auth::user();
         $buscador = new EncontrarTodo();
         $solicitudes_fetch = 
-        //(isset($usuario) && $usuario->cargo == 'docente') ? Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get() : 
-        Solicitud::all();
+        //($usuario->cargo == 'admin') ? 
+        Solicitud::all() 
+        //: Solicitud::where()->get()
+        ;
         $materias = Materia::all(['NOMBRE']);
         $solicitudes_estructuradas = [];
         
         foreach($solicitudes_fetch as $solicitud){
-            $prio = (strpos($solicitud->PRIORIDAD, 'URGENTE')) ? json_decode($solicitud->PRIORIDAD) : 'NORMAL';
+            $prio = (strpos($solicitud->PRIORIDAD, 'URGENTE')) ? 'URGENTE' : 'NORMAL';
             if(isset($solicitud)){
                 $solicitudes_estructuradas[] = [
                     'ID' => $solicitud->ID_SOLICITUD,
@@ -50,22 +53,19 @@ class SolicitudController extends Controller
             }
         }
         
-        // return [
-        //     'solicitudes' => $solicitudes_estructuradas, 
-        //     // 'nombre' => 
-        //     //     ($usuario->cargo == 'admin') ? 
-        //     //         $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '',
-        //     'materias' => $materias];
-
         return view('admin.listar.solicitudes', 
         [
-            'solicitudes' => $solicitudes_estructuradas, 
-            // 'nombre' => 
-            //     ($usuario->cargo == 'docente') ? 
-            //         $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '',
+            'solicitudes' => $solicitudes_estructuradas,
             'materias' => $materias]);
     }
 
+
+    /**
+     * Muestra los horarios de las solicitudes aceptadas
+     * @param String $ambientes
+     * @param String $fecha
+     * @return Json retorna un json con la lista de los ambientes
+     */
     public function solicitudes_libres($ambiente, $fecha){
         $solicitudes = [];
         $fecha_seg = strtotime($fecha);
@@ -177,19 +177,19 @@ class SolicitudController extends Controller
     { 
         $usuario = Auth::user();
         $buscador = new EncontrarTodo();
-        $solicitudes_fetch = ($usuario->cargo == 'admin') ? Solicitud::all() : Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get();
+        //$solicitudes_fetch = (isset($usuario) && $usuario->cargo == 'admin') ? Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get() : Solicitud::all() ;
         $materias = Materia::all(['NOMBRE']);
-        $solicitudes_estructuradas = [];
         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
+        $nombre_docente = (isset($usuario) && $usuario->cargo == 'docente') ? Docente::where('ID_DOCENTE', $usuario->ID_DOCENTE) : '';
 
         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
                                     ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
                                     ->get();
         // Construir la consulta base
-        $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
-                                    ->where('estado', 'Reservado')
-                                    ->get();
+        // $solicitudes = Solicitud::where('LIKE','ID_DOCENTE_s', "%$idDocente%")
+        //                             ->where('ESTADO', 'ACEPTADO')
+        //                             ->get();
         $materiasAsociadas = [];
         foreach ($relaciones as $relacion) {
             // Obtener la colección de materias asociadas a través de la relación
@@ -200,61 +200,17 @@ class SolicitudController extends Controller
             }
         }
         
-        return view('docente.solicitud.normal', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
+        if(isset($usuario) && $usuario->cargo == 'docente'){
+            return view('docente.solicitud.normal', [
+                //'solicitudes' => $solicitudes, 
+                'docente' => $nombre_docente,'materias' => $materiasAsociadas]);
+        }else{
+            return view('admin.viewFormSolicitud', [
+                //'solicitudes' => $solicitudes, 
+                'docente' => $nombre_docente, 'materias' => $materiasAsociadas]);
+        }
     }
 
-    /**
-     * Muestra todas las solicitudes en estado pendiente para la atencuin de una solicitud
-     * @param Materia el nombre de la materia a buscar
-     * @param Modo el modo en el que se encuentra la solicitud
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function showAtencion($docente, $materia, $modo)
-    {
-        $buscador =  new EncontrarTodo();
-        $modo = strtoupper($modo);
-        $solicitudes = Solicitud::with(
-                        'solicitud_relacion_ambiente',
-                        'solicitud_relacion_materia',
-                        )->whereHas(
-                            'solicitud_relacion_ambiente',
-                            function ($query) use ($docente, $materia, $modo, $buscador){
-                                if($materia != " "){
-                                    $query->where('ID_MATERIA', $buscador->getIdMateria($materia));
-                                }
-                                if($modo != " "){
-                                    $query->where('PRIORIDAD', 'LIKE', "%$modo%");
-                                }
-                                if($docente != " "){
-                                    $query->where(
-                                        'ID_DOCENTE_s', 'LIKE', "%{$buscador->getIdDocenteporNombre($docente)}%"
-                                    );
-                                }
-                            }
-                        )->where('ESTADO', 'CANCELADO')->orderBy('FECHA_RE')->get();
-        $solicitudes_estructuradas = [];
-        $nombre_docentes = [];
-        foreach($solicitudes as $solicitud){
-            $nombre_docentes = $buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s);
-            $data_reservar = date_create($solicitud->FECHA_RE.str_split(" ")[0]);
-            $data_solicitar = date_create($solicitud->FECHAHORA_SOLI.str_split(" ")[0]);
-            
-            $solicitudes_estructuradas[] = [
-                'NOMBRE_DOCENTES' => $nombre_docentes,
-                'CANTIDAD' => $solicitud->CANTIDAD_EST,
-                'FECHA_RESERVA' => date_format($data_reservar, 'd/m/Y'),
-                'HORARIO' => $solicitud->HORAINI." - ".$solicitud->HORAFIN,
-                'FECHA_HORASOLI' => date_format($data_solicitar, 'd/m/Y'),
-                'MOTIVO' => $solicitud->MOTIVO,
-                'MODO' => json_decode($solicitud->PRIORIDAD, true),
-                'MATERIA' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
-                'GRUPOS' => json_decode($solicitud->GRUPOS, true),
-                'AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
-                'ESTADO' => $solicitud->ESTADO
-            ];
-        }
-        return $solicitudes_estructuradas;
-    }
 
     /**
      * Muestra todas las solicitudes con un tipo por su materia, modo y estado
@@ -263,21 +219,9 @@ class SolicitudController extends Controller
      * @param Estado el estado en que se encuentra la solicitud
      * @return \Illuminate\Http\JsonResponse
      */
-    public function showTodo($materia, $modo, $estado)
+    public function showSolicitud($id)
     {
-        $buscador =  new EncontrarTodo();
-        $modo = strtoupper($modo);
-        $solicitudes = Solicitud::with(
-                        'solicitud_relacion_ambiente'
-                        )->whereHas(
-                            'solicitud_relacion_ambiente',
-                            function ($query) use ($materia, $modo, $estado, $buscador){
-                                $query->where('ID_MATERIA', $buscador->getIdMateria($materia));
-                                $query->where('PRIORIDAD', 'LIKE', "%$modo%");
-                                $query->where('ESTADO', $estado);
-                            }
-                        )->orderBy('FECHA_RE')->get();
-        return $solicitudes;
+        return Solicitud::where('ID_SOLICITUD', $id)->get();
     }
 
     /**
@@ -289,12 +233,17 @@ class SolicitudController extends Controller
      */
     public function update(Request $request)
     {
+        $buscador = new EncontrarTodo();
         $request->validate([
             'ID_SOLICITUD' => 'required|string',
             'ESTADO' => 'required|string'
         ]);
 
-        $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICUTD)->update(['ESTADO', $request->ESTADO]);
+        $data = json_decode($request->getContent(), true);
+        $solicitud = Solicitud::where('ID_SOLICITUD', $data->ID_SOLICUTD)
+            ->update([
+                'ESTADO'=> $data->ESTADO
+            ]);
 
         return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
     }
