@@ -1,6 +1,6 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
-        <h5 id="offcanvasRightLabel">Estado de Solicitud</h5>
+        <h5 id="offcanvasRightLabel">Estado de detalles</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -50,7 +50,7 @@
             </div>
             <div class="col-md-6">
                 <label for="fecha" class="form-label">Fecha:</label>
-                <input type="date" class="form-control" id="fecha" name="fecha" required readonly>
+                <input type="text" class="form-control" id="fecha" name="fecha" required readonly>
             </div>
             <div class="col-12">
                 <label for="horario" class="form-label">Horario:</label>
