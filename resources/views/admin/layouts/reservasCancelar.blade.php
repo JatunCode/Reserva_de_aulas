@@ -53,9 +53,7 @@
                         <td style="width: 20px">{{ $solicitud['HORARIO'] }}</td>
                         <td class="modo">
                             <span class="btn  btn-sm btn-block
-                                @if($solicitud['ESTADO'] == 'CANCELADO')
-                                    background-color: #FFC0B7;btn btn-outline-secondary ;
-                                @elseif($solicitud['MODO'] == 'NORMAL')
+                                @if($solicitud['MODO'] == 'NORMAL')
                                     ;
                                     btn-success
                                 @else

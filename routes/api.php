@@ -82,6 +82,7 @@ Route::controller(ReservasController::class)->group(
     function(){
         Route::get('/fetch/reservas', 'index');
         Route::put('/fetch/reservas/store', 'store');
+        Route::put('/fetch/reservas/update', 'update');
     }
 );
 
@@ -101,5 +102,6 @@ Route::controller(SolicitudController::class)->group(
 Route::controller(RazonesController::class)->group(
     function(){
         Route::get('/fetch/razones', 'indexList');
+        Route::post('/fetch/razones/store', 'store');
     }
 );

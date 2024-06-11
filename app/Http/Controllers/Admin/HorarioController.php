@@ -10,6 +10,7 @@ use App\Models\Admin\Docente;
 use App\Models\Admin\Horario;
 use App\Models\Admin\Materia;
 use App\Models\Admin\Relacion_DAHM;
+use App\Models\Admin\Relacion_DM;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 
@@ -99,7 +100,21 @@ class HorarioController extends Controller
             'horario_relacion_dahm.dahm_relacion_ambiente',
             'horario_relacion_dahm.dahm_relacion_materia',
             'horario_relacion_dahm.dahm_relacion_docente')->get();
-        return $horarios;
+        
+        $horarios_estructurados = [];
+        foreach ($horarios as $horario) {
+            if(isset($horario['horario_relacion_dahm']['dahm_relacion_ambiente']) && isset($horario['horario_relacion_dahm']['dahm_relacion_docente'])){
+                $horarios_estructurados[] = [
+                    'DIA' => $horario['DIA'],
+                    'INICIO' => $horario['INICIO'],
+                    'FIN' => $horario['FIN'],
+                    'AMBIENTE' => $horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'],
+                    'MATERIA' => $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'],
+                    'DOCENTE' => $horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE']
+                ];
+            }
+        }
+        return json_encode($horarios_estructurados);
     }
 
     /**
@@ -124,7 +139,8 @@ class HorarioController extends Controller
                         $fail('No existe la materia indicada.');
                     }
                 }],
-                'LISTAS' => 'required'
+                'LISTAS' => 'required',
+                'GRUPO' => 'required'
             ]);
             
             $data = json_decode($request->getContent(), true);
@@ -160,6 +176,12 @@ class HorarioController extends Controller
                     ]);
                 }
             }
+            Relacion_DM::create([
+                'ID_RELACION' => Uuid::uuid4(),
+                'ID_DOCENTE' => $id_docente,
+                'ID_MATERIA' => $id_materia,
+                'GRUPO' => $data['GRUPO'],
+            ]);
             return response()->json(["message" => "Horario creado exitosamente"], 200);
         }
         return view('admin.viewFormHorarios');
@@ -241,7 +263,21 @@ class HorarioController extends Controller
                         }
                     }
                 )->orderBy('INICIO')->get();
-            return json_encode($horarios);
+            $horarios_estructurados = [];
+            foreach ($horarios as $horario) {
+                if(isset($horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'])){
+                    $horarios_estructurados[] = [
+                        'DIA' => $horario['DIA'],
+                        'INICIO' => $horario['INICIO'],
+                        'FIN' => $horario['FIN'],
+                        'AMBIENTE' => $horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'],
+                        'MATERIA' => $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'],
+                        'DOCENTE' => $horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE']
+                    ];
+                }
+            }
+            
+            return json_encode($horarios_estructurados);
         } catch (\Throwable $th) {
             return response()->json(['message' => "Error en el servidor al mostrar la lista de horarios filtrados. $th"], 500);
         }

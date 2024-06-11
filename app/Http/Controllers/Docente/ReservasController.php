@@ -55,6 +55,7 @@ class ReservasController extends Controller
         return view('admin.layouts.reservas', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]);
     }
 
+
     public function indexCancelar()
     {
         $buscador =  new EncontrarTodo();
@@ -112,78 +113,8 @@ class ReservasController extends Controller
         // Devolver las solicitudes como respuesta en formato JSON
         return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
     }
-//     public function datos_cancelar(Request $request)
-//     {
-//         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
-
-//         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
-//         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-//                                     ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-//                                     ->get();
-//         // Construir la consulta base
-//         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
-//         ->where('estado', 'cancelado')
-//         ->get();
-//         $materiasAsociadas = [];
-//         foreach ($relaciones as $relacion) {
-//             // Obtener la colección de materias asociadas a través de la relación
-//             // Iterar sobre las materias para obtener sus nombres
-//             $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
-//             if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-//                 $materiasAsociadas[] = $nombreMateria;
-//             }
-//         }
-//            // Devolver las solicitudes como respuesta en formato JSON
-//         return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
-//     }
 
 
-//     public function datos_solicitando(Request $request)
-//     {
-//         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
-
-//         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
-//         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-//                                     ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-//                                     ->get();
-//         // Construir la consulta base
-//         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
-//         ->where('estado', 'Solicitando')
-//         ->get();
-//         $materiasAsociadas = [];
-//         foreach ($relaciones as $relacion) {
-//             // Obtener la colección de materias asociadas a través de la relación
-//             $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
-//             if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-//                 $materiasAsociadas[] = $nombreMateria;
-//             }
-//         }
-//            // Devolver las solicitudes como respuesta en formato JSON
-//         return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
-//     }
-//     public function datos_reservado(Request $request)
-//     {
-//         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
-
-//         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
-//         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-//                                     ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-//                                     ->get();
-//         // Construir la consulta base
-//         $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)
-//                 ->where('estado', 'Reservado')
-//                 ->get();
-//         $materiasAsociadas = [];
-//         foreach ($relaciones as $relacion) {
-//             // Obtener la colección de materias asociadas a través de la relación
-//             $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
-//             if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-//                 $materiasAsociadas[] = $nombreMateria;
-//             }
-//         }
-//            // Devolver las solicitudes como respuesta en formato JSON
-//         return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
-//     }
     public function cancelar_solicitud(Request $request)
     {
         $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
@@ -209,47 +140,6 @@ class ReservasController extends Controller
         // Devolver las solicitudes como respuesta en formato JSON
         return view('docente.listar.cancelar', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
     }
-//     public function datos_filtro(Request $request)
-//     {
- 
-//         $filtroModo = $request->input('modo');
-//         $filtroEstado = $request->input('estado');
-//         $filtroMateria = $request->input('materia');
-//         // Construir la consulta base
-//         $query = Solicitudes::where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d');
-        
-//         // Aplicar filtros si están presentes
-   
-//         if ($filtroMateria!==null) {
-//             $query->where('materia', $filtroMateria);
-//         }
-           
-        
-//         if ($filtroModo!== "Todos") {
-//             $query->where('modo', $filtroModo);
-//         }
-//         // Aplicar el filtro de estado solo si es diferente de "Todos"
-//         if ($filtroEstado !== "Todos") {
-            
-//             $query->where('estado', $filtroEstado);
-//         }
-        
-//         // Obtener las solicitudes filtradas
-//         $solicitudes = $query->get();
-        
-//         // Devolver las solicitudes filtradas como respuesta en formato JSON
-//         return response()->json($solicitudes);
-//     }
-    
-    
-
-// public function urgencia()
-// {
-
-//     $solicitudes = Solicitudes::where('modo', 'Urgencia')->paginate(1);
-
-//     return view('docente.solicitud.filtrar.urgente', ['solicitudes' => $solicitudes]);
-// }
 
     /**
      * Store a newly created resource in storage.
@@ -266,7 +156,7 @@ class ReservasController extends Controller
         $razones = new Razones();
         $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICITUD);
         try{
-            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):[];
+            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store(json_encode($request->ACTUALIZACIONES->LISTA_NO_REG)):[];
             $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg):'Ninguno';
             Reserva::create([
                 'ID_RESERVA' => $id,
@@ -308,17 +198,23 @@ class ReservasController extends Controller
     public function update(Request $request)
     {
         $razones = new Razones();
-        $request->validate([
-            'ID_SOLICITUD' => 'required|string',
-            'ESTADO' => 'required|string'
-        ]);
+        try {
+            $request->validate([
+                'ID_SOLICITUD' => 'required',
+                'ESTADO' => 'required'
+            ]);
 
-        $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):[];
-        $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg):'Ninguno';
-        $reserva = Reserva::where('ID_SOLICITUD', $request->ID_SOLICITUD)->update(['RAZONES' => json_encode($arreglo)]);
-        $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICUTD)->update(['ESTADO' => $request->ESTADO]);
+            $id_solicitud = $request->ID_SOLICITUD;
 
-        return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud, 'reserva' => $reserva], 200);
+            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):[];
+            $arreglo = array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg);
+            $reserva = Reserva::where('ID_SOLICITUD', $id_solicitud)->update(['RAZONES' => json_encode($arreglo)]);
+            $solicitud = Solicitud::where('ID_SOLICITUD', $id_solicitud)->update(['ESTADO' => $request->ESTADO]);
+    
+            return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud, 'reserva' => $reserva], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Falta un arreglo'.$th, 'solicitud' => $solicitud, 'reserva' => $reserva], 500);
+        }
     }
 
     /**
@@ -333,100 +229,18 @@ class ReservasController extends Controller
 
         return response()->json(['message' => 'Solicitud eliminada exitosamente']);
     }
-    public function cancelar($id)
+
+    public function showReservas($id)
     {
-        // Encuentra la solicitud por su ID
-        $solicitud = Solicitudes::findOrFail($id);
 
-        // Asigna el estado "cancelado" a la solicitud
-        $solicitud->estado = 'cancelado';
-
-        // Guarda los cambios en la base de datos
-        $solicitud->save();
-
-        // Devuelve la solicitud cancelada como JSON
-        return response()->json(['solicitud' => $solicitud, 'message' => 'Solicitud cancelada exitosamente']);
-    }
-
-    // public function filtrar_modo()
-    // {
-    //     // // Filtrar las solicitudes por modo "Urgente" y paginar el resultado
-    //     $solicitudes = Solicitudes::where('modo', 'Urgente')->paginate(10);
-
-    //     // Retornar la vista con las solicitudes filtradas y paginadas
-    //     return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes]);
-    //     // return "Hola";
-    // }
-    // public function filtrar_llegada()
-    // {
-    //     // // Filtrar las solicitudes por modo "Urgente" y paginar el resultado
-    //     $solicitudes = Solicitudes::where('modo', 'Normal')->paginate(10);
-
-    //     // Retornar la vista con las solicitudes filtradas y paginadas
-    //     return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes]);
-    //     // return "Hola";
-    // }
-    // public function filtrar()
-    // {
-    //     // Filtrar las solicitudes por estado diferente de "cancelado" y paginar el resultado
-    //     $solicitudes = Solicitudes::where('estado', '!=', 'cancelado')->paginate(10);
-
-    //     // Retornar la vista con las solicitudes filtradas y paginadas
-    //     return view('docente.listar.cancelar', ['solicitudes' => $solicitudes]);
-    // }
-//Hu registro reservas
-public function registroReservas()
-{
-    $nombreDocente = "Gelania";
-
-    $solicitudes = Solicitudes::where('nombre', $nombreDocente)
-        ->leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
+        $solicitud = Solicitudes::leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
+        ->where('solicitudes.id', $id)
         ->select('solicitudes.*', 'razones.razon')
-        ->paginate(10);
-     $razon = Razones::paginate(10);
-    // Retornar la vista con ambas variables
-    return view('docente.registro.registroreservas', ['solicitudes' => $solicitudes, 'razon' => $razon]);
-}
-
-public function showReservas($id)
-{
-
-    $solicitud = Solicitudes::leftJoin('razones', 'solicitudes.id_razon', '=', 'razones.id_razones')
-    ->where('solicitudes.id', $id)
-    ->select('solicitudes.*', 'razones.razon')
-    ->firstOrFail();
+        ->firstOrFail();
 
 
-    return response()->json(['solicitud' => $solicitud]);
-}
-
-
-
-
-///registro de RazonDenoAsignacion
-
-
-public function registroRazonDenoAsignacion()
-{
-    // Filtrar las solicitudes por el nombre del docente y paginar el resultado
-    $solicitudes = Razones::paginate(10);
-
-    // Envía los datos a la vista 'home'
-    return view('docente.registro.registroRazonDenoAsignacion', ['solicitudes' => $solicitudes]);
-}
-
-
-
-public function  borrarRazon($id)
-{
-    dd($id);
-
-    Razones::destroy($id);
-
- // Devuelve un mensaje de éxito como JSON
- return response()->json(['message' => 'Razón eliminada exitosamente']);
+        return response()->json(['solicitud' => $solicitud]);
     }
-
 
 
 }

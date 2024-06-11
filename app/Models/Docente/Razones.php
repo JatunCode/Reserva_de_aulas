@@ -15,4 +15,6 @@ class Razones extends Model
         'id_razones',
         'razon',
     ];
+
+    public $timestamps = false;
 }

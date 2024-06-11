@@ -40,7 +40,7 @@ Route::group(['prefix' => '/'], function () {
 Auth::routes();
 
 Route::prefix('admin')
-//->middleware('auth','can:admin')
+->middleware('auth','can:admin')
 ->group(function () {
     //*Mostrar el calendario en admin
     Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');

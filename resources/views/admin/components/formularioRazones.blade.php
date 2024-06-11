@@ -1,5 +1,4 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRightRa" aria-labelledby="offcanvasRightLabel">
-    @csrf
     <div class="offcanvas-header">
         <h5 id="offcanvasRightLabel">Formulario Razones</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -60,16 +59,16 @@
     }
 
     function agregarRazon(){
-        const input_razon = document.querySelector('[name="razon"]').value
+        let input_razon = document.querySelector('[name="razon"]')
         const div_lista = document.getElementById('list-razones')
 
         if(input_razon != ''){
             const newLi = document.createElement('li')
 
-            newLi.innerHTML = `<input type="checkbox" name="razonli" value="${input_razon}"><label for="razonli" class="form-label">${input_razon}</label>`
+            newLi.innerHTML = `<input type="checkbox" name="razonli" value="${input_razon.value}"><label for="razonli" class="form-label">${input_razon.value}</label>`
             div_lista.appendChild(newLi)
         }
-        input_razon = ''
+        input_razon.value = ''
     }
 
     function obtainValues(){
@@ -78,7 +77,7 @@
         const lista_reg = []
         const lista_no_reg = []
         lista_razones.forEach((element)=>{
-            if(!regex.test(parseInt(element.value, 10))){
+            if(regex.test(parseInt(element.value, 10))){
                 lista_no_reg.push(element.value)
             }else if(element.checked){
                 lista_reg.push(element.value)

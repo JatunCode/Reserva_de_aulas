@@ -98,7 +98,8 @@
         
         ambiente.innerHTML = '';
         cantidad.addEventListener('change', function(event){
-            let ambientes_filtro = obtenerAmbientes(parseInt(event.target.value));
+            let ambientes_filtro = [];
+            ambientes_filtro = obtenerAmbientes(parseInt(event.target.value));
             ambientes_filtro.forEach(
                 element => {
                     ambiente.innerHTML += `
@@ -182,14 +183,14 @@
             const input_nombre = this.querySelectorAll('[name="nombre"]');
             const input_materia = this.querySelector('[name="materia"]');
             const dato_materia = input_materia.options[input_materia.selectedIndex].value;
-            const input_cant = this.querySelector('[name="cantidad_estudiantes"]');
-            const dato_cant = input_cant.options[input_cant.selectedIndex].value;
+            const input_cant = this.querySelector('[name="cantidad_estudiantes"]').value;
             const input_motivo = this.querySelector('[name="motivo"]');
             const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
             const input_fecha = this.querySelector('[name="filtroFecha"]').value;
             const input_razon = this.querySelector('[name="razon"]').value;
             let prioridad = (input_razon != "") ? {"URGENTE" : input_razon} : {"NORMAL" : "Normal"};
-            const input_aula = this.querySelector('[name="aula"]').value;
+            const input_aula = this.querySelector('[name="aula"]');
+            const dato_aula = input_aula.options[input_aula.selectedIndex].value;
             const input_horario = this.querySelector('[name="horario"]').value;
             let arreglo_horario = input_horario.split(" - ");
             let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
@@ -245,14 +246,14 @@
 
             const json_send = {
                 'NOMBRES':json_nombres,
-                'CANTIDAD':parseInt(dato_cant, 10),
+                'CANTIDAD':parseInt(input_cant, 10),
                 'FECHA_RESERVA':input_fecha+' '+arreglo_horario[0],
                 'HORA_INICIO':arreglo_horario[0],
                 'HORA_FIN':arreglo_horario[1],
                 'PRIORIDAD':json_prioridad,
                 'MOTIVO':dato_motivo,
                 'MATERIA':dato_materia,
-                'AMBIENTE':input_aula
+                'AMBIENTE':dato_aula
             };
 
             // Mostrar el modal de confirmación con los datos del formulario

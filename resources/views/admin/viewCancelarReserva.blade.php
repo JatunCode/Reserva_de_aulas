@@ -100,13 +100,20 @@
     let bandera = false
     const message_razon = document.getElementById('messageErrorRazon')
 
-    document.querySelector('[name="razonli"]').addEventListener('change',
-        function(event){
-            if(event.target.checked == true){
-                message_razon.style.display = 'none'
-            }
+    const razones_list = document.querySelectorAll('[name="razonli"]')
+
+    razones_list.forEach(
+        element => {
+            element.addEventListener('change',
+                function(event){
+                    if(event.target.checked == true){
+                        message_razon.style.display = 'none'
+                    }
+                }
+            )
         }
     )
+
     function limpiar(){
         const razon = document.querySelector('[name="razon"]')
         const lista_razones = document.querySelectorAll('[name="razonli"]')
@@ -123,7 +130,7 @@
     }
 
     function agregarRazon(){
-        const input_razon = document.querySelector('[name="razon"]').value
+        let input_razon = document.querySelector('[name="razon"]').value
         const div_lista = document.getElementById('list-razones')
 
         if(input_razon != ''){
@@ -135,6 +142,10 @@
         input_razon = ''
     }
 
+    function isObject(object){
+        return typeof object === 'object' && object !== null
+    }
+
     function obtainValues(){
         const lista_razones = document.querySelectorAll('[name="razonli"]')
 
@@ -142,7 +153,7 @@
         const lista_no_reg = []
         lista_razones.forEach((element)=>{
 
-            if(!regex.test(parseInt(element.value, 10))){
+            if(regex.test(parseInt(element.value, 10))){
                 lista_no_reg.push(element.value)
             }else if(element.checked){
                 lista_reg.push(element.value)
@@ -164,8 +175,19 @@
             'ACTUALIZACIONES':actualizacion
         })
 
+        let nombres = []
+
+        soli_aten['NOMBRE_DOCENTES'].forEach(
+            nombre => {
+                nombres.push(nombre['Nombre_docente'])
+                console.log('Nombre: ', nombre['Nombre_docente'])
+            }
+        )
+
+        let json_nombres = JSON.stringify(nombres)
+
         const body = {
-            'NOMBRES': soli_aten['NOMBRES_DOCENTE'],
+            'NOMBRES': json_nombres,
             'TIPO': 'Reserva',
             'ESTADO':button.value,
             'FECHA':soli_aten['FECHA_RESERVA'],
@@ -173,27 +195,20 @@
             'AMBIENTE':soli_aten['AMBIENTE'],
             'RAZONES':actualizacion
         }
-        let content = ''
-        soli_aten['NOMBRE_DOCENTES'].forEach(
-            nombre => {
-                content+nombre['Nombre_docente']
-                console.log('Nombre: ', nombre['Nombre_docente'])
-            }
-        )
-        
+
+        console.log('Objeto de envio: ', body) 
         console.log("Bandera: ", bandera)
-        // let content = `
-        //     <p><strong>Docente(s)</strong>${docente}</p>
-        //     <p><strong>Materia</strong>${materia}</p>
-        //     <div>
-        //         <p><strong>Dia</strong> <strong>Inicio</strong> <strong>Salida</strong> <strong>Ambiente</strong></p>
-        //     </div>`
+        
         if(bandera == true){
-            const modalContent = content+Object.entries(soli_aten).map(([key, value]) => {
-                return `<div>
-                    <p><strong>${key}:</strong>${value}</p>
-                </div>`
-            }).join('')
+            const modalContent =
+            `<div>
+                <p><strong>Nombre(s):</strong>${nombres}</p>
+                <p><strong>Materia:</strong>${soli_aten['MATERIA']}</p>
+                <p><strong>Modo:</strong>${soli_aten['MODO']}</p>
+                <p><strong>Descripcion:</strong>${soli_aten['MODO']}</p>
+                <p><strong>Ambiente:</strong>${soli_aten['AMBIENTE']}</p>
+                <p><strong>Razon(es):</strong>${actualizacion}</p>
+            </div>`
 
             Swal.fire({
                 icon: 'info',
@@ -216,6 +231,7 @@
 
     function sendForm(ob_json, body){
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content') // Obtener el token CSR
+
         fetch(
             'update',
             {
@@ -260,6 +276,7 @@
     }
     function sendNotificacion(data){
         const cuerpo = JSON.stringify(data['BODY'])
+        console.log('Datos de la notificacion: ', cuerpo)
         fetch('http://127.0.0.1:8000/admin/notificacion/store',
             {
                 method:'POST', 
@@ -272,13 +289,13 @@
         ).then(
             response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
         ).then(
-            response => {
-                    window.location.reload();
-                    if (response.status == 200) {
-                        return response;
-                    } else {
-                        console.log('Response: ', response);
-                    }
+            data => {
+                window.location.reload();
+                if (response.status == 200) {
+                    return response;
+                } else {
+                    console.log('Response: ', response);
+                }
             }
         ).catch(
             error => {
