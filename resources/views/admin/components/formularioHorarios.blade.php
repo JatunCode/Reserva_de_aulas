@@ -6,11 +6,18 @@
         <p id="messageErrorDocente" style="display: none; color: red"></p>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-4">
         <label for="materia" class="form-label">Materia</label>
-        <input type="text" class="form-control" name="materia" required>
+        <input type="text" class="form-control" name="materia" onchange="findMateria(this)" required>
+        <p id="messageErrorMateria" style="display: none; color: red"></p>
     </div>
     
+    <div class="col-md-2">
+        <label for="grupo" class="form-label">Grupo</label>
+        <input type="text" class="form-control" name="grupo" required>
+        <p id="messageErrorGrupo" style="display: none; color: red"></p>
+    </div>
+
     <div class="col-md-12" id="container-main">
         <div class="row">
             <div class="col-md-10">
@@ -45,7 +52,6 @@
             <div class="col-md-4">
                 <label for="ambiente" class="form-label">Ambiente</label>
                 <input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)" required>
-                <p id="messageErrorAmbiente" style="display: none; color: red"></p>
             </div>
         </div>
     </div>

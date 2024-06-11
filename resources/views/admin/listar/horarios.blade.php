@@ -49,7 +49,6 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th style="width: 20px">Nº</th>
                     <th style="width: 40px">Dia</th>
                     <th style="width: 100px">Materia</th>
                     <th style="width: 40px">Hora Entrada</th>
@@ -61,7 +60,6 @@
             <tbody id="tableHorarios">
                 @foreach($horarios as $horario)
                     <tr>
-                        <th style="width: 20px"></td>
                         <th style="width: 40px">{{ $horario->DIA }}</td>
                         <th style="width: 100px">{{ $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
                         <th style="width: 40px">{{ $horario->INICIO }}</td>
@@ -146,13 +144,12 @@
         lista.forEach(elemento => {
             tabla.innerHTML += 
             `<tr>
-                <th style="width: 20px"></td>
                 <td style="width: 35px">${elemento['DIA']}</td>
-                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE']}</td>
+                <td style="width: 35px">${elemento['MATERIA']}</td>
                 <td style="width: 35px">${elemento['INICIO']}</td>
                 <td style="width: 150px">${elemento['FIN']}</td>
-                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE']}</td>
-                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']}</td>
+                <td style="width: 20px">${elemento['DOCENTE']}</td>
+                <td style="width: 20px">${elemento['AMBIENTE']}</td>
             </tr>`
             console.log('Ingresando al inner')
         })

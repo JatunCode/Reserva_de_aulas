@@ -52,7 +52,7 @@ class SolicitudController extends Controller
                 ];
             }
         }
-        
+        //return $solicitudes_estructuradas;
         return view('admin.listar.solicitudes', 
         [
             'solicitudes' => $solicitudes_estructuradas,

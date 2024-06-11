@@ -39,6 +39,7 @@ class NotificacionController extends Controller
         $request = json_decode($request->getContent(), true);
         $nombres = json_decode($request['NOMBRES']);
         try {
+            
             foreach($nombres as $nombre){
                 $docenteId = $buscador->getIdDocenteporNombre($nombre);
                 $docente = Docente::where('ID_DOCENTE',$docenteId)->first();

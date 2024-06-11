@@ -92,8 +92,19 @@
             'ACTUALIZACIONES':actualizacion
         })
 
+        let nombres = []
+
+        soli_aten['NOMBRE_DOCENTES'].forEach(
+            nombre => {
+                nombres.push(nombre['Nombre_docente'])
+                console.log('Nombre: ', nombre['Nombre_docente'])
+            }
+        )
+
+        let json_nombres = JSON.stringify(nombres)
+
         const body = {
-            'NOMBRES': soli_aten['NOMBRES'],
+            'NOMBRES': json_nombres,
             'TIPO': 'Reserva',
             'ESTADO':text,
             'FECHA':soli_aten['FECHA_RESERVA'],
@@ -111,8 +122,6 @@
                 console.log('Nombre: ', nombre['Nombre_docente'])
             }
         )
-
-
 
         if(bandera == true || text == 'ACEPTADO'){
             const modalContent = content+Object.entries(soli_aten).map(([key, value]) => {
@@ -142,7 +151,7 @@
 
     function sendForm(ob_json, body){
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
-
+        console.log('Datos que se tratan de enviar: ', ob_json)
         fetch(
             'store',
             {

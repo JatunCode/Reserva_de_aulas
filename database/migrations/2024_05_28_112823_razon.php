@@ -14,7 +14,7 @@ class Razon extends Migration
     public function up()
     {
         Schema::create('razones', function(Blueprint $table){
-            $table->id('id_razon')->autoIncrement()->nullable(false)->unique();
+            $table->id('id_razon')->autoIncrement();
             $table->string('razon')->nullable(false);
             $table->timestamps();
         });

@@ -32,13 +32,13 @@ class RazonesController extends Controller
      * Obtiene una lista de razones que se inserta en una tabla simple
      * @return response 200
      */
-    public function store($request){
+    public function store(Request $request){
         $list_ids = [];
-        foreach($request as $razon){
-            $nueva_razon = new Razones;
-            $nueva_razon->razon = $razon;
+        foreach($request['LISTA_NO_REG'] as $razon){
+            $nueva_razon = new Razones();
+            $nueva_razon['razon'] = $razon;
             $nueva_razon->save();
-            $list_ids[] = $nueva_razon->id_razon;
+            $list_ids[] = $nueva_razon['id_razon'];
         }
         return $list_ids;
     }
