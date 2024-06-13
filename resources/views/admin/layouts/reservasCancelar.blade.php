@@ -131,6 +131,7 @@
     function pressAtention(button){
         const id = button.value
         const canva = document.getElementById('offcanvasRight')
+        canva.style.setProperty('width', '800px')
         soli_aten = soli_pend.find(elemento => elemento['ID'] == id)
         console.log('Solicitud: ', soli_aten)
         if(soli_aten){

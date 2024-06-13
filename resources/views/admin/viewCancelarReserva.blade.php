@@ -87,11 +87,14 @@
         
 
         <div class="row">
-            <button type="button" class="btn btn-primary d-inline-block w-75" name="confirmar" style="background-color: green" onclick="cambiarEstado(this)" value="CANCELADO">Confirmar</button>
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary d-inline-block w-75" name="confirmar" style="background-color: green" onclick="cambiarEstado(this)" value="CANCELADO">Confirmar</button>
+            </div>
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary d-inline-block w-75" name="atras" style="background-color:red" onclick="cerrarMain()">Atras</button>
+            </div>
         </div>
-        <div>
-            <button type="button" class="btn btn-primary d-inline-block w-75" name="atras" style="background-color:red" onclick="cerrarMain()">Atras</button>
-        </div>
+        
     </div>
 </div>
 

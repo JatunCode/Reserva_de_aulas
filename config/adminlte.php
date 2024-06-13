@@ -441,6 +441,17 @@ return [
             'route'      => 'admin.reportes',
             'can'    => 'admin',
         ],
+        [
+            'header' => 'Mapa',
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'Mapa facultativo',
+            'icon'       => 'bi bi-map',
+            'icon_color' => 'green',
+            'route'      => 'admin.mapa.facultad',
+            'can'    => 'admin',
+        ]
     ],
 
     /*

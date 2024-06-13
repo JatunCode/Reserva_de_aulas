@@ -25,7 +25,6 @@
 </div>
 
 <script>
-    let ambientes = []
     let materia = []
     const button_guardar = document.getElementById('boton-sub')
     const button_cambio = document.getElementById('boton-mod')
@@ -86,42 +85,45 @@
 
     function sendForm(json){
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
-        fetch(
-            'http://127.0.0.1:8000/api/fetch/horarios/update',
-            {
-                method:'PUT',
-                headers:{
-                    'Content-type':'aplication/json',
-                    'X-CSRF-TOKEN': token
-                },
-                body:json
-            }
-        ).then(
-            response => {
-                if(response.ok){
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Horarios modificados exitosamente!',
-                        showConfirmButton: false,
-                        timer: 1500 // Cerrar automáticamente después de 1.5 segundos
-                    }).then(() => {
-                        // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
-                        limpiar()
-                        cerrar()
-                    })
-                }else{
-                    console.log('Error del servidor')
+        bandera = banderaAmbiente && banderaHora
+        if(bandera){
+            fetch(
+                'http://127.0.0.1:8000/api/fetch/horarios/update',
+                {
+                    method:'PUT',
+                    headers:{
+                        'Content-type':'aplication/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body:json
                 }
-            }
-        ).then(
-            data => {
-                console.log('Horarios modificados: ', data)
-            }
-        ).catch(
-            error => {
-                console.log(error)
-            }
-        )
+            ).then(
+                response => {
+                    if(response.ok){
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Horarios modificados exitosamente!',
+                            showConfirmButton: false,
+                            timer: 1500 // Cerrar automáticamente después de 1.5 segundos
+                        }).then(() => {
+                            // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
+                            limpiar()
+                            cerrar()
+                        })
+                    }else{
+                        console.log('Error del servidor')
+                    }
+                }
+            ).then(
+                data => {
+                    console.log('Horarios modificados: ', data)
+                }
+            ).catch(
+                error => {
+                    console.log(error)
+                }
+            )
+        }
         
     }
 
@@ -169,52 +171,58 @@
         button_guardar.style.display = 'block'
     }
 
-    function validateHoras(){
-        const inicio = document.querySelector('[name="inicio"]').value
-        const fin = document.querySelector('[name="fin"]').value
-        const dia = document.querySelector('[name="dia"]')
-        let dia_select = dia.options[dia.selectedIndex]
-        const message = document.getElementById('messageErrorHorario')
+    function validateHoras(input) {
+        const inicio = input.closest('.row').querySelector('[name="inicio"]').value
+        const fin = input.closest('.row').querySelector('[name="fin"]').value
+        const dia = input.closest('.row').querySelector('[name="dia"]')
+        const dia_select = dia.options[dia.selectedIndex]
+        const message = input.closest('.row').querySelector('#messageErrorHorario')
         
-        if(inicio != '' && fin != ''){
+        if (inicio != '' && fin != '') {
             const list_ini = String(inicio).split(':')
             const list_fin = String(fin).split(':')
-            const segundos_ini = parseInt(list_ini[0], 10)*3600 + parseInt(list_ini[1], 10)*60
-            const segundos_fin = parseInt(list_fin[0], 10)*3600 + parseInt(list_fin[1], 10)*60
+            const segundos_ini = parseInt(list_ini[0], 10) * 3600 + parseInt(list_ini[1], 10) * 60
+            const segundos_fin = parseInt(list_fin[0], 10) * 3600 + parseInt(list_fin[1], 10) * 60
             const string_hora = dia_select.value + String(segundos_ini) + String(segundos_fin)
 
-            if((segundos_ini <= 24300 || segundos_ini >= 78300) || (segundos_fin <= 24300 || segundos_fin >= 78300)){
+            if ((segundos_ini <= 24300 || segundos_ini >= 78300) || (segundos_fin <= 24300 || segundos_fin >= 78300)) {
                 message.textContent = '*El rango debe ser entre 06:45 y 21:45'
                 message.style.display = 'block'
-            }else if(horas.find(element => element == string_hora)){
-                message.textContent = `*El horario ya esta ocupado en el dia ${dia_select.value}`
+            } else if (horarios_estr.find(element => {
+                            return element['DIA'] == dia_select.value &&
+                                   element['INICIO'] == inicio &&
+                                   element['FIN'] == fin
+                        })) {
+                message.textContent = `*El horario ya está ocupado en el día ${dia_select.value}`
                 message.style.display = 'block'
+            } else {
+                message.style.display = 'none'
             }
-        }else{
+        } else {
             message.textContent = '*Debe introducir una hora'
             message.style.display = 'block'
         }
     }
 
-    function validateAmbiente(text){
-        let value = text.value
-        const regexaula = /[^0-9A-z]/
-        const regexaudi = /[^A-z]/
-        const message = document.getElementById('messageErrorAmbiente')
+    function validateAmbiente(input) {
+        let value = input.value
+        const regexaula = /[^0-9A-Za-z]/
+        const regexaudi = /[^A-Za-z]/
+        const message = input.closest('.row').querySelector('#messageErrorAmbiente')
 
-        if(value != ''){
-            if(regexaula.test(value) || regexaudi.text(value)){
-                if(!ambientes.find( ambiente => value == ambiente['NOMBRE'])){
+        if (value != '') {
+            if (!regexaula.test(value) || !regexaudi.test(value)) {
+                if (!ambientes.find(ambiente => value.toUpperCase() == ambiente['NOMBRE'])) {
                     message.textContent = '*El ambiente no existe'
                     message.style.display = 'block'
-                }else{
+                } else {
                     message.style.display = 'none'
                 }
-            }else{
+            } else {
                 message.textContent = '*No se permiten caracteres especiales'
                 message.style.display = 'block'
             }
-        }else{
+        } else {
             message.textContent = '*Campo obligatorio'
             message.style.display = 'block'
         }

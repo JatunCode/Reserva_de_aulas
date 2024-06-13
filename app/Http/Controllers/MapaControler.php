@@ -16,27 +16,7 @@ class MapaControler extends Controller
     public function index()
     {
         MapperFacade::map(-17.387356, -66.047694, ['zoom' => 15, 'center' => false, 'marker' => false, 'type' => 'HYBRID', 'overlay' => 'TRAFFIC']);
-        return view(
-            'cornford.googlmapper.map', [
-                'id' => 12, 
-                'options' => [
-                    'latitude' => -17.387356, 
-                    'longitude'=> -66.047694, 
-                    'tilt' => 'Mapa Facultativo',
-                    'zoom' => 15,
-                    'center' => false, 
-                    'marker' => false, 
-                    'type' => 'HYBRID', 
-                    'ui' => true,
-                    'scrollWheelZoom' => true,
-                    'zoomControl' => true,
-                    'mapTypeControl' => true,
-                    'scaleControl' => true,
-                    'streetViewControl' => true,
-                    'rotateControl' => true,
-                    'fullscreenControl' => true,
-                    'gestureHandling' => true,
-                    'overlay' => 'TRAFFIC']]);
+        return view('mapa-leaflet.simpleMapFacultad');
     }
 
     /**

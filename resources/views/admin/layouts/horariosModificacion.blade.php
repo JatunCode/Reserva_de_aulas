@@ -19,9 +19,6 @@
             <input class="form-control" type="text" name="docente-buscar" placeholder="Buscar docente">
             <p id="messageErrorDocente" style="display: none; color: red">*No se encontro el docente</p>
         </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary d-inline-block w-7" style="background-color:green" onclick="findDocente()">Buscar</button>
-        </div>
     </div>
     <div class="card-header">
         <h3 class="card-title">Horarios registrados</h3>
@@ -72,6 +69,7 @@
 
 <script>
     let docentes = []
+    let ambientes = []
     
     let docentesFiltro = []
 
@@ -79,6 +77,8 @@
 
     let horario_actual = null
 
+    let banderaAmbiente = true
+    let banderaHora = false
     fetch('http://127.0.0.1:8000/api/fetch/docentes').then(
         response => response.json()
     ).then(
@@ -91,9 +91,29 @@
         }
     )
 
+    fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
+        response => response.json()
+    ).then(
+        data => {
+            ambientes = data
+        }
+    ).catch(
+        error => {
+            console.log("Error encontrado: ", error)
+        }
+    )
+    function fetchs(){
+        
+    }
+
     function pressEdicion(button){
         const id = button.value
         const canva = document.getElementById('offcanvasRight')
+        button_guardar.style.display = 'none'
+        button_cambio.style.display = 'block'
+        button_cancelar.style.display = 'none'
+        button_atras.style.display = 'block'
+        canva.style.setProperty('width', '600px')
         let i = 1
         let horario = horarios_estr.find(elemento => elemento['NOMBRE'] == id)
         console.log('Horario: ', horario)
@@ -137,8 +157,12 @@
                                             </div>
                                             <div>
                                                 <div class="row">
-                                                    <p id="messageErrorHorario" style="display: none; color: red"></p>
-                                                    <p id="messageErrorAmbiente" style="display: none; color: red"></p>
+                                                    <div class="col-md-8">
+                                                        <p id="messageErrorHorario" style="display: none; color: red"></p>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <p id="messageErrorAmbiente" style="display: none; color: red"></p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -151,29 +175,42 @@
                 }
             )
             i = 0
+
         }else{
             console.log("Fallo al obtener los datos alv no puede ser >:VVVVVVVV")
         }
 
     }
 
-
-    document.querySelector('[name="docente"]').addEventListener('change', 
+    document.querySelector('[name="docente-buscar"]').addEventListener('keydown',
         function(event){
-            let text =  event.target.value
-            const message = document.getElementById("messageErrorDocente")
-            const content = document.getElementById("containerDocente")
-            
-            if(docentes.find((docente) => docente['NOMBRE'].includes(text.toUpperCase()))){
-                message.style.display = "none"
-                console.log("Cadena del input: ", text)
+            //event.preventDefault()
+            const tabla  =  document.getElementById('tableHorarios')
+            const message = document.getElementById('messageErrorDocente')
+            const docentes_encontrado = docentes.filter(docente => docente['NOMBRE'].includes(event.target.value.toUpperCase()))
+            if(!docentes_encontrado){
+                message.style.display = 'block'
+                console.log("No encontro al docente: ", event.target.value)
+                console.log("No encontro al docente: ", docentes_encontrado)
+                console.log("Docentes filtro: ", docentesFiltro,"Docentes: ",docentes)
+            }else if(event.target.value == ''){
+                agregarTabla(docentes, tabla)
             }else{
-                message.style.display = "block"
-                console.log("Cadena del input no encontrada: ", text)
+                message.style.display = 'none'
+                console.log("Encontro al docente: ", event.target.value,docentes_encontrado)
+                while(tabla.rows.length > 0){
+                    tabla.deleteRow(0)
+                }
+                try{
+                    agregarTabla(docentes_encontrado, tabla)
+                    console.log('Formato del objeto: ', docentes_encontrado)
+                }catch(error){
+                    console.log('Erro: ', error)
+                }
             }
         }
     )
-
+    
     function agregarTabla(lista, tabla){
         lista.forEach(elemento => {
             tabla.innerHTML += 
@@ -181,37 +218,40 @@
                 <td style="width: 35px">${elemento['NOMBRE']}</td>
                 <th style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                    data-id="${elemento['ID_DOCENTE']}" style="background-color:green" onclick="pressEdicion(this)" value="${elemento['ID_DOCENTE']}">Atender</button></td>
+                    data-id="${elemento['NOMBRE']}" style="background-color:green" onclick="pressEdicion(this)" value="${elemento['NOMBRE']}">Atender</button></td>
             </tr>`
             console.log('Ingresando al inner')
         })
     }
 
-    function findDocente(){
-        const tabla  =  document.getElementById('tableHorarios')
-        const message = document.getElementById('messageErrorDocente')
-        const input_docente = document.querySelector('[name="docente-buscar"]')
-        const docentes_encontrado = docentes.filter(docente => docente['NOMBRE'].includes(input_docente.value.toUpperCase()))
-
-        if(!docentes_encontrado){
-            message.style.display = 'block'
-            console.log("No encontro al docente: ", input_docente)
-            console.log("No encontro al docente: ", docentes_encontrado)
-            console.log("Docentes filtro: ", docentesFiltro,"Docentes: ",docentes)
+    function validateHoraInicio(time) {
+        let list = String(time.value).split(":")
+        let segundos = parseInt(list[0], 10)*3600 + parseInt(list[1], 10)*60
+        let message = document.getElementById("messageErrorHora")
+        if(segundos <= 24300 || segundos >= 72900){
+            message.textContent = "*Esta fuera del rango de la hora"
+            message.style.display = "block"
+            banderaHora = false
         }else{
-            message.style.display = 'none'
-            console.log("Encontro al docente: ", input_docente,docentes_encontrado)
-            while(tabla.rows.length > 0){
-                tabla.deleteRow(0)
-            }
-            try{
-                agregarTabla(docentes_encontrado, tabla)
-                console.log('Formato del objeto: ', docentes_encontrado)
-            }catch(error){
-                console.log('Erro: ', error)
-            }
+            banderaHora = true
+            message.style.display = "none"
         }
     }
+
+    function validateHoraFin(time) {
+        let list = String(time.value).split(":")
+        let segundos = parseInt(list[0], 10)*3600 + parseInt(list[1], 10)*60
+        let message = document.getElementById("messageErrorHora")
+        if(segundos <= 29700 || segundos >= 78300){
+            message.textContent = "*Esta fuera del rango de la hora"
+            message.style.display = "block"
+            banderaHora = false
+        }else{
+            banderaHora = true
+            message.style.display = "none"
+        }
+    }
+
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">
