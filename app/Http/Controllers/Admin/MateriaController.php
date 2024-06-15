@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Docente;
 use App\Models\Admin\Materia;
+use App\Models\Admin\Relacion_DM;
 use Illuminate\Http\Request;
 
 class MateriaController extends Controller
@@ -48,6 +49,26 @@ class MateriaController extends Controller
         return json_encode($materias_docente);
     }
 
+    public function showMateriasGrupos(){
+        $materias = Materia::with('materia_relacion_dm')->get();
+        $materias_estreucturadas = [];
+        foreach ($materias as $materia) {
+            $grupos = [];
+            if(isset($materia)){
+                foreach ($materia['materia_relacion_dm'] as $grupo) {
+                    $grupos[] = [
+                        'GRUPO' => $grupo['GRUPO'],
+                    ];
+                }
+                $materias_estreucturadas []= [
+                    'ID_MATERIA' => $materia['ID_MATERIA'],
+                    'GRUPO' => $grupos,
+                    'NOMBRE' => $materia['NOMBRE']
+                ];
+            }
+        }
+        return $materias_estreucturadas;
+    }
     /**
      * Update the specified resource in storage.
      *

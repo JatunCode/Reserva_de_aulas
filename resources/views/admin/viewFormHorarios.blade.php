@@ -190,6 +190,7 @@
             let ambiente = document.createElement('div')
             ambiente.classList.add('col-md-4')
             ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)">'
+            
             // errordiv.innerHTML = '@error("REFERENCIAS")
             //         <div class="text-danger">{{ $message }}</div>
             //     @enderror'

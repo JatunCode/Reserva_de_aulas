@@ -94,7 +94,7 @@ Route::prefix('admin')
     Route::get('/reportes/listar_filtro', [ReportesController::class, 'datos_filtro'])->name('admin.reportes.filtrar.datos_filtro');
     Route::get('/reportes/pdf', [ReportesController::class, 'exportarPDF'])->name('admin.exportarPDF');
 
-    Route::get('/mapa', [MapaControler::class, 'index'])->name('mapa.index');
+    Route::get('/mapa', [MapaControler::class, 'index'])->name('admin.mapa.facultad');
 });
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');

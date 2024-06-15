@@ -18,15 +18,15 @@
             <p id="messageErrorBusqueda" style="display: none; color: red">*No se encontro resultados</p>
         </div>
         <div class="col-md-2">
-            <label class="form-label" for="modo">Modo</label>
-            <select class="form-select" name="modo">
-                <option value=" ">Todos</option>
+            <label class="form-label" for="modo-busqueda">Modo</label>
+            <select class="form-select" name="modo-busqueda">
+                <option value="Todos">Todos</option>
                 <option value="URGENTE">Urgente</option>
                 <option value="NORMAL">Normal</option>
             </select>
         </div>
         <div class="col-md-2">
-            <button class="btn btn-primary d-inline-block w-7" style="background-color:green" onclick="findTodo()">Buscar</button>
+            <button class="btn btn-primary d-inline-block w-7" style="background-color:green" onclick="buscarSolicitud()">Buscar</button>
         </div>
     </div>
     <div class="card-body table-responsive">
@@ -131,6 +131,7 @@
     function pressAtention(button){
         const id = button.value
         const canva = document.getElementById('offcanvasRight')
+        canva.style.setProperty('width', '800px')
         soli_aten = soli_pend.find(elemento => elemento['ID'] == id)
         console.log('Solicitud: ', soli_aten)
         if(soli_aten){
@@ -167,107 +168,73 @@
 
     }
     
-    // document.querySelector('[name="ambiente"]').addEventListener('click', 
-    //     function(event){
-    //         let text =  event.target.value
+    function buscarSolicitud(){
+        const input_busqueda = document.querySelector('[name="busqueda"]').value
+        const input_modo = document.querySelector('[name="modo-busqueda"]')
+        console.log('Input modo: ', input_modo)
+        const modo_value = input_modo.options[input_modo.selectedIndex].value
+
+        console.log('Dato busqueda: ', input_busqueda)
+        console.log('Dato modo: ', modo_value)
+
+        const filtroAmbiente = soli_pend.filter(solicitud => {
+                            const modoMatch = (modo_value === 'Todos' || solicitud.MODO === modo_value.toUpperCase())
+                            const ambienteMatch = (input_busqueda === '' || solicitud.AMBIENTE.toUpperCase().includes(input_busqueda.toUpperCase()))
+                            return modoMatch && ambienteMatch
+                            })
+        const filtroMateria = soli_pend.filter(solicitud => {
+                            const modoMatch = (modo_value === 'Todos' || solicitud.MODO === modo_value.toUpperCase())
+                            const materiaMatch = (input_busqueda === '' || solicitud.MATERIA.includes(input_busqueda.toUpperCase()))
+                            return modoMatch && materiaMatch
+                            })
+        const tabla = document.getElementById('tableAmbientes')
+        console.log('Arreglo ambientes: ', filtroAmbiente)
+        console.log('Arreglo materia: ', filtroMateria)
+        agregarTabla((filtroAmbiente.length > 0) ? filtroAmbiente : filtroMateria, tabla)
+    }
+    
+    function agregarTabla(data, tabla) {
+        // Eliminar los elementos existentes en el cuerpo de la tabla
+        tabla.innerHTML = '';
+        let contador = 1;
+        // Iterar sobre los nuevos datos y agregar cada solicitud como una fila en la tabla
+        data.forEach(solicitud => {
+            // Crear una nueva fila
+            var row = document.createElement('tr');
             
-    //     }
-    // )
+            // Agregar las celdas con los datos de la solicitud a la fila
+            row.innerHTML = `
+                
+                <td>${solicitud['FECHA_RESERVA']}</td>
+                <td>${solicitud['AMBIENTE']}</td>
+                <td>${solicitud['MATERIA']}</td>
+                <td>${solicitud['FECHA_HORASOLI']}</td>
+                <td>${solicitud['HORARIO']}</td>
+                <td >
+                    <span class="btn  btn-sm btn-block" style="background-color: ${solicitud['MODO'] === 'NORMAL' ? '#198754' : '#dc3545'};color: white">
+                        ${(isObject(solicitud['MODO']) || solicitud['MODO'].includes('URGENTE'))? 'URGENTE': 'NORMAL'}
+                    </span>
+                </td>
+                <td>
+                    <span class="btn btn-sm btn-block" style="background-color: ${solicitud['ESTADO'] === 'ACEPTADO' ? '#198754' : solicitud['ESTADO'] === 'PENDIENTE' ? '#FFC107' : '#dc3545'}; color: ${solicitud['ESTADO'] === 'PENDIENTE' ? 'black' : 'white'}">
+                        ${solicitud['ESTADO']}
+                    </span>
+                </td>
 
-    // document.querySelector('[name="materia"]').addEventListener('change', 
-    //     function(event){
-    //         let text =  event.target.value
-    //         const message = document.getElementById("messageErrorMateria")
-    //         const content = document.getElementById("containerMateria")
-    //         const lista = document.createElement('ul')
-    //         materias.forEach(materia => {
-    //             lista.innerHTML += `<li>${materia['NOMBRE']}</li>`
-    //         });
-    //         if(materias.find((materia) => materia['NOMBRE'].includes(text.toUpperCase()))){
-    //             message.style.display = "none"
-    //             console.log("Cadena del input: ", text)
-    //         }else{
-    //             message.style.display = "block"
-    //             console.log("Cadena del input no encontrada: ", text)
-    //         }
-    //     }
-    // )
+                <td style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+                    data-id="${solicitud['ID']}" style="background-color:green" onclick="pressAtention(this)" value="${solicitud['ID']}">Atender</button>
+                </td>
+            `;
+            
+            // Agregar la fila al cuerpo de la tabla
+            tabla.appendChild(row);
+        });
+    }
 
-    // function agregarTabla(lista, tabla){
-    //     lista.forEach(elemento => {
-    //         tabla.innerHTML += 
-    //         `<tr>
-    //             <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']}</td>
-    //             <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['TIPO']}</td>
-    //             <td style="width: 150px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['REFERENCIAS']}</td>
-    //             <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['CAPACIDAD']}</td>
-    //             <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['DATA']}</td>
-    //             <td style="width: 40px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['ESTADO']}</td>
-    //         </tr>`
-    //         console.log('Ingresando al inner')
-    //     })
-    // }
-
-    // function findAmbiente(){
-    //     tipo = ""
-    //     tabla  =  document.getElementById('tableAmbientes')
-
-    //     input_materia = document.querySelector('[name="materia"]').value
-    //     input_ambiente = document.querySelector('[name="ambiente"]').value
-
-    //     input_dia = document.querySelector('[name="dia"]')
-    //     dia_select = input_dia.options[input_dia.selectedIndex].value
-
-    //     input_libres_ocupados = document.querySelector('[name="blockfree"]')
-    //     blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
-
-    //     cadena_fetch = 'http://127.0.0.1:8000/api/fetch/ambientes'
-
-    //     if(input_materia == "" && input_ambiente != ""){
-    //         cadena_fetch += `/${input_ambiente.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-    //         console.log('Cadena de ambiente', cadena_fetch)
-    //     }else{
-    //         if(input_materia != "" && input_ambiente == ""){
-    //             cadena_fetch += `materia/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-    //             console.log('Cadena de materia', cadena_fetch)
-    //         }else{
-    //             if(input_materia != "" && input_ambiente != ""){
-    //                 cadena_fetch += `todo/${input_ambiente.toUpperCase()}/${input_materia.toUpperCase()}/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-    //                 console.log('Cadena de todo', cadena_fetch)
-    //             }else{
-    //                 cadena_fetch += `todosin/${dia_select.toUpperCase()}/${blockfree_select.toUpperCase()}`
-    //             }
-    //         }
-    //     }
-
-    //     fetch(
-    //         cadena_fetch,
-    //         {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         }
-    //     ).then(
-    //         response => response.json()
-    //     ).then(
-    //         data => {
-    //             ambientesfiltro = data
-    //             while(tabla.rows.length > 0){
-    //                 tabla.deleteRow(0)
-    //             }
-    //             try{
-    //                 agregarTabla(ambientesfiltro, tabla)
-    //             }catch(error){
-    //                 console.log('Erro: ', error)
-    //             }
-    //         }
-    //     ).catch(
-    //         error => {
-    //             console.log("Error encontrado: ", error)
-    //         }
-    //     )
-    // }
+    function isObject(params) {
+        return typeof params === "object" && params !== null
+    }
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">
