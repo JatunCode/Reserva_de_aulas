@@ -12,11 +12,6 @@
 
 <div class="card">
     <div class="card-header row">
-        <div class="col-md-3" id="containerMateria">
-            <label class="form-label" for="materia">Materia</label>
-            <input class="form-control" type="text" name="materia" placeholder="Buscar materia">
-            <p id="messageErrorMateria" style="display: none; color: red">*No se encontro la materia</p>
-        </div>
         <div class="col-md-2" id="containerAmbiente">
             <label class="form-label" for="ambiente">Ambiente</label>
             <input class="form-control" type="text" name="ambiente" placeholder="Buscar ambiente">
@@ -24,7 +19,7 @@
         </div>
         <div class="col-md-3">
             <select class="form-select" name="blockfree">
-                <option value="">Todos los ambientes</option>
+                <option value="Todos">Todos los ambientes</option>
                 <option value="NO HABILITADO">Ambientes bloqueados</option>
                 <option value="HABILITADO" selected>Ambientes libres</option>
             </select>
@@ -43,7 +38,7 @@
                 <tr>
                     <th style="width: 35px">Nombre de ambiente</th>
                     <th style="width: 35px">Tipo de ambiente</th>
-                    <th>Referencias</th>
+                    <th style="width: 30px">Referencias</th>
                     <th style="width: 20px">Capacidad</th>
                     <th style="width: 20px">Data</th>
                     <th style="width: 40px">Estado</th>
@@ -52,12 +47,12 @@
             <tbody id="tableAmbientes">
                 @foreach($ambientes as $ambiente)
                     <tr>
-                        <td style="width: 35px">{{ $ambiente->NOMBRE }}</td>
-                        <td style="width: 35px">{{ $ambiente->TIPO }}</td>
-                        <td style="width: 150px">{{ $ambiente->REFERENCIAS }}</td>
-                        <td style="width: 20px">{{ $ambiente->CAPACIDAD }}</td>
-                        <td style="width: 20px">{{ $ambiente->DATA }}</td>
-                        <td style="width: 40px">{{ $ambiente->ESTADO }}</td>
+                        <td style="width: 35px">{{ $ambiente['NOMBRE'] }}</td>
+                        <td style="width: 35px">{{ $ambiente['TIPO'] }}</td>
+                        <td style="width: 30px">{{ $ambiente['REFERENCIAS'] }}</td>
+                        <td style="width: 20px">{{ $ambiente['CAPACIDAD'] }}</td>
+                        <td style="width: 20px">{{ $ambiente['DATA'] }}</td>
+                        <td style="width: 40px">{{ $ambiente['ESTADO'] }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -83,21 +78,8 @@
 </script>
 
 <script>
-    ambientes = []
-    materias = []
     ambientesfiltro = []
-
-    fetch('http://127.0.0.1:8000/api/fetch/ambientes').then(
-        response => response.json()
-    ).then(
-        data => {
-            ambientes = data
-        }
-    ).catch(
-        error => {
-            console.log("Error encontrado: ", error)
-        }
-    )
+    let ambientes = @json($ambientes)
 
     fetch('http://127.0.0.1:8000/api/fetch/materias').then(
         response => response.json()
@@ -130,107 +112,39 @@
         }
     )
 
-    document.querySelector('[name="materia"]').addEventListener('change', 
-        function(event){
-            let text =  event.target.value
-            const message = document.getElementById("messageErrorMateria")
-            const content = document.getElementById("containerMateria")
-            const lista = document.createElement('ul')
-            materias.forEach(materia => {
-                lista.innerHTML += `<li>${materia['NOMBRE']}</li>`
-            });
-            if(materias.find((materia) => materia['NOMBRE'].includes(text.toUpperCase()))){
-                message.style.display = "none"
-                console.log("Cadena del input: ", text)
-            }else{
-                message.style.display = "block"
-                console.log("Cadena del input no encontrada: ", text)
-            }
-        }
-    )
-
     function agregarTabla(lista, tabla){
+        tabla.innerHTML = ''
         lista.forEach(elemento => {
             tabla.innerHTML += 
             `<tr>
-                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE']}</td>
-                <td style="width: 35px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['TIPO']}</td>
-                <td style="width: 150px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['REFERENCIAS']}</td>
-                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['CAPACIDAD']}</td>
-                <td style="width: 20px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['DATA']}</td>
-                <td style="width: 40px">${elemento['horario_relacion_dahm']['dahm_relacion_ambiente']['ESTADO']}</td>
+                <td style="width: 35px">${elemento['NOMBRE']}</td>
+                <td style="width: 35px">${elemento['TIPO']}</td>
+                <td style="width: 30px">${elemento['REFERENCIAS']}</td>
+                <td style="width: 20px">${elemento['CAPACIDAD']}</td>
+                <td style="width: 20px">${elemento['DATA']}</td>
+                <td style="width: 40px">${elemento['ESTADO']}</td>
             </tr>`
             console.log('Ingresando al inner')
         })
     }
 
     function findAmbiente(){
-        tipo = ""
         tabla  =  document.getElementById('tableAmbientes')
 
-        input_materia = document.querySelector('[name="materia"]').value
         input_ambiente = document.querySelector('[name="ambiente"]').value
 
         input_libres_ocupados = document.querySelector('[name="blockfree"]')
         blockfree_select = input_libres_ocupados.options[input_libres_ocupados.selectedIndex].value
 
-        cadena_fetch = 'http://127.0.0.1:8000/api/fetch/ambientestodos'
-        //Agregar combinacion de todos los dias y todos los estados del ambiente
-        if(input_ambiente == "" && input_materia == "" && blockfree_select == ""){
-            //Cadena para todos los datos sin filtros
-            cadena_fetch += `sin/ / /%20`
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }else if(input_ambiente != "" && input_materia == "" && blockfree_select == ""){
-            //Cadena para lo datos solo por filtro de nombre de ambiente
-            cadena_fetch += `/${input_ambiente}/ / `
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }else if(input_ambiente == "" && input_materia != "" && blockfree_select == ""){
-            //Cadena para los datos solo por filtro de nombre de materia
-            cadena_fetch += `/ /${input_materia}/ `
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }else if(input_ambiente == "" && input_materia == "" && blockfree_select != ""){
-            //Cadena para los datos solo por filtro de seleccion de ambientes libres u ocupados
-            cadena_fetch += `/ / /${blockfree_select}`
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }else if(input_ambiente != "" && input_materia != "" && blockfree_select == ""){
-            //Cadena para filtro de ambientes nombre de  materia y nombre de ambiente pero para todos los estados del ambiente
-            cadena_fetch += `/${input_ambiente}/${input_materia}/ `
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }else if(input_ambiente == "" && input_materia != "" && blockfree_select != ""){
-            //Cadena para el filtro de ambientes por nombres de la materia y estado del ambiente
-            cadena_fetch += `/ /${input_materia}/${blockfree_select}`
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }else if(input_ambiente != "" && input_materia == "" && blockfree_select != ""){
-            //Cadena para el filtro de ambientes por su nombre de ambiente y estado del mismo
-            cadena_fetch += `/${input_ambiente}/ /${blockfree_select}`
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }else if(input_ambiente != "" && input_materia != "" && blockfree_select != ""){
-            //Cadena para el filtro de ambientes cuando se tenga selecionado el estado y tambien se ingrese el nombre dek ambientes y de la materia
-            cadena_fetch += `/${input_ambiente}/${input_materia}/${blockfree_select}`
-            console.log('Cadena peticion fetch: ', cadena_fetch)
-        }
-
-        fetch(
-            cadena_fetch
-        ).then(
-            response => response.json()
-        ).then(
-            data => {
-                ambientesfiltro = data
-                while(tabla.rows.length > 0){
-                    tabla.deleteRow(0)
-                }
-                try{
-                    agregarTabla(ambientesfiltro, tabla)
-                }catch(error){
-                    console.log('Erro: ', error)
-                }
-            }
-        ).catch(
-            error => {
-                console.log("Error encontrado: ", error)
-            }
-        )
+        const filtroAmbientes = ambientes.filter(ambiente => {
+                            const modoMatch = (blockfree_select === 'Todos' || ambiente.ESTADO === blockfree_select.toUpperCase())
+                            const nombreMatch = (input_ambiente === '' || ambiente.NOMBRE.includes(input_ambiente.toUpperCase()))
+                            return modoMatch && nombreMatch
+                            })
+        
+        console.log('Arreglo ambientes: ', filtroAmbientes)
+        
+        agregarTabla(filtroAmbientes, tabla)
     }
 </script>
 

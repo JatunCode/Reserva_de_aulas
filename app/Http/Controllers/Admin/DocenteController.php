@@ -43,6 +43,41 @@ class DocenteController extends Controller
     }
 
     /**
+     * Muestra los docentes con sus materias y grupos correspondientes
+     * 
+     * @return Json
+     */
+    public function showDocentesMaterias(){
+        $docentes = Docente::select('ID_DOCENTE', 'NOMBRE')
+            ->with([
+                'docente_relacion_materia.dm_relacion_materia' => function ($query) {
+                    $query->select('ID_MATERIA', 'NOMBRE');
+                }
+            ])->get();
+        $docentes_estructurados = [];
+        
+        foreach ($docentes as $docente) {
+            $materias_estructuradas = [];
+            if(isset($docente)){
+                $materias = $docente['docente_relacion_materia'];
+                foreach ($materias as $materia) {
+                    $materias_estructuradas [] = [
+                        'GRUPO' => $materia['GRUPO'],
+                        'ID_MATERIA' => $materia['dm_relacion_materia']['ID_MATERIA'],
+                        'NOMBRE' => $materia['dm_relacion_materia']['NOMBRE'],
+                    ];
+                }
+                $docentes_estructurados [] = [
+                    'NOMBRE_DOCENTE' => $docente['NOMBRE'],
+                    'MATERIAS' => $materias_estructuradas
+                ];
+            }
+        }
+        //return $docentes;
+        return $docentes_estructurados;
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

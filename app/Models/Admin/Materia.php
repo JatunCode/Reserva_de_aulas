@@ -21,4 +21,8 @@ class Materia extends Model
     public function materia_relacion_solicitud(){
         return $this->belongsTo(Solicitud::class, 'ID_MATERIA', 'ID_MATERIA');
     }
+
+    public function materia_relacion_dm(){
+        return $this->hasMany(Relacion_DM::class, 'ID_MATERIA', 'ID_MATERIA');
+    }
 }

@@ -66,65 +66,68 @@
                 </div>`
             }).join('')
 
-            Swal.fire({
-                icon: 'info',
-                title: 'Confirmación de modificacion',
-                html: modalContent,
-                showCancelButton: true,
-                confirmButtonText: 'Enviar',
-                cancelButtonText: 'Cancelar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Enviar el formulario si se confirma la acción
-                    console.log("Formato del json: ", json_array_update)
-                    sendForm(json_array_update)
-                }
-            })
+            bandera = banderaAmbiente && banderaHora
+            console.log('Bandera ambiente: ', banderaAmbiente)
+            console.log('Bandera hora: ', banderaHora)
+            console.log('Bandera: ', bandera)
+            if(bandera){
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Confirmación de modificacion',
+                    html: modalContent,
+                    showCancelButton: true,
+                    confirmButtonText: 'Enviar',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Enviar el formulario si se confirma la acción
+                        console.log("Formato del json: ", json_array_update)
+                        sendForm(json_array_update)
+                    }
+                })
+            }
         }
     )
 
     function sendForm(json){
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
-        bandera = banderaAmbiente && banderaHora
-        if(bandera){
-            fetch(
-                'http://127.0.0.1:8000/api/fetch/horarios/update',
-                {
-                    method:'PUT',
-                    headers:{
-                        'Content-type':'aplication/json',
-                        'X-CSRF-TOKEN': token
-                    },
-                    body:json
+
+        fetch(
+            'http://127.0.0.1:8000/api/fetch/horarios/update',
+            {
+                method:'PUT',
+                headers:{
+                    'Content-type':'aplication/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body:json
+            }
+        ).then(
+            response => {
+                if(response.ok){
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Horarios modificados exitosamente!',
+                        showConfirmButton: false,
+                        timer: 1500 // Cerrar automáticamente después de 1.5 segundos
+                    }).then(() => {
+                        // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
+                        limpiar()
+                        cerrar()
+                    })
+                }else{
+                    console.log('Error del servidor')
                 }
-            ).then(
-                response => {
-                    if(response.ok){
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Horarios modificados exitosamente!',
-                            showConfirmButton: false,
-                            timer: 1500 // Cerrar automáticamente después de 1.5 segundos
-                        }).then(() => {
-                            // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
-                            limpiar()
-                            cerrar()
-                        })
-                    }else{
-                        console.log('Error del servidor')
-                    }
-                }
-            ).then(
-                data => {
-                    console.log('Horarios modificados: ', data)
-                }
-            ).catch(
-                error => {
-                    console.log(error)
-                }
-            )
-        }
-        
+            }
+        ).then(
+            data => {
+                console.log('Horarios modificados: ', data)
+            }
+        ).catch(
+            error => {
+                console.log(error)
+            }
+        )
     }
 
     function cambiar(){
@@ -188,6 +191,7 @@
             if ((segundos_ini <= 24300 || segundos_ini >= 78300) || (segundos_fin <= 24300 || segundos_fin >= 78300)) {
                 message.textContent = '*El rango debe ser entre 06:45 y 21:45'
                 message.style.display = 'block'
+                banderaHora = false
             } else if (horarios_estr.find(element => {
                             return element['DIA'] == dia_select.value &&
                                    element['INICIO'] == inicio &&
@@ -195,12 +199,15 @@
                         })) {
                 message.textContent = `*El horario ya está ocupado en el día ${dia_select.value}`
                 message.style.display = 'block'
+                banderaHora = false
             } else {
                 message.style.display = 'none'
+                banderaHora = true
             }
         } else {
             message.textContent = '*Debe introducir una hora'
             message.style.display = 'block'
+            banderaHora = false
         }
     }
 
@@ -215,16 +222,20 @@
                 if (!ambientes.find(ambiente => value.toUpperCase() == ambiente['NOMBRE'])) {
                     message.textContent = '*El ambiente no existe'
                     message.style.display = 'block'
+                    banderaHora = false
                 } else {
                     message.style.display = 'none'
+                    banderaHora = true
                 }
             } else {
                 message.textContent = '*No se permiten caracteres especiales'
                 message.style.display = 'block'
+                banderaHora = false
             }
         } else {
             message.textContent = '*Campo obligatorio'
             message.style.display = 'block'
+            banderaHora = false
         }
     }
 

@@ -19,7 +19,24 @@ class AmbienteController extends Controller
     public function index()
     {
         $ambientes = Ambiente::all();
-        return view('admin.listar.ambientes', ['ambientes' => $ambientes]);
+        $ambientes_estructurados = [];
+        foreach ($ambientes as $ambiente) {
+            $ambientes_estructurados [] = [
+                'NOMBRE' => $ambiente['NOMBRE'],
+                'TIPO' => $ambiente['TIPO'],
+                'REFERENCIAS' => ''.$this->quitarCaracteres($ambiente['REFERENCIAS']),
+                'CAPACIDAD' => $ambiente['CAPACIDAD'],
+                'DATA' => $ambiente['DATA'],
+                'ESTADO' => $ambiente['ESTADO'] 
+            ];
+        }
+        return view('admin.listar.ambientes', ['ambientes' => $ambientes_estructurados]);
+    }
+
+    function quitarCaracteres($input) {
+        $regex = '/[^a-zA-Z0-9, ]/';
+        $cadena = preg_replace($regex, '', $input);
+        return $cadena;
     }
 
     /**
@@ -125,23 +142,15 @@ class AmbienteController extends Controller
     public function showTodo($ambiente, $materia, $estado)
     {
         $value = Horario::with(
-            'horario_relacion_dahm.dahm_relacion_ambiente',
-            'horario_relacion_dahm.dahm_relacion_materia'
+            'horario_relacion_dahm.dahm_relacion_ambiente'
             )->whereHas(
             'horario_relacion_dahm.dahm_relacion_ambiente', 
                 function ($query) use ($ambiente, $estado){
                     if($ambiente != " "){
-                        $query->where('ambiente.NOMBRE', $ambiente);
+                        $query->where('ambiente.NOMBRE', 'LIKE', "%$ambiente%");
                     }
                     if($estado != " "){
                         $query->where('ambiente.ESTADO', $estado);
-                    }
-                }
-            )->whereHas(
-                'horario_relacion_dahm.dahm_relacion_materia',
-                function ($query) use ($materia){
-                    if($materia != " "){
-                        $query->where('materia.NOMBRE', $materia);
                     }
                 }
             )->get();

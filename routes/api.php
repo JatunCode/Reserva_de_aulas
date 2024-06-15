@@ -42,7 +42,8 @@ Route::controller(AmbienteController::class)->group(
 Route::controller(DocenteController::class)->group(
     function(){
         Route::get('/fetch/docentes', 'index');
-        Route::put('/docente/{caracter}', 'show');
+        Route::put('/fetch/docente/{caracter}', 'show');
+        Route::get('/fetch/docente/materias/grupos', 'showDocentesMaterias');
     }
 );
 
@@ -66,7 +67,7 @@ Route::controller(MateriaController::class)->group(
         Route::get('/fetch/materias', 'index');
         Route::put('/fetch/materias/{nombre}', 'show');
         Route::put('/fetch/materias/{docente}', 'indexDocente');
-
+        Route::get('/fetch/materias/grupos', 'showMateriasGrupos');
     }
 );
 

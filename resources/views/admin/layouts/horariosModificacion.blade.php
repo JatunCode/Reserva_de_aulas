@@ -78,7 +78,7 @@
     let horario_actual = null
 
     let banderaAmbiente = true
-    let banderaHora = false
+    let banderaHora = true
     fetch('http://127.0.0.1:8000/api/fetch/docentes').then(
         response => response.json()
     ).then(
@@ -222,34 +222,6 @@
             </tr>`
             console.log('Ingresando al inner')
         })
-    }
-
-    function validateHoraInicio(time) {
-        let list = String(time.value).split(":")
-        let segundos = parseInt(list[0], 10)*3600 + parseInt(list[1], 10)*60
-        let message = document.getElementById("messageErrorHora")
-        if(segundos <= 24300 || segundos >= 72900){
-            message.textContent = "*Esta fuera del rango de la hora"
-            message.style.display = "block"
-            banderaHora = false
-        }else{
-            banderaHora = true
-            message.style.display = "none"
-        }
-    }
-
-    function validateHoraFin(time) {
-        let list = String(time.value).split(":")
-        let segundos = parseInt(list[0], 10)*3600 + parseInt(list[1], 10)*60
-        let message = document.getElementById("messageErrorHora")
-        if(segundos <= 29700 || segundos >= 78300){
-            message.textContent = "*Esta fuera del rango de la hora"
-            message.style.display = "block"
-            banderaHora = false
-        }else{
-            banderaHora = true
-            message.style.display = "none"
-        }
     }
 
 </script>

@@ -31,7 +31,6 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th style="width: 10px">#</th>
                                 <th>Aula</th>
                                 <th>Horario</th>
                                 <th>Fecha</th>
@@ -63,7 +62,18 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
-
+<style>
+    #lista-docentes {
+        position: absolute;
+        z-index: 1000;
+        background-color: white;
+        width: calc(100% - 2px);
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+</style>
 @stop
 
 @section('js')
@@ -74,6 +84,8 @@
 <script>
     let solicitudes = [];
     let ambientes = [];
+    let docentes = [];
+
     fetch(
         'http://127.0.0.1:8000/api/fetch/ambientes'
     ).then(
@@ -81,13 +93,29 @@
     ).then(
         data => {
             ambientes = data;
-            console.log('Datos del fetch: ', ambientes);
+            console.log('Datos del fetch ambientes: ', ambientes);
         }
     ).catch(
         error => {
             console.log('Error encontrado: ', error);
         }
     )
+
+    fetch(
+        'http://127.0.0.1:8000/api/fetch/docente/materias/grupos'
+    ).then(
+        response => response.json()
+    ).then(
+        data => {
+            docentes = data;
+            console.log('Datos del fetch docentes: ', docentes);
+        }
+    ).catch(
+        error => {
+            console.log('Error encontrado: ', error);
+        }
+    )
+
     document.addEventListener('DOMContentLoaded', function() {
         const filtroFechaInput = document.getElementById('filtroFecha');
         const ambiente = document.getElementById('aula');
@@ -96,17 +124,20 @@
         const campoRazon = document.getElementById('campoRazon');
         const tabla = document.getElementById('tablaSolicitudes');
 
-        ambiente.innerHTML = '';
-        cantidad.addEventListener('change', function(event){
-            let ambientes_filtro = obtenerAmbientes(parseInt(event.target.value));
-            ambientes_filtro.forEach(
-                element => {
-                    ambiente.innerHTML += `
-                        <option value="${element['NOMBRE']}">${element['NOMBRE']}</option>
-                    `;
-                    console.log('Ambientes en lista: ', element);
-                }
-            );
+        cantidad.addEventListener('keydown', function(event){
+            ambiente.innerHTML = '';
+            let ambientes_filtro = [];
+            ambientes_filtro = obtenerAmbientes(parseInt(event.target.value));
+            if(event.target.value !== ''){
+                ambientes_filtro.forEach(
+                    element => {
+                        ambiente.innerHTML += `
+                            <option value="${element['NOMBRE']}">${element['NOMBRE']}</option>
+                        `;
+                        console.log('Ambientes en lista: ', element);
+                    }
+                );
+            }
         });
 
         filtroFechaInput.addEventListener('change', function() {
@@ -126,74 +157,58 @@
                 // Mostrar el campo de razón
                 campoRazon.style.display = 'block';
             }
+                actualizarTabla();
         });
-        
-        ambiente.addEventListener('change', function(event){
-            let fecha = filtroFechaInput.value;
-            console.log("Fecha de reserva: ", fecha);
-            if(fecha != ''){
-                fetch(
-                    'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
-                ).then(
-                    response => response.json()
-                ).then(
-                    data => {
-                        solicitudes = data;
-                        tabla.innerHTML = '';
-                        solicitudes.forEach(solicitud =>{
-                            tabla.innerHTML += `
-                                    <tr>
-                                        <td>${solicitud['AMBIENTE']}</td>
-                                        <td>${solicitud['HORARIO']}</td>
-                                        <td>${fecha}</td>
-                                    </tr>`
-                        });
-                    }
-                ).catch(
-                    error => {
-                        console.log("Error encontrado: ", error);
-                    }
-                );
-                console.log("Solicitudes libres: ", solicitudes);
-                // Mostrar las filas en la tabla
-                // tabla.innerHTML = tablaHTML;
-            }else{
-                //Mostrar mensaje en caso de no seleccionar una fecha
-                
-            }
-        });
-    });
 
-    function obtenerAmbientes(cant){
-        return ambientes.filter(
-            ambiente => {
-                let num_div = cant/10
-                return (ambiente['CAPACIDAD'] <= num_div*10+10 && ambiente['CAPACIDAD'] >= num_div*10-10)
-            }
-        )
-    }
-</script>
-{{-- 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Obtener los botones de solicitud
-    var solicitarButtons = document.querySelectorAll(".solicitar-btn");
-    // Agregar un event listener a cada botón
-    solicitarButtons.forEach(function(button) {
-        button.addEventListener("click", function() {
-            // Obtener los datos de la fila asociados al botón
-            var aula = button.getAttribute("data-aula");
-            var horario = button.getAttribute("data-horario");
-            var fecha = button.getAttribute("data-fecha");
-            console.log(fecha)
-            // Rellenar el formulario con los datos de la fila
-            document.getElementById("aula").value = aula;
-            document.getElementById("horario").value = horario;
-            document.getElementById("fecha").value = fecha;
+        ambiente.addEventListener('change', function() {
+            actualizarTabla();
         });
+
+        function actualizarTabla() {
+            const fecha = filtroFechaInput.value;
+            const aulaSeleccionada = ambiente.value;
+            const cadena = 'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
+            console.log('Cadena fetch: ', cadena);
+            if (fecha !== '' && aulaSeleccionada !== '') {
+                console.log("Fecha de reserva: ", fecha);
+                if(fecha != ''){
+                    fetch(
+                        'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
+                    ).then(
+                        response => response.json()
+                    ).then(
+                        data => {
+                            solicitudes = data;
+                            tabla.innerHTML = '';
+                            solicitudes.forEach(solicitud =>{
+                                tabla.innerHTML += `
+                                        <tr>
+                                            <td>${solicitud['AMBIENTE']}</td>
+                                            <td>${solicitud['HORARIO']}</td>
+                                            <td>${fecha}</td>
+                                        </tr>`
+                            });
+                        }
+                    ).catch(
+                        error => {
+                            console.log("Error encontrado: ", error);
+                        }
+                    );
+                    console.log("Solicitudes libres: ", solicitudes);
+                }
+            }
+        }
+
+        function obtenerAmbientes(cant){
+            return ambientes.filter(
+                ambiente => {
+                    let num_div = cant/10
+                    return (ambiente['CAPACIDAD'] <= num_div*10+10 && ambiente['CAPACIDAD'] >= num_div*10-10)
+                }
+            )
+        }
     });
-});
-</script> --}}
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -206,14 +221,14 @@ document.addEventListener("DOMContentLoaded", function() {
             const input_nombre = this.querySelectorAll('[name="nombre"]');
             const input_materia = this.querySelector('[name="materia"]');
             const dato_materia = input_materia.options[input_materia.selectedIndex].value;
-            const input_cant = this.querySelector('[name="cantidad_estudiantes"]');
-            const dato_cant = input_cant.options[input_cant.selectedIndex].value;
+            const input_cant = this.querySelector('[name="cantidad_estudiantes"]').value;
             const input_motivo = this.querySelector('[name="motivo"]');
             const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
             const input_fecha = this.querySelector('[name="filtroFecha"]').value;
             const input_razon = this.querySelector('[name="razon"]').value;
             let prioridad = (input_razon != "") ? {"URGENTE" : input_razon} : {"NORMAL" : "Normal"};
-            const input_aula = this.querySelector('[name="aula"]').value;
+            const input_aula = this.querySelector('[name="aula"]');
+            const dato_aula = input_aula.options[input_aula.selectedIndex].value;
             const input_horario = this.querySelector('[name="horario"]').value;
             let arreglo_horario = input_horario.split(" - ");
             let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
@@ -269,14 +284,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const json_send = {
                 'NOMBRES':json_nombres,
-                'CANTIDAD':parseInt(dato_cant, 10),
+                'CANTIDAD':parseInt(input_cant, 10),
                 'FECHA_RESERVA':input_fecha+' '+arreglo_horario[0],
                 'HORA_INICIO':arreglo_horario[0],
                 'HORA_FIN':arreglo_horario[1],
                 'PRIORIDAD':json_prioridad,
                 'MOTIVO':dato_motivo,
                 'MATERIA':dato_materia,
-                'AMBIENTE':input_aula
+                'AMBIENTE':dato_aula
             };
 
             // Mostrar el modal de confirmación con los datos del formulario
@@ -386,33 +401,33 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const grupoInput = document.getElementById('grupo');
+    document.addEventListener('DOMContentLoaded', function() {
+        const grupoInput = document.getElementById('grupo');
 
-    grupoInput.addEventListener('keydown', function(event) {
-        let inputValue = grupoInput.value;
+        grupoInput.addEventListener('keydown', function(event) {
+            let inputValue = grupoInput.value;
 
-        // Convertir todo el texto a mayúsculas
-        inputValue = inputValue.toUpperCase();
+            // Convertir todo el texto a mayúsculas
+            inputValue = inputValue.toUpperCase();
 
-        // Mantener solo números, letras y comas
-        inputValue = inputValue.replace(/[^0-9A-Z,]/g, '');
+            // Mantener solo números, letras y comas
+            inputValue = inputValue.replace(/[^0-9A-Z,]/g, '');
 
-        // Si la tecla presionada es espacio (código 32), agregar una coma
-        if (event.keyCode === 32) {
-            // Obtener la última parte de la cadena después de la última coma
-            const lastPart = inputValue.split(',').pop().trim();
+            // Si la tecla presionada es espacio (código 32), agregar una coma
+            if (event.keyCode === 32) {
+                // Obtener la última parte de la cadena después de la última coma
+                const lastPart = inputValue.split(',').pop().trim();
 
-            // Si la última parte no está vacía, agregar una coma
-            if (lastPart !== '') {
-                inputValue += ',';
+                // Si la última parte no está vacía, agregar una coma
+                if (lastPart !== '') {
+                    inputValue += ',';
+                }
             }
-        }
 
-        // Actualizar el valor del campo de entrada con la entrada filtrada
-        grupoInput.value = inputValue;
+            // Actualizar el valor del campo de entrada con la entrada filtrada
+            grupoInput.value = inputValue;
+        });
     });
-});
 </script>
 
 
@@ -456,67 +471,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function insertAfter(newNode, referenceNode) {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
-</script>
-
-<script>
-// document.addEventListener("DOMContentLoaded", function() {
-//     const ambiente = document.getElementById('aula');
-//     const tablaSolicitudes = document.getElementById('tablaSolicitudes');
-
-//     ambiente.addEventListener('change', function() {
-//         const fechaSeleccionada = this.value;
-//         const solicitudes = @json($solicitudes); // Convertir las solicitudes a un array JavaScript
-
-//         // Filtrar las solicitudes por la fecha seleccionada
-//         const solicitudesFiltradas = solicitudes.filter(solicitud => solicitud.fecha ===
-//             fechaSeleccionada);
-
-//         if (fechaSeleccionada === '') {
-//             // Mostrar un mensaje cuando no hay fecha seleccionada
-//             tablaSolicitudes.innerHTML = '<tr><td colspan="5">Seleccione una fecha</td></tr>';
-//         } else if (solicitudesFiltradas.length === 0) {
-//             // Mostrar un mensaje cuando no hay datos para la fecha seleccionada
-//             tablaSolicitudes.innerHTML =
-//                 '<tr><td colspan="5">No hay ambientes disponibles en esta fecha</td></tr>';
-//         } else {
-//             // Generar el HTML de las filas de la tabla
-           
-//             const tablaHTML = solicitudesFiltradas.map(solicitud => `
-//                 <tr>
-//                     <td></td>
-//                     <td>${solicitud.aula}</td>
-//                     <td>${solicitud.horario}</td>
-//                     <td>${solicitud.fecha}</td>
-//                     <td>
-//                         <button class="btn btn-sm btn-success solicitar-btn" type="button"
-//                             data-aula="${solicitud.aula}" data-horario="${solicitud.horario}"
-//                             data-fecha="${solicitud.fecha}">
-//                             Seleccionar
-//                         </button>
-//                     </td>
-//                 </tr>
-//             `).join('');
-
-//             // Mostrar las filas en la tabla
-//             tablaSolicitudes.innerHTML = tablaHTML;
-//         }
-//     });
-
-//     // Función para escuchar eventos en botones de solicitud (si es necesario)
-//     tablaSolicitudes.addEventListener('click', function(event) {
-//         if (event.target.classList.contains('solicitar-btn')) {
-//             const button = event.target;
-//             const aula = button.getAttribute('data-aula');
-//             const horario = button.getAttribute('data-horario');
-//             const fecha = button.getAttribute('data-fecha');
-//             console.log(aula);
-
-//             document.getElementById("aula").value = aula;
-//             document.getElementById("horario").value = horario;
-//             document.getElementById("fecha").value = fecha;
-//         }
-//     });
-// });
 </script>
 
 @stop

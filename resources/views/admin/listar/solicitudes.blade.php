@@ -16,7 +16,8 @@
         <div class="form-group col-lg-4 col-md-3 align-self-center">
             <label for="inputSearch" class="mr-2">Materia:</label>
             <select type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
-            <option value="" disabled selected>Seleccione una materia</option>
+                <option value="" disabled selected>Seleccione una materia</option>
+                <option value="TODAS LAS MATERIAS">TODAS LAS MATERIAS</option>
                 @foreach($materias as $materia)
                     <option value="{{ $materia['NOMBRE'] }}">{{ $materia['NOMBRE'] }}</option>
                 @endforeach
@@ -212,7 +213,7 @@
                             console.log("Solicitud:", solicitud);
                             const modoMatch = (modo === 'Todos' || solicitud.MODO === modo.toUpperCase());
                             const estadoMatch = (estado === 'Todos' || solicitud.ESTADO === estado.toUpperCase());
-                            const materiaMatch = (materia === '' || solicitud.MATERIA.includes(materia));
+                            const materiaMatch = (materia === 'TODAS LAS MATERIAS' || solicitud.MATERIA.includes(materia));
 
                             console.log("modoMatch:", modoMatch);
                             console.log("estadoMatch:", estadoMatch);
@@ -273,6 +274,11 @@
             tbody.appendChild(row);
         });
     }
+
+    function isObject(params) {
+        return typeof params === "object" && params !== null
+    }
+
 </script>
 
 

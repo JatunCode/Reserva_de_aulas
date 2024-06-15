@@ -9,6 +9,7 @@ use App\Models\Admin\Materia;
 use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
+use App\Models\Admin\Relacion_DM;
 use App\Models\Docente\Solicitud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -23,13 +24,9 @@ class SolicitudController extends Controller
      */
     public function index()
     {
-        //$usuario = Auth::user();
+        $usuario = Auth::user();
         $buscador = new EncontrarTodo();
-        $solicitudes_fetch = 
-        //($usuario->cargo == 'admin') ? 
-        Solicitud::all() 
-        //: Solicitud::where()->get()
-        ;
+        $solicitudes_fetch = ($usuario->cargo == 'admin') ? Solicitud::all() : Solicitud::where('ID_DOCENTE', 'LIKE', "%$usuario->ID_DOCENTE%")->get();
         $materias = Materia::all(['NOMBRE']);
         $solicitudes_estructuradas = [];
         
@@ -53,10 +50,17 @@ class SolicitudController extends Controller
             }
         }
         //return $solicitudes_estructuradas;
-        return view('admin.listar.solicitudes', 
-        [
-            'solicitudes' => $solicitudes_estructuradas,
-            'materias' => $materias]);
+        if($usuario->cargo == 'admin'){
+            return view('admin.listar.solicitudes', 
+            [
+                'solicitudes' => $solicitudes_estructuradas,
+                'materias' => $materias]);
+        }else{
+            return view('docente.listar.solicitudes', 
+            [
+                'solicitudes' => $solicitudes_estructuradas,
+                'materias' => $materias]);
+        }
     }
 
 
@@ -177,10 +181,25 @@ class SolicitudController extends Controller
     { 
         $usuario = Auth::user();
         $buscador = new EncontrarTodo();
-        //$solicitudes_fetch = (isset($usuario) && $usuario->cargo == 'admin') ? Solicitud::where('ID_DOCENTE', $usuario->ID_DOCENTE)->get() : Solicitud::all() ;
-        $materias = Materia::all(['NOMBRE']);
-        $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
-        $nombre_docente = (isset($usuario) && $usuario->cargo == 'docente') ? Docente::where('ID_DOCENTE', $usuario->ID_DOCENTE) : '';
+        //$solicitudes_fetch = (isset($usuario) && $usuario->cargo == 'admin') ? Solicitud::where('ID_DOCENTE', 'LIKE', "%$usuario->ID_DOCENTE%")->get() : Solicitud::all() ;
+        $materias = Materia::with('materia_relacion_dm')->get();
+        $materias_estreucturadas = [];
+        foreach ($materias as $materia) {
+            $grupos = [];
+            if(isset($materia)){
+                foreach ($materia['materia_relacion_dm'] as $grupo) {
+                    $grupos[] = [
+                        'GRUPO' => $grupo['GRUPO'],
+                    ];
+                }
+                $materias_estreucturadas []= [
+                    'ID_MATERIA' => $materia['ID_MATERIA'],
+                    'GRUPOS' => $grupos,
+                    'NOMBRE' => $materia['NOMBRE']
+                ];
+            }
+        }
+        $nombre_docente = (isset($usuario) && $usuario->cargo == 'docente') ? Docente::where('ID_DOCENTE','LIKE', "%$usuario->ID_DOCENTE%") : '';
 
         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
@@ -207,7 +226,7 @@ class SolicitudController extends Controller
         }else{
             return view('admin.viewFormSolicitud', [
                 //'solicitudes' => $solicitudes, 
-                'docente' => $nombre_docente, 'materias' => $materiasAsociadas]);
+                'docente' => $nombre_docente, 'materias' => $materias_estreucturadas]);
         }
     }
 
