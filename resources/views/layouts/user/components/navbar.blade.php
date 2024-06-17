@@ -11,7 +11,7 @@
                 @if (Auth::user()->cargo === 'docente')
                     <a href="{{ route('docente.inicio') }}" class="btn btn-outline-success me-3">Ingresar</a>
                 @elseif (Auth::user()->cargo === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-success me-3">Ingresar</a>
+                    <a href="{{ route('admin.inicio') }}" class="btn btn-outline-success me-3">Ingresar</a>
                 @endif
             @else
                 <a href="{{ route('login') }}" class="btn btn-outline-success me-3">Ingresar</a>

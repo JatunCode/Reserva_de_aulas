@@ -50,7 +50,7 @@ class LoginController extends Controller
         if ($user->cargo === 'docente') {
             return redirect()->route('docente.inicio');
         } elseif ($user->cargo === 'admin') {
-            return redirect()->route('admin.listar.solicitudes');
+            return redirect()->route('admin.inicio');
         }
 
         return redirect($this->redirectTo);

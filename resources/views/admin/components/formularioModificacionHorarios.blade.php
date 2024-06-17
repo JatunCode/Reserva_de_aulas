@@ -112,6 +112,7 @@
                         timer: 1500 // Cerrar automáticamente después de 1.5 segundos
                     }).then(() => {
                         // Después de cerrar la alerta, limpiar el formulario y cerrar el offcanvas
+                        window.location.reload()
                         limpiar()
                         cerrar()
                     })

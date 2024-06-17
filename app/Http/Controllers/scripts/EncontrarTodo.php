@@ -109,7 +109,8 @@ class EncontrarTodo extends Controller
      * Todos en formato json
      */
     public function getIdDocenteporNombre($nombre){
-        return Docente::where('NOMBRE', $nombre)->first()->ID_DOCENTE;
+        $docente = Docente::where('NOMBRE', $nombre)->first();
+        return ($docente) ? $docente['ID_DOCENTE'] : '';
     }
 
      /**
@@ -119,7 +120,8 @@ class EncontrarTodo extends Controller
      * Todos en formato json
      */
     public function getNombreDocenteporId($id_docente){
-        return Docente::where('ID_DOCENTE', $id_docente)->first()->NOMBRE;
+        $docente = Docente::where('ID_DOCENTE', $id_docente)->first();
+        return ($docente) ? $docente['NOMBRE'] : '';
     }
 
 

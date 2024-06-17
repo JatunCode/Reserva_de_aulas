@@ -316,8 +316,9 @@ return [
            'can'  => 'docente',
         ],
         
-        ['header' => 'Solicitudes',
-         'can'    => 'docente',
+        [
+            'header' => 'Solicitudes',
+            'can'    => 'docente',
         ],
         [
             'text'       => 'Registrar una solicitud',
@@ -342,13 +343,43 @@ return [
             'can'    => 'docente',
         
         ],
-
+        [
+            'header' => 'Reservas',
+            'can'    => 'docente',
+        ],
+        [
+            'text'       => 'Visualizar mis reservas',
+            'icon'       => 'fa fa-book',
+            'icon_color' => 'green',
+            'route'      => 'docente.solicitud.normal',
+            'can'    => 'docente',
+        ],
+        [
+            'text'       => 'Cancelar reserva',
+            'icon'       => 'fas fa-list',
+            'icon_color' => 'green',
+            'route'      => 'docente.solicitud.filtrar.datos',
+            'can'    => 'docente',
+        
+        ],
+        [
+            'header' => 'Mapa',
+            'can'    => 'docente',
+        ],
+        [
+            'text'       => 'Mapa facultativo',
+            'icon'       => 'bi bi-map',
+            'icon_color' => 'green',
+            'route'      => 'mapa.index',
+            'can'    => 'docente',
+        ],
+        
         //!!Rutas de Admin
         [
             'text' => 'Inicio',
             'route'  => 'admin.inicio',
             'icon' => 'fa fa-home',
-            'can'  => 'docente',
+            'can'  => 'admin',
         ],
         [
             'header' => ' Solicitudes' ,

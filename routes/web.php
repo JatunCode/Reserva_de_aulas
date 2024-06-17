@@ -102,7 +102,7 @@ Route::prefix('admin')
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')
-//->middleware('auth','can:docente')
+->middleware('auth','can:docente')
 ->group(function () {
     Route::get('/', [CalendarioController::class, 'index'])->name('docente.inicio');
     Route::get('/solicitud/normal/hola', [SolicitudController::class, 'fecha'])->name('docente.solicitud.fecha');
