@@ -112,5 +112,6 @@ Route::controller(RazonesController::class)->group(
 Route::controller(EncontrarTodo::class)->group(
     function(){
         Route::patch('/fetch/razones/nombres', 'getRazonesporID');
+        Route::get('/fetch/docente/{id}', 'getNombreDocenteporId');
     }
 );

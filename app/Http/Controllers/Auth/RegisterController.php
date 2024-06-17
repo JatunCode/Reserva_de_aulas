@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -64,10 +66,25 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $buscador = new EncontrarTodo();
+        $id_docente = $buscador->getIdDocenteporNombre(strtoupper($data['name']));
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'cargo' => ($id_docente != '') ? 'docente' : '',
+            'ID_DOCENTE' => ($id_docente != '') ? $id_docente : null,
         ]);
+    }
+
+    protected function registered(Request $request, $user)
+    {
+        if ($user->cargo === 'docente') {
+            return redirect()->route('docente.inicio');
+        } elseif ($user->cargo === 'admin') {
+            return redirect()->route('admin.inicio');
+        } else {
+            return redirect()->route('home'); // O alguna otra ruta predeterminada
+        }
     }
 }
