@@ -7,7 +7,6 @@ use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Admin\Docente;
 use App\Models\Admin\Notificacion as AdminNotificacion;
 use App\Notifications\Notificacion;
-use Dotenv\Repository\Adapter\EnvConstAdapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Ramsey\Uuid\Uuid;
@@ -21,10 +20,28 @@ class NotificacionController extends Controller
      */
     public function index()
     {
-        // $notificaciones = AdminNotificacion::with('docente_relacion_notificacion.notificaion_relacion_docente')->get();
-        // return view('admin.mail.mailbox', ['notificaciones'=>$notificaciones]);
-        //return $notificaciones;
+        $notificaciones = AdminNotificacion::with('docente_relacion_notificacion')->get();
+        $notificaciones_estructuradas = [];
+        foreach ($notificaciones as $notify) {
+            $datos_docente = $notify['docente_relacion_notificacion'];
+            if(isset($datos_docente)){
+                $notificaciones_estructuradas [] = [
+                    'ID' => $notify['ID_NOTIFICACION'],
+                    'CUERPO' => $this->quitarCaracteres($notify['CUERPO']),
+                    'NOMBRE_DOCENTE' => $datos_docente['NOMBRE'],
+                    'EMAIL' => $datos_docente['EMAIL']
+                ];
+            }
+        }
+        return view('admin.mail.mailbox', ['notificationes'=>$notificaciones_estructuradas]);
+        //return $notificaciones_estructuradas;
         //return view('vendor.mail.html.layout', ['slot' => 'Nombre de la persona que creo q es']);
+    }
+
+    function quitarCaracteres($input) {
+        $regex = '/[^a-zA-Z0-9, \/:-]/';
+        $cadena = preg_replace($regex, '', $input);
+        return $cadena;
     }
 
     /**
@@ -43,10 +60,10 @@ class NotificacionController extends Controller
             foreach($nombres as $nombre){
                 $docenteId = $buscador->getIdDocenteporNombre($nombre);
                 $docente = Docente::where('ID_DOCENTE',$docenteId)->first();
-                Notification::route('mail', (($docente->EMAIL != '') ? $docente->EMAIL :'nombre@universidad.edu.bo'))->notify(new Notificacion($request['TIPO'], ['NOMBRE' => $nombre, 'FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE']]));
+                Notification::route('mail', (($docente->EMAIL != '') ? $docente->EMAIL :'nombre@universidad.edu.bo'))->notify(new Notificacion($request['TIPO'], ['NOMBRE' => $nombre, 'ESTADO' => (!isset($request['ESTADO']) ? 'PENDIENTE' : $request['ESTADO']),'FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE'], 'RAZONES' => (isset($request['RAZONES'])) ? $request['RAZONES']['LISTA_REG'] : '']));
                 AdminNotificacion::create([
                     'ID_NOTIFICACION' => Uuid::uuid4(),
-                    'CUERPO' => json_encode(['FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE']]),
+                    'CUERPO' => json_encode(['FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE'], 'ESTADO' => (!isset($request['ESTADO']) ? 'PENDIENTE' : $request['ESTADO']), 'TIPO' => $request['TIPO']]),
                     'ID_DOCENTE' => $docenteId
                 ]);
             }

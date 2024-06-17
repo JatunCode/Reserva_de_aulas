@@ -319,7 +319,8 @@
             'TIPO': 'Solicitud',
             'FECHA':formData['FECHA_RESERVA'],
             'MATERIA':formData['MATERIA'],
-            'AMBIENTE':formData['AMBIENTE']
+            'AMBIENTE':formData['AMBIENTE'],
+            'ESTADO':'PENDIENTE'
         }
         const json_send = JSON.stringify(formData)
         fetch(document.getElementById('solicitudForm').action, {

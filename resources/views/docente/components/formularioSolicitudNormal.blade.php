@@ -166,12 +166,17 @@
         const valor = event.target.value.trim();
 
         if(valor.length > 0){
-            if (grupos_relacionados.some(grupo => valor.includes(grupo['GRUPO']))) {
+            if(grupos_relacionados.find(grupo => grupo['GRUPO'] == valor)){
+                console.log('Ingresando al find');
+                message.style.display = 'none';
+            }else if (grupos_relacionados.some(grupo => valor.includes(grupo['GRUPO']))) {
+                console.log('Ingresando al some');
                 message.style.display = 'none';
             }else{
+                console.log('Expulsado del some');
                 message.style.display = 'block';
             }
-        }else{
+        }else{  
             message.style.display = 'block';
         }
     });

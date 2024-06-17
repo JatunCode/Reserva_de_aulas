@@ -43,7 +43,7 @@ Route::prefix('admin')
 ->middleware('auth','can:admin')
 ->group(function () {
     //*Mostrar el calendario en admin
-    Route::get('/', [SolicitudController::class, 'index'])->name('admin.home');
+    Route::get('/', [CalendarioController::class, 'index'])->name('admin.inicio');
     //*Lista de solicitudes en admin
     Route::get('/solicitudes', [SolicitudController::class, 'index'])->name('admin.listar.solicitudes');
     //*Pagina de creacion de solicitud en admin
@@ -74,8 +74,11 @@ Route::prefix('admin')
     //*Muestra los horarios para modificarlos
     Route::get('/horarios/update', [HorarioController::class, 'indexMod'])->name('admin.horarios.modificar');
 
-    Route::get('/notificacion', [NotificacionController::class, 'index'])->name('see.notificaciones');
+    //*Mostrar notificaciones y mensajes
+    Route::get('/mailbox', [NotificacionController::class, 'index'])->name('admin.notificaciones.list');
+    //?Guardar notificaciones
     Route::post('/notificacion/store', [NotificacionController::class, 'store'])->name('send.notificaciones');
+    
     //*Mostrar las solicitudes pendientes
     Route::get('/reservas/atencion', [ReservasController::class, 'index'])->name('admin.reservas.atender');
     //*Cambiar el estado de la solicitud al ser atendida
@@ -99,7 +102,6 @@ Route::prefix('admin')
 
 // Route::get('/solicitud', [SolicitudController::class, 'index'])->name('solicitud.index');
 Route::prefix('docente')
-//!!Autorizacion de docente se descomenta para tener la autorizacion
 //->middleware('auth','can:docente')
 ->group(function () {
     Route::get('/', [CalendarioController::class, 'index'])->name('docente.inicio');
