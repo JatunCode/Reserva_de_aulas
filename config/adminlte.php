@@ -323,7 +323,7 @@ return [
             'text'       => 'Registrar una solicitud',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
-            'route'      => ($role != 'Usuario') ? 'admin.solicitud.normal':'docente.solicitud.normal',
+            'route'      => 'docente.solicitud.normal',
             'can'    => 'docente',
         ],
         [
@@ -344,6 +344,12 @@ return [
         ],
 
         //!!Rutas de Admin
+        [
+            'text' => 'Inicio',
+            'route'  => 'admin.inicio',
+            'icon' => 'fa fa-home',
+            'can'  => 'docente',
+        ],
         [
             'header' => ' Solicitudes' ,
             'can'    => 'admin',
@@ -375,14 +381,14 @@ return [
         ],
         [
             'text'       => 'Registrar ambiente',
-            'icon'       => 'bi bi-building-add',
+            'icon'       => 'bi bi-building-fill-add',
             'icon_color' => 'green',
             'route'      => 'admin.ambiente.registrar',
             'can'    => 'admin',
         ],
         [
             'text'       => 'Visualizar ambientes',
-            'icon'       => 'bi bi-building-exclamation',
+            'icon'       => 'bi bi-buildings',
             'icon_color' => 'yellow',
             'route'      => 'admin.ambientes.list',
             'can'    => 'admin',
@@ -450,6 +456,17 @@ return [
             'icon'       => 'bi bi-map',
             'icon_color' => 'green',
             'route'      => 'admin.mapa.facultad',
+            'can'    => 'admin',
+        ],
+        [
+            'header' => 'Mensajes y notificaciones',
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'MailBox',
+            'icon'       => 'bi bi-inboxes',
+            'icon_color' => 'yellow',
+            'route'      => 'admin.notificaciones.list',
             'can'    => 'admin',
         ]
     ],

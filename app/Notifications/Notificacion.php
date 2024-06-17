@@ -2,9 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Http\Controllers\scripts\EncontrarTodo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Date;
 
 class Notificacion extends Notification
 {
@@ -20,7 +22,7 @@ class Notificacion extends Notification
      */
     public function __construct($tipo_mensaje, $cuerpo)
     {   
-        $this->tipo_mensaje = $tipo_mensaje;
+        $this->tipo_mensaje = strtolower($tipo_mensaje);
         $this->cuerpo = $cuerpo;
     }
 
@@ -44,30 +46,68 @@ class Notificacion extends Notification
      */
     public function toMail($notifiable)
     {   
-        // $data = [
-        //     'tipo_mensaje' => $this->tipo_mensaje,
-        //     'cuerpo' => $this->cuerpo,
-        //     'cancelar_url' => url('docente/cancelar'),
-        //     'accion1_url' => url('docente/accion1'),
-        //     'accion2_url' => url('docente/accion2'),
-        // ];
-    
-        // $html = view('admin.mail.notificacion', $data)->render();
-    
-        // return (new MailMessage)
-        //     ->subject('Asunto del Correo')
-        //     ->view($html, $data);
-        $mensajes = [""];
+        $buscador = new EncontrarTodo();
+        $razones = implode(", ", $buscador->getRazonesporID($this->cuerpo['RAZONES']));
+
+        $saludos = ["BUENOS DÌAS", "BUENAS TARDES", "BUENAS NOCHES"];
+        $saludo = "";
+
+        $hora_actual = Date::now()->format('H');
+        if ($hora_actual >= 6 && $hora_actual < 12) {
+            $saludo = $saludos[0]; 
+        } elseif ($hora_actual >= 12 && $hora_actual < 18) {
+            $saludo = $saludos[1]; 
+        } else {
+            $saludo = $saludos[2];
+        }
+
+        $mensajes_tipo_solicitud = ["Su $this->tipo_mensaje ha sido completada con exito.", "Su $this->tipo_mensaje ha sido aceptada.", "Sentimos que su $this->tipo_mensaje haya sido rechazada."];
+        $mensaje_inicial = "";
+
+        if($this->tipo_mensaje != "reserva"){
+            $mensaje_inicial = $mensajes_tipo_solicitud[0];
+        }else if($this->cuerpo['ESTADO'] == 'ACEPTADO'){
+            $mensaje_inicial = $mensajes_tipo_solicitud[1];
+        }else{
+            $mensaje_inicial = $mensajes_tipo_solicitud[2];
+        }
+
+        $mensajes_datos = ["Hora de reserva: ".$this->cuerpo['FECHA'], "Razones de cancelacion: "];
+        $mensaje_dato = "";
+
+        $mensajes_info = ["En caso de haber un error puede cancelar su $this->tipo_mensaje en el siguiente enlace:", "$razones"];
+        $mensaje_info = "";
+
+        $mensajes_accion = [
+            [
+                'message' => "Cancelar $this->tipo_mensaje", 
+                'url' => "admin/reservas/atencion"
+            ], 
+            [
+                'message' => "Nueva solicitud", 
+                'url' => "admin/solicitud"]];
+        $mensaje_accion = null;
+
+        if($this->tipo_mensaje != "reserva" || $this->cuerpo['ESTADO'] == 'ACEPTADO'){
+            $mensaje_dato = $mensajes_datos[0];
+            $mensaje_info = $mensajes_info[0];
+            $mensaje_accion = $mensajes_accion[0];
+        }else{
+            $mensaje_dato = $mensajes_datos[1];
+            $mensaje_info = $mensajes_info[1];
+            $mensaje_accion = $mensajes_accion[1];
+        }
+
         return (new MailMessage)
-                    ->greeting("Buenos dias ".$this->cuerpo['NOMBRE'])
+                    ->greeting("$saludo ".$this->cuerpo['NOMBRE'])
                     ->level((!isset($this->cuerpo['ESTADO']) || $this->cuerpo['ESTADO'] == 'ACEPTADO') ? 'error':'success')
-                    ->line("Su $this->tipo_mensaje ha sido completada con exito")
+                    ->line($mensaje_inicial)
                     ->line("Los datos de su $this->tipo_mensaje son:")
-                    ->line("Hora de reserva: ".$this->cuerpo['FECHA'])
                     ->line("Materia: ".$this->cuerpo['MATERIA'])
                     ->line("Ambiente de reserva: ".$this->cuerpo['AMBIENTE'])
-                    ->line("En caso de haber un error puede cancelar su $this->tipo_mensaje en el siguiente enlace:" )
-                    ->action("Cancelar $this->tipo_mensaje",url('docente/cancelar'))
+                    ->line($mensaje_dato)
+                    ->line($mensaje_info)
+                    ->action($mensaje_accion['message'],url($mensaje_accion['url']))
                     ->line('Gracias por usar nuestra aplicacion de reservas!');
     }
 

@@ -42,7 +42,7 @@
         </div>
         <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
             <label for="selectMode" class="mr-2"></label>
-            <button type="button" id="btnBuscar" class="btn btn-primary w-100">Buscar</button>
+            <button type="button" id="btnBuscar" class="btn btn-primary w-100" style="background-color: green">Buscar</button>
 
         </div>
         </form>

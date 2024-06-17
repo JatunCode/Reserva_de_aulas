@@ -127,28 +127,12 @@ class EncontrarTodo extends Controller
      * Encuentra la razon para una reserva por su id
      * Todos en formato json
      */
-    public function getRazonesporID($json){
-        $iterables = json_decode($json);
+    public function getRazonesporID($iterables){
         $list = [];
-        foreach($iterables as $iterable){
-            $list[] = [
-               "Razon" => Razones::where('id_razon', $iterable)->first()->RAZON
-            ];
-        }
-        return $list;
-    }
-
-    /**
-     * Encuentra el id de la razon para una reserva por su razon
-     * Todos en formato json
-     */
-    public function getRazonesporRazon($json){
-        $iterables = json_decode($json);
-        $list = [];
-        foreach($iterables as $iterable){
-            $list[] = [
-               "Razon" => Razones::where('id_razon', $iterable)->first()->RAZON
-            ];
+        if(is_array($iterables)){
+            foreach($iterables as $iterable){
+                $list[] = Razones::where('id_razones', (int)$iterable)->first()->razon;
+            }
         }
         return $list;
     }

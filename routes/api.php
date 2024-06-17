@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\RazonesController;
+use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Docente\Solicitud;
+use Twilio\TwiML\Video\Room;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,5 +106,11 @@ Route::controller(RazonesController::class)->group(
     function(){
         Route::get('/fetch/razones', 'indexList');
         Route::post('/fetch/razones/store', 'store');
+    }
+);
+
+Route::controller(EncontrarTodo::class)->group(
+    function(){
+        Route::patch('/fetch/razones/nombres', 'getRazonesporID');
     }
 );

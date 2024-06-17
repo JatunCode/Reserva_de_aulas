@@ -26,8 +26,8 @@ class SolicitudController extends Controller
     {
         $usuario = Auth::user();
         $buscador = new EncontrarTodo();
-        $solicitudes_fetch = ($usuario->cargo == 'admin') ? Solicitud::all() : Solicitud::where('ID_DOCENTE', 'LIKE', "%$usuario->ID_DOCENTE%")->get();
-        $materias = Materia::all(['NOMBRE']);
+        $solicitudes_fetch = ($usuario->cargo == 'admin') ? Solicitud::all() : Solicitud::where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")->get();
+        $materias = ($usuario->cargo == 'admin') ? Materia::all(['NOMBRE']) : Materia::all();
         $solicitudes_estructuradas = [];
         
         foreach($solicitudes_fetch as $solicitud){

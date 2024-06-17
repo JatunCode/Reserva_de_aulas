@@ -78,7 +78,7 @@
         const lista_no_reg = []
         lista_razones.forEach((element)=>{
             if(regex.test(parseInt(element.value, 10))){
-                lista_no_reg.push(element.value)
+                lista_no_reg.push(parseInt(element.value, 10))
             }else if(element.checked){
                 lista_reg.push(element.value)
             }
