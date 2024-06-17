@@ -11,6 +11,7 @@ use App\Models\Docente\Razones;
 use App\Models\Docente\Reserva;
 use App\Models\Docente\Solicitud;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 
 class ReservasController extends Controller
@@ -22,11 +23,17 @@ class ReservasController extends Controller
      */
     public function index()
     {
+        $usuario = Auth::user();
         $buscador =  new EncontrarTodo();
-        $solicitudes = Solicitud::with(
-                        'solicitud_relacion_ambiente',
-                        'solicitud_relacion_materia',
-                        )->where('ESTADO', 'PENDIENTE')->orderBy('FECHA_RE')->get();
+        $solicitudes = ($usuario->cargo != 'admin') ?
+        Solicitud::with(
+            'solicitud_relacion_ambiente',
+            'solicitud_relacion_materia',
+        )->where('ESTADO', 'PENDIENTE')->orderBy('FECHA_RE')->get() : 
+        Solicitud::with(
+            'solicitud_relacion_ambiente',
+            'solicitud_relacion_materia',
+        )->where('ESTADO', 'PENDIENTE')->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")->orderBy('FECHA_RE')->get();
         $solicitudes_estructuradas = [];
         $nombre_docentes = [];
         foreach($solicitudes as $solicitud){
@@ -52,7 +59,11 @@ class ReservasController extends Controller
             ];
         }
         $razones = Razones::all();
-        return view('admin.layouts.reservas', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]);
+        if($usuario->cargo != 'admin'){
+            return view('admin.layouts.reservas', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]); 
+        }else{
+            return view('docente.listar.cancelar', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]);
+        }
     }
 
 

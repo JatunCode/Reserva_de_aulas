@@ -110,11 +110,11 @@ Route::prefix('docente')
     Route::get('/solicitud/urgente', [SolicitudController::class, 'urgente'])->name('docente.solicitud.urgente');
 
     //Route::get('/solicitudes/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.solicitud.filtrar.urgente');
-    Route::get('/solicitudes/listar', [ReservasController::class, 'datos'])->name('docente.solicitud.filtrar.datos'); //si da
+    Route::get('/solicitudes/listar', [SolicitudController::class, 'index'])->name('docente.solicitud.listar'); //si da
     /**
      * Se debe unir todas estas en una sola url y mandar por get
      */
-    Route::get('/solicitudes/listar/cancelar', [ReservasController::class, 'datos_cancelar'])->name('docente.solicitud.filtrar.datos_cancelar'); //si da
+    Route::get('/solicitudes/listar/cancelar', [ReservasController::class, 'index'])->name('docente.solicitud.cancelar'); //si da
     Route::get('/solicitudes/listar/pendiente', [ReservasController::class, 'datos_solicitando'])->name('docente.solicitud.filtrar.datos_solicitando'); //si da
     Route::get('/solicitudes/listar/reservado', [ReservasController::class, 'datos_reservado'])->name('docente.solicitud.filtrar.datos_reservado'); //si da 
     
