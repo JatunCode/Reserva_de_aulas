@@ -182,7 +182,14 @@ class SolicitudController extends Controller
         $usuario = Auth::user();
         $buscador = new EncontrarTodo();
         //$solicitudes_fetch = (isset($usuario) && $usuario->cargo == 'admin') ? Solicitud::where('ID_DOCENTE', 'LIKE', "%$usuario->ID_DOCENTE%")->get() : Solicitud::all() ;
-        $materias = Materia::with('materia_relacion_dm')->get();
+        $materias = ($usuario->cargo == 'admin') ? 
+        Materia::with('materia_relacion_dm')->get() : 
+        Materia::with('materia_relacion_dm')->whereHas(
+            'materia_relacion_dm',
+            function ($query) use ($usuario){
+                $query->where('ID_DOCENTE', $usuario->ID_DOCENTE);
+            })->get();
+
         $materias_estreucturadas = [];
         foreach ($materias as $materia) {
             $grupos = [];
@@ -199,7 +206,7 @@ class SolicitudController extends Controller
                 ];
             }
         }
-        $nombre_docente = (isset($usuario) && $usuario->cargo == 'docente') ? Docente::where('ID_DOCENTE','LIKE', "%$usuario->ID_DOCENTE%") : '';
+        $nombre_docente = (isset($usuario) && $usuario->cargo == 'docente') ? $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '';
 
         // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
         $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
@@ -222,7 +229,7 @@ class SolicitudController extends Controller
         if(isset($usuario) && $usuario->cargo == 'docente'){
             return view('docente.solicitud.normal', [
                 //'solicitudes' => $solicitudes, 
-                'docente' => $nombre_docente,'materias' => $materiasAsociadas]);
+                'docente' => $nombre_docente,'materias' => $materias_estreucturadas]);
         }else{
             return view('admin.viewFormSolicitud', [
                 //'solicitudes' => $solicitudes, 

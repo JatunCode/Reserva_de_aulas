@@ -331,7 +331,7 @@ return [
             'text'       => 'Visualizar mis solicitudes',
             'icon'       => 'fas fa-list',
             'icon_color' => 'green',
-            'route'      => 'docente.solicitud.filtrar.datos',
+            'route'      => 'docente.solicitud.listar',
             'can'    => 'docente',
         
         ],
@@ -354,14 +354,14 @@ return [
             'route'      => 'docente.solicitud.normal',
             'can'    => 'docente',
         ],
-        [
-            'text'       => 'Cancelar reserva',
-            'icon'       => 'fas fa-list',
-            'icon_color' => 'green',
-            'route'      => 'docente.solicitud.filtrar.datos',
-            'can'    => 'docente',
+        // [
+        //     'text'       => 'Cancelar reserva',
+        //     'icon'       => 'fas fa-solid fa-ban',
+        //     'icon_color' => 'red',
+        //     'route'      => 'docente.solicitud.filtrar.datos',
+        //     'can'    => 'docente',
         
-        ],
+        // ],
         [
             'header' => 'Mapa',
             'can'    => 'docente',
