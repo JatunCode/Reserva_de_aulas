@@ -12,6 +12,9 @@ class Materia extends Model
 {
     use HasFactory;
     protected $table = 'materia';
+    protected $primaryKey = 'ID_MATERIA';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['ID_MATERIA', 'NOMBRE', 'TIPO'];
 
     public function materia_relacion_dahm(){

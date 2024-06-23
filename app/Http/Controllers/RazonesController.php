@@ -35,10 +35,10 @@ class RazonesController extends Controller
     public function store(Request $request){
         $list_ids = [];
         foreach($request['LISTA_NO_REG'] as $razon){
-            $nueva_razon = new Razones();
-            $nueva_razon['razon'] = $razon;
-            $nueva_razon->save();
-            $list_ids[] = $nueva_razon['id_razon'];
+            $nueva_razon = Razones::create([
+                'razon' => $razon
+            ]);
+            $list_ids[] = $nueva_razon->id_razon;
         }
         return $list_ids;
     }

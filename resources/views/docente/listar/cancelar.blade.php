@@ -13,45 +13,40 @@
 <div class="card">
     <div class="card-header">
         <form class="row">
-            <div class="form-group col-lg-4 col-md-3 align-self-center">
-                <label for="inputSearch" class="mr-2">Materia:</label>
-                <input type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
-                <datalist  id="materias" id="selectmateria">
-                    @foreach($materias as $materia)
+        <div class="form-group col-lg-4 col-md-3 align-self-center">
+            <label for="inputSearch" class="mr-2">Materia:</label>
+            <select type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
+                <option value="" disabled selected>Seleccione una materia</option>
+                <option value="TODAS LAS MATERIAS">TODAS LAS MATERIAS</option>
+                @foreach($materias as $materia)
                     <option value="{{ $materia }}">{{ $materia }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group col-lg-2 col-md-3 align-self-center">
+            <label for="selectMode" class="mr-2">Modo:</label>
+            <select class="form-control" id="selectMode">
+                <option value="Todos" selected>Todos</option>
+                <option value="Normal">Normal</option>
+                <option value="Urgente">Urgente</option>
+            </select>
+        </div>
+        <div class="form-group col-lg-2 col-md-3 align-self-center">
+            <label for="selectStatus" class="mr-2">Estado:</label>
+            <select class="form-control" id="selectStatus">
+                <option value="Todos" selected>Todos</option>
+                <option value="Aceptado">Reservado</option>
+                <option value="Pendiente">Solicitando</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+        <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
+            <label for="selectMode" class="mr-2"></label>
+            <button type="button" id="btnBuscar" class="btn btn-primary w-100" style="background-color: green">Buscar</button>
 
-                    @endforeach
-                </datalist >
-            </div>
-
-
-            <div class="form-group col-lg-2 col-md-3 align-self-center">
-                <label for="selectMode" class="mr-2">Modo:</label>
-                <select class="form-control" id="selectMode">
-                    <option value="Todos" selected>Todos</option>
-                    <option value="Normal">Normal</option>
-                    <option value="Urgente">Urgente</option>
-                </select>
-            </div>
-            <div class="form-group col-lg-2 col-md-3 align-self-center">
-                <label for="selectStatus" class="mr-2">Estado:</label>
-                <select class="form-control" id="selectStatus">
-                    <option value="Todos" selected>Todos</option>
-                    <option value="Reservado">Reservado</option>
-                    <option value="Solicitando">Solicitando</option>
-                    <option value="Cancelado">Cancelado</option>
-                </select>
-            </div>
-            <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
-                <label for="selectMode" class="mr-2"></label>
-                <button type="button" id="btnBuscar" class="btn btn-primary w-100">Buscar</button>
-
-            </div>
+        </div>
         </form>
     </div>
-
-
-
     <div class="card-body table-responsive">
         <table class="table table-bordered">
             <thead>
@@ -62,7 +57,7 @@
                     <th>Fecha </th>
                     <th style="width: 40px">Modo</th>
                     <th style="width: 40px">Estado</th>
-                    <th style="width: 40px">Acciones</th>
+                    <th style="width: 10px">Detalles</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,71 +65,67 @@
                 $contador = 1;
                 @endphp
                 @foreach($solicitudes as $solicitud)
-                <tr style="@if($solicitud->estado == 'cancelado') background-color: #E8E8E8; color: black; @endif">
+                    <tr style="@if($solicitud['ESTADO'] == 'CANCELADO') background-color: #E8E8E8; color: black; @endif">
 
-                    <td>{{ $contador++ }}</td>
-                    <td>{{ $solicitud->aula }}</td>
-                    <td>{{ $solicitud->materia }}</td>
-                    <td>{{ $solicitud->fecha }}</td>
+                        <td>{{ $contador++ }}</td>
+                        <td>{{ $solicitud['AMBIENTE'] }}</td>
+                        <td>{{ $solicitud['MATERIA'] }}</td>
+                        <td>{{ $solicitud['FECHA_SOLICITUD'] }}</td>
 
-                    <td class="modo">
-                        <span class="btn  btn-sm btn-block
-                            @if($solicitud->estado == 'cancelado')
-                                background-color: #FFC0B7;btn btn-outline-secondary ;
-                            @elseif($solicitud->modo == 'Normal')
-                                ;
-                                btn-success
-                            @else
-                                btn-danger
-                            @endif
+                        <td class="modo">
+                            <span class="btn  btn-sm btn-block
+                                @if($solicitud['ESTADO'] == 'CANCELADO')
+                                    background-color: #FFC0B7;btn btn-outline-secondary ;
+                                @elseif($solicitud['MODO'] == 'NORMAL')
+                                    ;
+                                    btn-success
+                                @else
+                                    btn-danger
+                                @endif
                                 " aria-controls="offcanvasRight">
-                            {{ $solicitud->modo }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="btn btn-sm btn-block
-                            @if($solicitud->estado == 'cancelado')
-                                background-color: #FFC0B7;btn btn-outline-secondary
-                            @elseif($solicitud->estado == 'Reservado')
-                                btn-success
-                            @elseif($solicitud->estado == 'Solicitando')
-                                btn-warning
-                            @else
-                                btn-danger
-                            @endif
-                                " aria-controls="offcanvasRight">
-                            <span class="text-truncate">{{ $solicitud->estado }}</span>
-                        </span>
+                                {{ @$retVal = (!is_object($solicitud['MODO'])) ? $solicitud['MODO'] : 'URGENTE' ; }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="btn btn-sm btn-block
+                                    @if($solicitud['ESTADO'] == 'CANCELADO')
+                                        background-color: #FFC0B7;btn btn-outline-secondary
+                                    @elseif($solicitud['ESTADO'] == 'ACEPTADO')
+                                        btn-success
+                                    @elseif($solicitud['ESTADO'] == 'PENDIENTE')
+                                        btn-warning
+                                    @else
+                                        btn-danger
+                                    @endif
+                                    " aria-controls="offcanvasRight">
+                                <span class="text-truncate">{{ $solicitud['ESTADO'] }}</span>
+                            </span>
 
-                    </td>
-                    <td class="d-flex justify-content-between">
-                        <button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                            data-id="{{ $solicitud->id }}" onclick="obtenerDatosSolicitud(this)">
-                            <span class="text-primary">
-                                <i class="bi bi-eye"></i> <!-- Icono "eye" de Bootstrap Icons -->
-                            </span>
-                        </button>
-                        <button
-                            class="btn eliminar-btn mx-1 cancelarBtn @if($solicitud->estado == 'cancelado') d-none @endif"
-                            type="button" data-id="{{ $solicitud->id }}">
-                            <span class="text-danger">
-                                <i class="fa fa-ban" aria-hidden="true"></i>
-                            </span>
-                        </button>
-                    </td>
-                </tr>
+                        </td>
+                        <td class="d-flex justify-content-between">
+                            <button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+                                data-id="{{ $solicitud['ID'] }}" onclick="obtenerDatosSolicitud(this)">
+                                <span class="text-primary">
+                                    <i class="bi bi-eye"></i> <!-- Icono "eye" de Bootstrap Icons -->
+                                </span>
+                            </button>
+                            <button
+                                class="btn eliminar-btn mx-1 cancelarBtn @if($solicitud->ESTADO == 'CANCELADO') d-none @endif"
+                                type="button" data-id="{{ $solicitud['ID']}}">
+                                <span class="text-danger">
+                                    <i class="fa fa-ban" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
+        
     </div>
-
     
-
-
-
-
-@include('docente.components.formularioCancelar')
+@include('admin.components.formularioReserva')
 
 @stop
 
@@ -206,18 +197,16 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 <script>
+    const solicitudes = @json($solicitudes);
     function obtenerDatosSolicitud(button) {
         var id = button.getAttribute("data-id");
+        const solicitud_actual = solicitudes.find(soli => soli['ID'] == id);
         document.getElementById("solicitudId").value = id;
-        fetch('{{ route("docente.reservas.show", ["id" => ":id"]) }}'.replace(':id', id))
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                llenarFormulario(data.solicitud);
-            })
-            .catch(error => {
-                console.error('Error al obtener los datos:', error);
-            });
+        if (solicitud_actual) {
+            llenarFormulario(solicitud_actual);
+        } else {
+            console.error('La solicitud no está definida en los datos obtenidos:', data);
+        }
     }
 
     function llenarFormulario(solicitud) {

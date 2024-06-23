@@ -16,13 +16,20 @@ class EncontrarTodo extends Controller
      * Devolvera los ids y grupos de los docentes en el arreglo
      * Todos en formato json
      */
-    public function getGruposyIdsDocentes($nombres){
+    public function getGruposyIdsDocentes($nombres, $id_materia){
         $ids_docentes = [];
         $grupos = [];
         foreach ($nombres as $nombre) {
-            $docente = Docente::where('NOMBRE', $nombre)->first();
+            $docente = Docente::with('docente_relacion_materia')
+                            ->whereHas('docente_relacion_materia', 
+                                function ($query) use ($id_materia){
+                                    $query->where('ID_MATERIA', $id_materia);
+                                }
+                            )->where('NOMBRE', 'ZURITA ORELLANA RIMER MAURICIO')->first();
             $ids_docentes[] = $docente->ID_DOCENTE;
-            $grupos[] = $docente->GRUPO;
+            foreach($docente['docente_relacion_materia'] as $materia){
+                $grupos[] = $materia->GRUPO;
+            }
         }
         return array(json_encode($ids_docentes),json_encode($grupos));
     }

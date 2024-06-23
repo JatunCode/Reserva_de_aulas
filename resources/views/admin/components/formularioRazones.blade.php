@@ -65,7 +65,7 @@
         if(input_razon != ''){
             const newLi = document.createElement('li')
 
-            newLi.innerHTML = `<input type="checkbox" name="razonli" value="${input_razon.value}"><label for="razonli" class="form-label">${input_razon.value}</label>`
+            newLi.innerHTML = `<input type="checkbox" name="razonli" value="${input_razon.value}" checked><label for="razonli" class="form-label">${input_razon.value}</label>`
             div_lista.appendChild(newLi)
         }
         input_razon.value = ''
@@ -78,9 +78,9 @@
         const lista_no_reg = []
         lista_razones.forEach((element)=>{
             if(regex.test(parseInt(element.value, 10))){
-                lista_no_reg.push(parseInt(element.value, 10))
+                lista_no_reg.push(element.value)
             }else if(element.checked){
-                lista_reg.push(element.value)
+                lista_reg.push(parseInt(element.value, 10))
             }
         })
         bandera = ([...lista_razones].find(element => element.checked)) ? true : false

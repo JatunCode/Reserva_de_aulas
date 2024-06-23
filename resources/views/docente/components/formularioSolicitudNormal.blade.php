@@ -23,14 +23,12 @@
         <p id="messageErrorDocente" style="display: none; color: red">*El docente no existe</p>
     </div>
 
-    <div class="col-6">
+    <div class="col-6" id="div-grupo">
         <label for="grupo" class="form-label">Grupo(s):</label>
-        <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3" required >
+        <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3" required>
+        <div id="listaGrupos" class="list-group" style="display: none; position: absolute;"></div>
         <p id="messageErrorGrupo" style="display: none ;color: red">*El grupo no existe</p>
     </div>
-
-
-
 
     <div class="col-md-6">
         <label for="cantidad_estudiantes" class="form-label">N° de Estudiantes:</label>
@@ -99,9 +97,14 @@
         selectMateria.addEventListener('change', (event) => {
             docentes_relacionados = [];
             const idMateriaSeleccionada = event.target.value;
+            const lista_grupos = document.getElementById('listaGrupos');
             extra_materias = materias;
             grupos_relacionados = extra_materias.find(materia => materia['NOMBRE'] === idMateriaSeleccionada);
-            grupos_relacionados = [...new Set(grupos_relacionados['GRUPOS'])];
+            grupos_relacionados = grupos_relacionados['GRUPOS'].filter((item, index, self) =>
+                                                                            index === self.findIndex((t) => (
+                                                                                t.GRUPO === item.GRUPO && t.ID_MATERIA === item.ID_MATERIA && t.NOMBRE === item.NOMBRE
+                                                                            ))
+                                                                        );
             
             for (let i = 0; i < docentes.length; i++) {
                 const docente = docentes[i];
@@ -116,9 +119,10 @@
             console.log('Grupos: ', grupos_relacionados);
             console.log('Materias: ', materias);
             console.log('Docentes: ', docentes_relacionados);
+            console.log('Lista de grupos: ', lista_grupos);
         });
 
-        container.addEventListener('keydown', (event) => {
+        container.addEventListener('keyup', (event) => {
             if (event.target && event.target.matches('input[name="nombre"]')) {
                 const inputNombre = event.target;
 
@@ -161,23 +165,26 @@
         });
     });
 
-    document.getElementById('grupo').addEventListener('keydown', (event) => {
-        const message = document.getElementById('messageErrorGrupo');
-        const valor = event.target.value.trim();
+    document.getElementById('div-grupo').addEventListener('keyup', (event) => {
+        const lista_grupos = document.getElementById('listaGrupos');
+        const inputGrupo = event.target;
+        lista_grupos.innerHTML = '';
+        lista_grupos.style.display = 'block';
+        grupos_relacionados.forEach(grupo => {
+            const item = document.createElement('a');
+            item.className = 'list-group-item list-group-item-action';
+            item.textContent = grupo['GRUPO'];
+            item.addEventListener('click', () => {
+                inputGrupo.value += grupo['GRUPO'];
+                lista_grupos.style.display = 'none';
+            });
+            lista_grupos.appendChild(item);
+        });
 
-        if(valor.length > 0){
-            if(grupos_relacionados.find(grupo => grupo['GRUPO'] == valor)){
-                console.log('Ingresando al find');
-                message.style.display = 'none';
-            }else if (grupos_relacionados.some(grupo => valor.includes(grupo['GRUPO']))) {
-                console.log('Ingresando al some');
-                message.style.display = 'none';
-            }else{
-                console.log('Expulsado del some');
-                message.style.display = 'block';
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('#div-grupo') && !event.target.closest('#listaGrupos')) {
+                lista_grupos.style.display = 'none';
             }
-        }else{  
-            message.style.display = 'block';
-        }
+        });
     });
 </script>

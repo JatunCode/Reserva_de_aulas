@@ -26,17 +26,18 @@
             </select>
         </div>
         <div class="col-md-2">
-            <button class="btn btn-primary d-inline-block w-7" style="background-color:green" onclick="buscarSolicitud()">Buscar</button>
+            
+            <button class="btn btn-primary d-inline-block w-7" name="boton" style="background-color:green" onclick="buscarSolicitud()">Buscar</button>
         </div>
     </div>
     <div class="card-body table-responsive">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th style="width: 40px">Fecha de reserva</th>
+                    <th style="width: 40px">Fecha de solicitud</th>
                     <th style="width: 20px">Aula</th>
                     <th style="width: 75px">Materia</th>
-                    <th style="width: 40px">Fecha de solicitud</th>
+                    <th style="width: 40px">Fecha de reserva</th>
                     <th style="width: 40px">Horario</th>
                     <th style="width: 30px">Modo</th>
                     <th style="width: 40px">Estado</th>
@@ -46,10 +47,10 @@
             <tbody id="tableAmbientes">
                 @foreach($solis_no_reser as $solicitud)
                     <tr>
-                        <td style="width: 35px">{{ $solicitud['FECHA_RESERVA'] }}</td>
+                        <td style="width: 35px">{{ $solicitud['FECHA_HORASOLI'] }}</td>
                         <td style="width: 35px">{{ $solicitud['AMBIENTE'] }}</td>
                         <td style="width: 150px">{{ $solicitud['MATERIA'] }}</td>
-                        <td style="width: 35px">{{ $solicitud['FECHA_HORASOLI'] }}</td>
+                        <td class="reserva" style="width: 35px">{{ $solicitud['FECHA_RESERVA'] }}</td>
                         <td style="width: 20px">{{ $solicitud['HORARIO'] }}</td>
                         <td class="modo">
                             <span class="btn  btn-sm btn-block
@@ -62,7 +63,7 @@
                                     btn-danger
                                 @endif
                                 " aria-controls="offcanvasRight">
-                                {{ @$retVal = (!is_object($solicitud['MODO'])) ? $solicitud['MODO'] : 'URGENTE' ; }}
+                                {{ @$retVal = (!is_object($solicitud['MODO'])) ? 'NORMAL' : 'URGENTE' ; }}
                             </span>
                         </td>
                         <td>
@@ -81,9 +82,9 @@
                             </span>
 
                         </td>
-                        <td style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
+                        <td style="width: 40px"><button class="btn btn-success" type="button" data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                            data-id="{{ $solicitud['ID'] }}" style="background-color:green" onclick="pressAtention(this)" value="{{$solicitud['ID']}}">Atender</button>
+                            data-id="{{ $solicitud['ID'] }}" style="background-color:green" onclick="pressAtention(this)" value="{{$solicitud['ID']}}">ATENDER</button>
                         </td>
                     </tr>
                 @endforeach
@@ -104,6 +105,19 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+<style>
+    @keyframes blink {
+        0% { background-color: rgb(243, 73, 73); }
+        25% { background-color: rgb(250, 173, 173); }
+        50% { background-color: white; }
+        75% { background-color: rgb(250, 173, 173); }
+        100% { background-color: rgb(243, 73, 73); }
+    }
+
+    .blink {
+        animation: blink 2s infinite;
+    }
+</style>
 @stop
 
 @section('js')
@@ -158,6 +172,23 @@
         )
     }
     razonesfetch()
+    document.addEventListener('DOMContentLoaded', () => {
+        const tableRows = document.querySelectorAll('#tableAmbientes tr');
+        const hora_actual = new Date();
+        const hora_mas_cinco = new Date(hora_actual);
+        hora_mas_cinco.setHours(hora_actual.getHours() + 5);
+
+        tableRows.forEach(element => {
+            const text = element.querySelector('.modo span').textContent;
+            const hora = element.querySelector('.reserva').textContent.split(' ')[1];
+            const hora_reserva = new Date();
+            hora_reserva.setHours(...hora.split(':'));
+            
+            if (text === 'URGENTE' && hora_reserva >= hora_actual && hora_reserva < hora_mas_cinco) {
+                element.classList.add('blink');
+            }
+        });
+    });
     function pressAtention(button){
         const id = button.value
         const canva = document.getElementById('offcanvasRight')
@@ -175,7 +206,6 @@
             const horario = document.querySelector('[name="horario"]')
             const motivo = document.querySelector('[name="motivo"]')
             const modo = document.querySelector('[name="modo"]')
-            const desc = document.querySelector('[name="desc"]')
             const div = document.getElementById('desc-modo');
             docentes.innerHTML = ''
             soli_aten['NOMBRE_DOCENTES'].forEach(element => {
@@ -199,8 +229,6 @@
             horario.value = soli_aten['HORARIO']
             motivo.value = soli_aten['MOTIVO']
             modo.value = soli_aten['MODO']
-            desc.value = soli_aten['DESC'].split(':')[1]
-            div.style.display = (soli_aten['MODO'] == 'NORMAL') ? 'none':'block'
         }else{
             console.log("Fallo al obtener los datos alv no puede ser >:VVVVVVVV")
         }
@@ -243,12 +271,12 @@
             // Agregar las celdas con los datos de la solicitud a la fila
             row.innerHTML = `
                 
-                <td>${solicitud['FECHA_RESERVA']}</td>
+                <td>${solicitud['FECHA_HORASOLI']}</td>
                 <td>${solicitud['AMBIENTE']}</td>
                 <td>${solicitud['MATERIA']}</td>
-                <td>${solicitud['FECHA_HORASOLI']}</td>
+                <td class="reserva">${solicitud['FECHA_RESERVA']}</td>
                 <td>${solicitud['HORARIO']}</td>
-                <td >
+                <td class="modo">
                     <span class="btn  btn-sm btn-block" style="background-color: ${solicitud['MODO'] === 'NORMAL' ? '#198754' : '#dc3545'};color: white">
                         ${(isObject(solicitud['MODO']) || solicitud['MODO'].includes('URGENTE'))? 'URGENTE': 'NORMAL'}
                     </span>
@@ -259,9 +287,9 @@
                     </span>
                 </td>
 
-                <td style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
+                <td style="width: 40px"><button class="btn btn-success" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                    data-id="${solicitud['ID']}" style="background-color:green" onclick="pressAtention(this)" value="${solicitud['ID']}">Atender</button>
+                    data-id="${solicitud['ID']}" style="background-color:green" onclick="pressAtention(this)" value="${solicitud['ID']}">ATENDER</button>
                 </td>
             `;
             

@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\Docente;
+
+use App\Events\SolicitudCreada;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Http\Controllers\scripts\GeneradorHorariosNoRegistrados;
-use App\Models\Admin\Docente;
+use App\Models\Admin\Ambiente;
 use App\Models\Admin\Materia;
-use App\Models\Docente\Solicitudes;
 use Illuminate\Http\Request;
-use App\Models\Admin\Relacion_DAHM;
-use App\Models\Admin\Relacion_DM;
 use App\Models\Docente\Solicitud;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Ramsey\Uuid\Uuid;
@@ -49,6 +49,7 @@ class SolicitudController extends Controller
                 ];
             }
         }
+        $this->updateAll();
         //return $solicitudes_estructuradas;
         if($usuario->cargo == 'admin'){
             return view('admin.listar.solicitudes', 
@@ -66,7 +67,7 @@ class SolicitudController extends Controller
 
     /**
      * Muestra los horarios de las solicitudes aceptadas
-     * @param String $ambientes
+     * @param String $ambiente
      * @param String $fecha
      * @return Json retorna un json con la lista de los ambientes
      */
@@ -148,9 +149,11 @@ class SolicitudController extends Controller
                 'MATERIA' => 'required|string',
                 'AMBIENTE' => 'required|string'
             ]);
-
-            $idsygruposDocente = $buscardor->getGruposyIdsDocentes(json_decode($request->NOMBRES));
-            Solicitud::create([
+            $id_materia =$buscardor->getIdMateria($request->MATERIA);
+            $fecha_reserva = Carbon::parse($request->FECHA_RESERVA);
+            $bandera = ($fecha_reserva->dayOfWeek == Carbon::SUNDAY || ($fecha_reserva->dayOfWeek == Carbon::SATURDAY && $request->HORA_INICIO > '12:45:00')) ? false : true;
+            $idsygruposDocente = $buscardor->getGruposyIdsDocentes(json_decode($request->NOMBRES), $id_materia);
+            $solicitud = Solicitud::create([
                 'ID_SOLICITUD' => $uuid->toString(),
                 'ID_DOCENTE_s' => $idsygruposDocente[0],
                 'CANTIDAD_EST' => $request->CANTIDAD,
@@ -160,14 +163,14 @@ class SolicitudController extends Controller
                 'FECHAHORA_SOLI' => Date::now(),
                 'MOTIVO' => $request->MOTIVO,
                 'PRIORIDAD' => json_encode($request->PRIORIDAD),
-                'ID_MATERIA' => $buscardor->getIdMateria($request->MATERIA),
+                'ID_MATERIA' => $id_materia,
                 'GRUPOS' => $idsygruposDocente[1],
                 'ID_AMBIENTE' => $buscardor->getIdAmbiente($request->AMBIENTE),
-                'ESTADO' => 'PENDIENTE'
+                'ESTADO' => ($bandera) ? 'PENDIENTE' : 'CANCELADO'
             ]);
+            event(new SolicitudCreada($solicitud));
             return response()->json(["message" => "Solicitud creada exitosamente"], 200);
         } catch (\Exception $e) {
-            //return redirect()->back()->withInput()->withErrors(['error' => 'Error al procesar la solicitud. Por favor, inténtalo de nuevo más tarde.']);
             return response()->json(["message" => "Hubo un error en el servidor: $e"], 500);
         }
      }
@@ -177,11 +180,10 @@ class SolicitudController extends Controller
      * @param Request debe ser el id o el nombre del docente
      * @return response mostrar los datos del docente en el registro
      */
-    public function docente_datos(Request $request)
+    public function docente_datos()
     { 
         $usuario = Auth::user();
         $buscador = new EncontrarTodo();
-        //$solicitudes_fetch = (isset($usuario) && $usuario->cargo == 'admin') ? Solicitud::where('ID_DOCENTE', 'LIKE', "%$usuario->ID_DOCENTE%")->get() : Solicitud::all() ;
         $materias = ($usuario->cargo == 'admin') ? 
         Materia::with('materia_relacion_dm')->get() : 
         Materia::with('materia_relacion_dm')->whereHas(
@@ -207,33 +209,15 @@ class SolicitudController extends Controller
             }
         }
         $nombre_docente = (isset($usuario) && $usuario->cargo == 'docente') ? $buscador->getNombreDocenteporId($usuario->ID_DOCENTE) : '';
-
-        // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
-        $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-                                    ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-                                    ->get();
-        // Construir la consulta base
-        // $solicitudes = Solicitud::where('LIKE','ID_DOCENTE_s', "%$idDocente%")
-        //                             ->where('ESTADO', 'ACEPTADO')
-        //                             ->get();
-        $materiasAsociadas = [];
-        foreach ($relaciones as $relacion) {
-            // Obtener la colección de materias asociadas a través de la relación
-            // Iterar sobre las materias para obtener sus nombres
-            $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
-            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-                $materiasAsociadas[] = $nombreMateria;
-            }
-        }
         
         if(isset($usuario) && $usuario->cargo == 'docente'){
             return view('docente.solicitud.normal', [
                 //'solicitudes' => $solicitudes, 
-                'docente' => $nombre_docente,'materias' => $materias_estreucturadas]);
+                'docente' => $nombre_docente,'materias' => $materias_estreucturadas, 'user' => 'docente']);
         }else{
             return view('admin.viewFormSolicitud', [
                 //'solicitudes' => $solicitudes, 
-                'docente' => $nombre_docente, 'materias' => $materias_estreucturadas]);
+                'docente' => $nombre_docente, 'materias' => $materias_estreucturadas, 'user' => 'admin']);
         }
     }
 
@@ -259,19 +243,94 @@ class SolicitudController extends Controller
      */
     public function update(Request $request)
     {
-        $buscador = new EncontrarTodo();
         $request->validate([
             'ID_SOLICITUD' => 'required|string',
-            'ESTADO' => 'required|string'
+            'ESTADO' => 'required|string',
         ]);
 
         $data = json_decode($request->getContent(), true);
         $solicitud = Solicitud::where('ID_SOLICITUD', $data->ID_SOLICUTD)
             ->update([
-                'ESTADO'=> $data->ESTADO
+                'ESTADO'=> $data->ESTADO,
+                'AMBIENTE' => $data->AMBIENTE
             ]);
 
         return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
+    }
+
+
+    /**
+     * Actualiza todas las solicitudes al tener un horario pasado de la hora actual
+     * @return 
+     */
+    private function updateAll(){
+
+        $ambientes = Ambiente::all(['ID_AMBIENTE']);
+        $solicitudes_de_esta_semana = [];
+        $fecha_actual = strtotime(Date::now());
+        if(Date::now()->format('H:i:s') == '06:00:00' || Date::now()->format('H:i:s') == '18:00:00'){
+            $this->actualizarPorHora($ambientes, $fecha_actual);
+        }else{
+            $this->updateAntiguos();
+            $this->actualizarUrgente();
+        }
+        
+        return $solicitudes_de_esta_semana;
+    }
+    
+    private function actualizarSolicitudes(){
+        return Solicitud::where('ESTADO', 'PENDIENTE')->orderBy('FECHAHORA_SOLI', 'asc')->get();
+    }
+
+    private function actualizarPorHora($ambientes, $fecha_actual){
+        $solicitudes = $this->actualizarSolicitudes();
+        $solicitud_first = $solicitudes->first();
+        foreach ($ambientes as $ambiente) {
+            $solicitudes_de_esta_semana = [];
+            foreach($solicitudes as $solicitud){
+                $hora_reserva = $solicitud['FECHA_RE'];
+                if( strtotime($hora_reserva) >= $fecha_actual-864000 && 
+                    strtotime($hora_reserva) <= $fecha_actual && 
+                    $solicitud['ID_AMBIENTE'] == $ambiente &&
+                    $solicitud_first['ID_MATERIA'] == $solicitud['ID_MATERIA'] &&
+                    $solicitud_first['HORAINI'] == $solicitud['HORAINI']
+                ){
+                    $solicitudes_de_esta_semana[] = $solicitud;
+                }
+            }
+    
+            $i = 0;
+            foreach ($solicitudes_de_esta_semana as $solicitud) {
+                if($i > 0){
+                    $solicitud->update(['ESTADO' => 'CANCELADO']);
+                }else{
+                    $solicitud->update(['ESTADO' => 'ACEPTADO']);
+                }
+                $i += 1;
+            }
+        }
+    }
+
+    private function updateAntiguos(){
+        $solicitdes = Solicitud::where('ESTADO', 'PENDIENTE')->where('FECHA_RE', '<', Date::now()->format('Y-m-d H:i:s'))->get();
+        foreach ($solicitdes as $solicitd) {
+            $solicitd->update(['ESTADO' => 'CANCELADO']);
+        }
+        return ;
+    }
+
+    private function actualizarUrgente(){
+
+        $solicitudes = Solicitud::where('PRIORIDAD', 'LIKE', "%NORMAL%")
+                                  ->where('FECHA_RE', '<=', Date::now()->addDays(1)->format('Y-m-d'))
+                                  ->where('FECHA_RE', '>=', Date::now()->format('Y-m-d'))->get();
+        
+        foreach ($solicitudes as $solicitud) {
+            $objeto_urgente = json_encode([
+                'URGENTE' => $solicitud['MOTIVO']
+            ]);
+            $solicitud->update(['PRIORIDAD' => $objeto_urgente]);
+        }
     }
 
     /**

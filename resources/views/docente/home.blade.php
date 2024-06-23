@@ -21,7 +21,7 @@
             <div class="icon">
                 <i class="ion ion-bag"></i>
             </div>
-            <a href="{{ route('docente.solicitud.filtrar.datos_cancelar') }}" class="small-box-footer">Ver  <i class="fas fa-arrow-circle-right"></i></a>
+            {{-- <a href="{{ route('docente.solicitud.filtrar.datos_cancelar') }}" class="small-box-footer">Ver  <i class="fas fa-arrow-circle-right"></i></a> --}}
         </div>
     </div>
 
@@ -35,7 +35,7 @@
             <div class="icon">
                 <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="{{ route('docente.solicitud.filtrar.datos_solicitando') }}" class="small-box-footer">Ver  <i class="fas fa-arrow-circle-right"></i></a>
+            {{-- <a href="{{ route('docente.solicitud.filtrar.datos_solicitando') }}" class="small-box-footer">Ver  <i class="fas fa-arrow-circle-right"></i></a> --}}
         </div>
     </div>
 
@@ -50,7 +50,7 @@
             <div class="icon">
                 <i class="ion ion-person-add"></i>
             </div>
-            <a href="{{ route('docente.solicitud.filtrar.datos_reservado') }}" class="small-box-footer">Ver <i class="fas fa-arrow-circle-right"></i></a>
+            {{-- <a href="{{ route('docente.solicitud.filtrar.datos_reservado') }}" class="small-box-footer">Ver <i class="fas fa-arrow-circle-right"></i></a> --}}
         </div>
     </div>
 </div>

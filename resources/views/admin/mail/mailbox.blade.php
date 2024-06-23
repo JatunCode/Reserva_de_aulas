@@ -59,12 +59,22 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <strong>Contenido del Mensaje</strong>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Contenido del Mensaje</strong>
+                        </div>
+                        {{-- <div class="col-md-6">
+                            <button class="btn btn-info" name="enviar" style="color: white">Redactar mensaje</button>
+                        </div> --}}
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="notification-content">
                         <p>Seleccione un mensaje para ver el contenido.</p>
                     </div>
+                </div>
+                <div id="cuerpo">
+
                 </div>
             </div>
         </div>
@@ -241,6 +251,36 @@
     function descMessage(message){
         return message.split(',')
     }
+
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     const enviarMensajeBtn = document.querySelector('button[name="enviar"]');
+    //     const cuerpoDiv = document.getElementById('cuerpo');
+
+    //     enviarMensajeBtn.addEventListener('click', function() {
+    //         cuerpoDiv.innerHTML = `
+    //             <form id="formulario-mensaje">
+    //                 <div class="form-group">
+    //                     <label for="mensaje">Mensaje:</label>
+    //                     <textarea class="form-control" id="mensaje" rows="3"></textarea>
+    //                 </div>
+    //                 <div class="form-group">
+    //                     <label for="docentes" class="label-control">Enviar a:</label>
+    //                     <input name="docentes" class="form-control"></input>
+    //                 </div>
+    //                 <button type="submit" class="btn btn-primary">Enviar</button>
+    //             </form>
+    //         `;
+
+    //         const formularioMensaje = document.getElementById('formulario-mensaje');
+    //         formularioMensaje.addEventListener('submit', function(event) {
+    //             event.preventDefault();
+    //             const mensaje = document.getElementById('mensaje').value;
+    //             const docentesSeleccionados = Array.from(document.querySelectorAll('#docentes option:checked')).map(option => option.value);
+    //             console.log('Mensaje:', mensaje);
+    //             console.log('Docentes seleccionados:', docentesSeleccionados);
+    //         });
+    //     });
+    // });
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">

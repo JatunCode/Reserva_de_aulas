@@ -10,6 +10,9 @@ class Ambiente extends Model
 {
     use HasFactory;
     protected $table = 'ambiente';
+    protected $primaryKey = 'ID_AMBIENTE';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['ID_AMBIENTE', 'TIPO', 'NOMBRE', 'REFERENCIAS', 'CAPACIDAD', 'DATA', 'ESTADO'];
     /**
      * funciones relacionales

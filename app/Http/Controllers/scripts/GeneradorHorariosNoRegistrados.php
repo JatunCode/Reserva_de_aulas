@@ -30,16 +30,16 @@ class GeneradorHorariosNoRegistrados extends Controller
             if(count($horas) == 0){
                 $list[] = [
                     'DIA' => $dia,
-                    'HORA_INI' => date('H:i:s',$hora_ini),
-                    'HORA_FIN' => date('H:i:s',$hora_ini+$rango),
+                    'HORA_INI' => date('H:i',$hora_ini),
+                    'HORA_FIN' => date('H:i',$hora_ini+$rango),
                     'AMBIENTE' => $ambiente
                 ];
             }else{
-                if($hora_nose['INICIO'] != date('H:i:s', $hora_ini)){
+                if($hora_nose['INICIO'] != date('H:i', $hora_ini)){
                     $list[] = [
                         'DIA' => $dia,
-                        'HORA_INI' => date('H:i:s',$hora_ini),
-                        'HORA_FIN' => date('H:i:s',$hora_ini+$rango),
+                        'HORA_INI' => date('H:i',$hora_ini),
+                        'HORA_FIN' => date('H:i',$hora_ini+$rango),
                         'AMBIENTE' => $ambiente
                     ];
                 }else{

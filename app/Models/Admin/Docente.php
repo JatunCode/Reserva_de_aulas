@@ -10,6 +10,9 @@ class Docente extends Model
 {
     use HasFactory, Notifiable;
     protected $table = 'docente';
+    protected $primaryKey = 'ID_DOCENTE';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['ID_DOCENTE', 'NOMBRE', 'CELULAR', 'EMAIL'];
     
     public function docente_relacion_dahm(){

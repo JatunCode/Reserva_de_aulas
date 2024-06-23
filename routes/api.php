@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DocenteController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Admin\MateriaController;
 use App\Http\Controllers\Admin\NotificacionController;
+use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -97,6 +98,7 @@ Route::controller(SolicitudController::class)->group(
         Route::get('/fetch/solicitudeslibres/{ambiente}/{fecha}', 'solicitudes_libres');
         Route::get('/fetch/solicitudesshow/{ambiente}', 'show');
         Route::get('/fetch/solicitudes/{id}', 'showSolicitud');
+        Route::get('/fetch/solicitudesactualizar', 'actualizarUrgente');
         //Route::post('/horarios/store', 'store');
         // Route::post('/putambiente', 'show');
     }
@@ -113,5 +115,12 @@ Route::controller(EncontrarTodo::class)->group(
     function(){
         Route::patch('/fetch/razones/nombres', 'getRazonesporID');
         Route::get('/fetch/docente/{id}', 'getNombreDocenteporId');
+        Route::get('/fetch/docentegrupos', 'getGruposyIdsDocentes');
+    }
+);
+
+Route::controller(CalendarioController::class)->group(
+    function(){
+        Route::get('/fetch/calendario', 'index');
     }
 );
