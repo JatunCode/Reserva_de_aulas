@@ -25,7 +25,7 @@ class EncontrarTodo extends Controller
                                 function ($query) use ($id_materia){
                                     $query->where('ID_MATERIA', $id_materia);
                                 }
-                            )->where('NOMBRE', 'ZURITA ORELLANA RIMER MAURICIO')->first();
+                            )->where('NOMBRE', $nombre)->first();
             $ids_docentes[] = $docente->ID_DOCENTE;
             foreach($docente['docente_relacion_materia'] as $materia){
                 $grupos[] = $materia->GRUPO;

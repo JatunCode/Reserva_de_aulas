@@ -194,8 +194,6 @@
             if (fechaSeleccionada > fechaActual) {
                 // Si la fecha seleccionada es mayor a la fecha actual + 2 días, establecer modo como "Normal"
                 modoInput.value = 'Normal';
-                // Ocultar el campo de razón
-                campoRazon.style.display = 'none';
             } else {
                 // Si la fecha seleccionada está dentro de los 2 días próximos, establecer modo como "Urgente"
                 modoInput.value = 'Urgente';
@@ -272,6 +270,14 @@
 </script>
 
 <script>
+    let banderaMateria = false;
+    let banderaDocente = false;
+    let banderaGrupo = false;
+    let banderaCant = false;
+    let banderaMotivo = false;
+    let banderaFecha = false;
+    let banderaHorario = false;
+
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('solicitudForm').addEventListener('submit', function(event) {
             // Evitar que el formulario se envíe automáticamente
@@ -287,9 +293,9 @@
             const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
             const input_fecha = this.querySelector('[name="filtroFecha"]').value;
             const input_modo = this.querySelector('[name="modo"]').value;
-            let prioridad = (input_modo.toUpperCase() != "NORMAL") ? {"URGENTE" : input_motivo} : {"NORMAL" : "Normal"};
+            let prioridad = (input_modo.toUpperCase() != "NORMAL") ? {"URGENTE" : dato_motivo} : {"NORMAL" : "Normal"};
             const input_aula = this.querySelector('[name="aula"]');
-            const dato_aula = input_aula.options[input_aula.selectedIndex].value;
+            const dato_aula = (input_aula.options[input_aula.selectedIndex]) ? input_aula.options[input_aula.selectedIndex].value:'';
             const input_horario = this.querySelector('[name="horario"]').value;
             const input_grupo = this.querySelector('[name="grupo"]');
             let arreglo_horario = input_horario.split(" - ");
@@ -357,21 +363,31 @@
                 'GRUPOS':JSON.stringify(input_grupo)
             };
 
+            verificarMateria(dato_materia);
+            verificarDocente(input_nombre);
+            verificarGrupo(input_grupo);
+            verificarCantidad(input_cant);
+            verificarMotivo(dato_motivo);
+            verificarFecha(input_fecha);
+            verificarHorario(input_horario);
+            bandera = banderaMateria && banderaDocente && banderaGrupo && banderaCant && banderaMotivo && banderaFecha && banderaHorario
             // Mostrar el modal de confirmación con los datos del formulario
-            Swal.fire({
-                icon: 'info',
-                title: 'Confirmación de envío',
-                html: modalContent,
-                showCancelButton: true,
-                confirmButtonText: 'Enviar',
-                cancelButtonText: 'Cancelar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Enviar el formulario si se confirma la acción
-                    console.log("Formato del json: ", json_send);
-                    sendForm(json_send);
-                }
-            });
+            if(bandera){
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Confirmación de envío',
+                    html: modalContent,
+                    showCancelButton: true,
+                    confirmButtonText: 'Enviar',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Enviar el formulario si se confirma la acción
+                        console.log("Formato del json: ", json_send);
+                        sendForm(json_send);
+                    }
+                });
+            }
         });
     });
 
@@ -417,7 +433,7 @@
             }
         }).then(
             data => {
-                console.log("Datos: ", data)
+                console.log("Datos: ", data);
             }
         ).catch(error => {
             console.error('Error:', error);
@@ -449,9 +465,139 @@
             }
         ).catch(
             error => {
-                console.log('Error del servidor: ', error)
+                console.log('Error del servidor: ', error);
             }
         )
+    }
+
+    function verificarMateria(text){
+        const message = document.getElementById('messageErrorMateria');
+        if(text == 'ninguno'){
+            banderaMateria = false;
+            message.style.display = 'block';
+        }else{
+            banderaMateria = true;
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarDocente(inputsDocentes){
+        const message = document.getElementById('messageErrorDocente');
+        let allFill = true;
+        let encontrado = true;
+        inputsDocentes.forEach(input => {
+            if (input.value.trim() === '') {
+                allFill = false;
+            }else if(!docentes_relacionados.includes(input.value.trim())){
+                encontrado =false;
+            }
+        });
+
+        if(allFill == false){
+            banderaDocente = false;
+            message.textContent = '*Debe completar los campos vacios o eliminarlos';
+            message.style.display = 'block';
+        }else if(encontrado == false){
+            banderaDocente = false;
+            message.textContent = '*El docente no es de la materia';
+            message.style.display = 'none';
+        }else{
+            banderaDocente = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarGrupo(text){
+        const message = document.getElementById('messageErrorGrupo');
+        if(text == ''){
+            banderaMateria = false;
+            message.textContent = '*Debe completar el campo';
+            message.style.display = 'block';
+        }else{
+            banderaMateria = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarCantidad(text){
+        const message = document.getElementById('messageErrorCantidad');
+        if(text == ''){
+            banderaMateria = false;
+            message.textContent = '*Debe completar el campo';
+            message.style.display = 'block';
+        }else if(parseInt(text, 10) <= 0){
+            banderaMateria = false;
+            message.textContent = '*La cantidad debe ser mayor a 0';
+            message.style.display = 'block';
+        }else if(parseInt(text, 10) < 1 || parseInt(text, 10) > 250){
+            banderaMateria = false;
+            message.textContent = '*La cantidad debe ser entre 1 y 250';
+            message.style.display = 'block';
+        }else{
+            banderaMateria = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarMotivo(text){
+        const message = document.getElementById('messageErrorMotivo');
+        if(text == 'ninguno'){
+            banderaMotivo = false;
+            message.style.display = 'block';
+        }else{
+            banderaMotivo = true;
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarFecha(text){
+        const message = document.getElementById('messageErrorFecha');
+        if(text == ''){
+            banderaFecha = false;
+            message.style.display = 'block';
+        }else{
+            banderaFecha = true;
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarHorario(text){
+        const message = document.getElementById('messageErrorHorario');
+        const hora = text.split(' - ');
+        const hora_inicio = (text!='') ? parseTime(hora[0]):'';
+        const hora_fin = (text!='') ? parseTime(hora[1]):'';
+        const hora_min = parseTime('06:45');
+        const hora_max = parseTime('21:45');
+        
+        if(text === ''){
+            banderaHorario = false;
+            message.textContent = '*Debe ingresar o seleccionar un horario';
+            message.style.display = 'block';
+        } else if(hora_inicio >= hora_fin){
+            banderaHorario = false;
+            message.textContent = '*Formato de horario incorrecto';
+            message.style.display = 'block';
+        } else if(hora_inicio < hora_min || hora_max < hora_fin){
+            banderaHorario = false;
+            message.textContent = '*Rango de horario: 06:45 - 21:45';
+            message.style.display = 'block';
+        } else {
+            banderaHorario = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function parseTime(timeString) {
+        if(timeString != ''){
+            const [hours, minutes] = timeString.split(':').map(Number);
+            const date = new Date();
+            date.setHours(hours, minutes, 0, 0);
+            return date;
+        }
     }
 </script>
 
