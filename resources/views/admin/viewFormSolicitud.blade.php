@@ -364,12 +364,19 @@
             };
 
             verificarMateria(dato_materia);
+            console.log('Bandera materia: ', banderaMateria);
             verificarDocente(input_nombre);
+            console.log('Bandera nombre: ', banderaDocente);
             verificarGrupo(input_grupo);
+            console.log('Bandera grupo: ', banderaGrupo);
             verificarCantidad(input_cant);
+            console.log('Bandera cantidad: ', banderaCant);
             verificarMotivo(dato_motivo);
+            console.log('Bandera motivo: ', banderaMotivo);
             verificarFecha(input_fecha);
+            console.log('Bandera fecha: ', banderaFecha);
             verificarHorario(input_horario);
+            console.log('Bandera horario: ', banderaHorario);
             bandera = banderaMateria && banderaDocente && banderaGrupo && banderaCant && banderaMotivo && banderaFecha && banderaHorario
             // Mostrar el modal de confirmación con los datos del formulario
             if(bandera){
@@ -488,11 +495,13 @@
         inputsDocentes.forEach(input => {
             if (input.value.trim() === '') {
                 allFill = false;
-            }else if(!docentes_relacionados.includes(input.value.trim())){
-                encontrado =false;
+            }else if(!docentes_relacionados.find(docente => docente['NOMBRE_DOCENTE'] == input.value.trim())){
+                encontrado = false;
             }
         });
 
+        console.log('Bandera allfill: ', allFill);
+        console.log('Bandera encontrado: ', encontrado);
         if(allFill == false){
             banderaDocente = false;
             message.textContent = '*Debe completar los campos vacios o eliminarlos';
@@ -511,11 +520,11 @@
     function verificarGrupo(text){
         const message = document.getElementById('messageErrorGrupo');
         if(text == ''){
-            banderaMateria = false;
+            banderaGrupo = false;
             message.textContent = '*Debe completar el campo';
             message.style.display = 'block';
         }else{
-            banderaMateria = true;
+            banderaGrupo = true;
             message.textContent = '';
             message.style.display = 'none';
         }
@@ -524,19 +533,19 @@
     function verificarCantidad(text){
         const message = document.getElementById('messageErrorCantidad');
         if(text == ''){
-            banderaMateria = false;
+            banderaCant = false;
             message.textContent = '*Debe completar el campo';
             message.style.display = 'block';
         }else if(parseInt(text, 10) <= 0){
-            banderaMateria = false;
+            banderaCant = false;
             message.textContent = '*La cantidad debe ser mayor a 0';
             message.style.display = 'block';
         }else if(parseInt(text, 10) < 1 || parseInt(text, 10) > 250){
-            banderaMateria = false;
+            banderaCant = false;
             message.textContent = '*La cantidad debe ser entre 1 y 250';
             message.style.display = 'block';
         }else{
-            banderaMateria = true;
+            banderaCant = true;
             message.textContent = '';
             message.style.display = 'none';
         }
