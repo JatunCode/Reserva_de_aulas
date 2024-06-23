@@ -9,6 +9,9 @@ class Relacion_DAHM extends Model
 {
     use HasFactory;
     protected $table = "relacion_dahm";
+    protected $primaryKey = 'ID_RELACION';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['ID_RELACION', 'ID_DOCENTE', 'ID_AMBIENTE', 'ID_HORARIO', 'ID_MATERIA'];
 
     public function dahm_relacion_horario(){

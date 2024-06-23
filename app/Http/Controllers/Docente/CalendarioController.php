@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Docente;
 use DateTime;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Docente\Solicitudes;
-use Illuminate\Http\Request;
 use App\Models\Admin\Relacion_DAHM;
-use App\Models\Admin\Materia;
+use App\Models\Docente\Solicitud;
+use Illuminate\Support\Facades\Date;
+
 class CalendarioController extends Controller
 {
     /**
@@ -16,83 +18,91 @@ class CalendarioController extends Controller
      */
     public function index()
     {
-        // Obtener todas las relaciones_dahm filtradas por el ID del docente
-        $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-                                    ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-                                    ->get();
-    
-        $solicitudes = Solicitudes::where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')->get();
-        $solicitudesAll = Solicitudes::whereNotIn('ID_DOCENTE', ['354db6b6-be0f-4aca-a9ea-3c31e412c49d'])->get();
+        // ? TODOS LOS HORARIOS Obtener todas las relaciones_dahm filtradas por el ID del docente
+        // $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
+        //                             ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
+        //                             ->get();
+        
+        $start_month = Date::now()->startOfMonth()->format('Y-m-d');
+        $end_month = Date::now()->endOfMonth()->format('Y-m-d');
+        $buscador = new EncontrarTodo();
+        $solicitudes = Solicitud::where('ESTADO', 'PENDIENTE')->orWhere('ESTADO', 'ACEPTADO')->get(['ID_AMBIENTE','ID_MATERIA','FECHA_RE','MOTIVO', 'PRIORIDAD', 'ESTADO']);
+        $solicitudesAll = Solicitud::all();
 
         //dump($relaciones);
-        $pendientesCount = $solicitudes->where('estado', 'Cancelado')->count();
-    $urgentesCount = $solicitudes->where('estado', 'Solicitando')->count();
-    $reservadasCount = $solicitudes->where('estado', 'Reservado')->count();
+        $pendientesCount = $solicitudesAll->where('ESTADO', 'CANCELADO')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
+        $urgentesCount = $solicitudesAll->where('ESTADO', 'PENDIENTE')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
+        $reservadasCount = $solicitudesAll->where('ESTADO', 'ACEPTADO')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
         $anoActual = date('Y');
     
-        // Convertir los datos en el formato adecuado para FullCalendar
-        $eventos = [];
-        foreach ($relaciones as $relacion) {
-            $dow = $this->convertirDiaSemanaANumero($relacion->dahm_relacion_horario->DIA);
+        //? Convertir los horarios en el formato adecuado para FullCalendar
+        // $eventos = [];
+        // foreach ($relaciones as $relacion) {
+        //     $dow = $this->convertirDiaSemanaANumero($relacion->dahm_relacion_horario->DIA);
     
-            // Obtener todas las fechas de "Lunes" en el año actual
-            $fechasLunes = $this->obtenerFechasDiaSemanaEnAno($anoActual, $dow);
+        //     // Obtener todas las fechas de "Lunes" en el año actual
+        //     $fechasLunes = $this->obtenerFechasDiaSemanaEnAno($anoActual, $dow);
 
-            // Agregar un evento para cada fecha de "Lunes"
-            foreach ($fechasLunes as $fechaLunes) {
-                // Agregar el evento al arreglo de eventos
+        //     // Agregar un evento para cada fecha de "Lunes"
+        //     foreach ($fechasLunes as $fechaLunes) {
+        //         // Agregar el evento al arreglo de eventos
+        //         $eventos[] = [
+        //             'title' => $relacion->dahm_relacion_materia->NOMBRE. '-'.$relacion->dahm_relacion_ambiente->NOMBRE, // Nombre de la materia como título del evento
+        //             'start' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->INICIO, // Fecha y hora de inicio
+        //             'end' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->FIN, // Fecha y hora de fin
+        //             'dow' => [$dow], // Convertir el día de la semana a un array de un solo elemento
+        //             'aula' => $relacion->dahm_relacion_ambiente->NOMBRE,
+        //             'eventBackgroundColor'=>'#AFEEEE',
+        //             'textColor'=>'black',
+        //         ];
+        //     }
+        // }
+        // Convertir las solicitudes en eventos y agregarlas al arreglo de eventos
+        foreach ($solicitudes as $solicitud) {
+            if ($solicitud->ESTADO == 'PENDIENTE') {
+                $backgroundColor = '#fff2cc'; // Color para estado Pendiente
+            } elseif ($solicitud->ESTADO == 'ACEPTADO') {
+                $backgroundColor = '#d9ead3'; // Color para estado Reservado
+            } else {
+                $backgroundColor = '#f2dede'; // Color por defecto para otros estados
+            }
+            $nombres = $buscador->getNombreDocentesporID(json_encode(explode(',',$solicitud->ID_DOCENTE_s)));
+            if(!is_object($solicitud->PRIORIDAD)){
+                $fecha_hora = explode(' ',$solicitud->FECHA_RE);
                 $eventos[] = [
-                    'title' => $relacion->dahm_relacion_materia->NOMBRE. '-'.$relacion->dahm_relacion_ambiente->NOMBRE, // Nombre de la materia como título del evento
-                    'start' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->INICIO, // Fecha y hora de inicio
-                    'end' => $fechaLunes->format('Y-m-d') . 'T' . $relacion->dahm_relacion_horario->FIN, // Fecha y hora de fin
-                    'dow' => [$dow], // Convertir el día de la semana a un array de un solo elemento
-                    'aula' => $relacion->dahm_relacion_ambiente->NOMBRE,
-                    'eventBackgroundColor'=>'#AFEEEE',
-                    'textColor'=>'black',
+                    'title' => $solicitud->MOTIVO . '-'.$buscador->getNombreAmbiente($solicitud->ID_AMBIENTE), // Nombre de la solicitud como título del evento
+                    'start' => $fecha_hora[0] . 'T' . $fecha_hora[1], // Fecha y hora de inicio
+                    'end' => $fecha_hora[0] . 'T' . $solicitud->HORAFIN, // Fecha y hora de fin (misma que inicio)
+                    'aula' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
+                    'modo' => (strpos($solicitud->PRIORIDAD,'URGENTE')) ? 'URGENTE' : 'NORMAL',
+                    'materia' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
+                    'estado' => $solicitud->ESTADO,
+                    'nombres' => implode(', ',$nombres),
+                    'eventBackgroundColor'=>$backgroundColor,
+                    'textColor'=>'white',
                 ];
             }
         }
-    // Convertir las solicitudes en eventos y agregarlas al arreglo de eventos
-    foreach ($solicitudes as $solicitud) {
-        if ($solicitud->estado == 'Solicitando') {
-            $backgroundColor = '#CCCC00'; // Color para estado Pendiente
-        } elseif ($solicitud->estado == 'Reservado') {
-            $backgroundColor = '#006600'; // Color para estado Reservado
-        } 
-        else {
-            $backgroundColor = '#990000'; // Color por defecto para otros estados
-        }
-        $eventos[] = [
-            'title' => $solicitud->motivo . '-'.$solicitud->aula, // Nombre de la solicitud como título del evento
-            'start' => $solicitud->fecha . 'T' . $solicitud->hInicio, // Fecha y hora de inicio
-            'end' => $solicitud->fecha . 'T' . $solicitud->hFin, // Fecha y hora de fin (misma que inicio)
-            'aula' => $solicitud->aula,
-            'modo' => $solicitud->modo,
-            'materia' => $solicitud->materia,
-            'estado' => $solicitud->estado,
-            'eventBackgroundColor'=>$backgroundColor,
-            'textColor'=>'white',
-        ];
-    }
-    // Convertir las solicitudes en eventos y agregarlas al arreglo de eventos ALLLLLLLLLLLLLLLLLLLLLLLLLLLL
-    foreach ($solicitudesAll as $solicitudAll) {
-        
-        $eventos[] = [
-            'title' => $solicitudAll->motivo . '-'.$solicitudAll->aula . '-'.$solicitudAll->nombre, // Nombre de la solicitud como título del evento
-            'start' => $solicitudAll->fecha . 'T' . $solicitudAll->hInicio, // Fecha y hora de inicio
-            'end' => $solicitudAll->fecha . 'T' . $solicitudAll->hFin, // Fecha y hora de fin (misma que inicio)
-            'aula' => $solicitudAll->aula,
-            'modo' => $solicitudAll->modo,
-            'materia' => $solicitudAll->materia,
-            'estado' => $solicitudAll->estado,
-            'eventBackgroundColor'=>'#080808',
-            'textColor'=>'white',
-        ];
-    }
+        // ? no se que convierte :P Convertir las solicitudes en eventos y agregarlas al arreglo de eventos ALLLLLLLLLLLLLLLLLLLLLLLLLLLL
+        // foreach ($solicitudesAll as $solicitudAll) {
+            
+        //     $eventos[] = [
+        //         'title' => $solicitudAll->MOTIVO . '-'.$solicitudAll->aula . '-'.$solicitudAll->nombre, // Nombre de la solicitud como título del evento
+        //         'start' => $solicitudAll->fecha . 'T' . $solicitudAll->hInicio, // Fecha y hora de inicio
+        //         'end' => $solicitudAll->fecha . 'T' . $solicitudAll->hFin, // Fecha y hora de fin (misma que inicio)
+        //         'aula' => $solicitudAll->aula,
+        //         'modo' => $solicitudAll->modo,
+        //         'materia' => $solicitudAll->materia,
+        //         'estado' => $solicitudAll->estado,
+        //         'eventBackgroundColor'=>'#080808',
+        //         'textColor'=>'white',
+        //     ];
+        // }
         // Convertir los eventos a formato JSON para pasarlo a la vista
         $eventos_json = json_encode($eventos);
     
         return view('docente.home', compact('eventos_json', 'solicitudes','pendientesCount', 'urgentesCount', 'reservadasCount'));
+        //return $eventos;
     }
     
     // Función para obtener todas las fechas de un día de la semana en un año específico

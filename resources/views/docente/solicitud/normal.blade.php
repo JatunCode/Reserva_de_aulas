@@ -73,6 +73,23 @@
         max-height: 200px;
         overflow-y: auto;
     }
+
+    #listaGrupos {
+        display: none;
+        position: absolute;
+        border: 1px solid #ccc;
+        background-color: white;
+        z-index: 1000;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    .list-group-item {
+        padding: 10px;
+        cursor: pointer;
+    }
+    .list-group-item:hover {
+        background-color: #f0f0f0;
+    }
 </style>
 @stop
 
@@ -85,7 +102,7 @@
     let solicitudes = [];
     let ambientes = [];
     let docentes = [];
-
+    let bandera = false;
     fetch(
         'http://127.0.0.1:8000/api/fetch/ambientes'
     ).then(
@@ -115,6 +132,7 @@
             console.log('Error encontrado: ', error);
         }
     )
+    const input_hora = document.getElementById('horario');
 
     document.addEventListener('DOMContentLoaded', function() {
         const filtroFechaInput = document.getElementById('filtroFecha');
@@ -141,9 +159,36 @@
         });
 
         filtroFechaInput.addEventListener('change', function() {
-            const fechaSeleccionada = new Date(this.value);
+            let fechaSeleccionada = new Date(this.value);
             const fechaActual = new Date();
+            
+            const hora_actual = new Date(fechaActual.getTime());
+            hora_actual.setHours(hora_actual.getHours()+2);
+            let inicio = null;
+            let fin = null;
+            let hora_ini = null;
+            let hora_fin = null;
+            if(hora_actual.getHours() > 21 || hora_actual.getHours() < 6){
+                hora_actual.setHours(6);
+                hora_actual.setMinutes(45);
+                inicio = formatTime(hora_actual.getHours(), hora_actual.getMinutes());
+                hora_fin = new Date(hora_actual.getTime() + 1.5 * 60 * 60 * 1000);
+                fin = formatTime(hora_fin.getHours(), hora_fin.getMinutes());
+                input_hora.value = `${inicio} - ${fin}`;
+                fechaSeleccionada.setDate(fechaSeleccionada.getDate() + 1);
+                this.value = formatDate(fechaSeleccionada);
+                console.log('If del time');
+            }else{
+                hora_ini = new Date(hora_actual.getTime() + 1.5 * 60 * 60 * 1000);
+                inicio = formatTime(hora_ini.getHours(), hora_ini.getMinutes());
+                hora_fin = new Date(hora_ini.getTime() + 1.5 * 60 * 60 * 1000);
+                fin = formatTime(hora_fin.getHours(), hora_fin.getMinutes());
+                input_hora.value = `${inicio} - ${fin}`;
+                console.log('Else del time');
+            }
+
             console.log("Fecha de reserva: ", filtroFechaInput.value);
+            console.log('Fecha del input: ', fechaSeleccionada);
             fechaActual.setDate(fechaActual.getDate() + 1);
 
             if (fechaSeleccionada > fechaActual) {
@@ -154,10 +199,9 @@
             } else {
                 // Si la fecha seleccionada está dentro de los 2 días próximos, establecer modo como "Urgente"
                 modoInput.value = 'Urgente';
-                // Mostrar el campo de razón
-                campoRazon.style.display = 'block';
             }
-                actualizarTabla();
+
+            actualizarTabla();
         });
 
         ambiente.addEventListener('change', function() {
@@ -186,6 +230,9 @@
                                             <td>${solicitud['AMBIENTE']}</td>
                                             <td>${solicitud['HORARIO']}</td>
                                             <td>${fecha}</td>
+                                            <td>
+                                                <button type="button" id="btn-${solicitud['ID']}" class="btn btn-success btn-sm" onclick="agregarHorario('${solicitud['HORARIO']}')">SELECCIONAR</button>
+                                            </td>
                                         </tr>`
                             });
                         }
@@ -207,7 +254,21 @@
                 }
             )
         }
+
+        function formatTime(hours, minutes) {
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        function formatDate(date) {
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
     });
+    function agregarHorario(horario) {
+        input_hora.value = horario;
+    }
 </script>
 
 <script>
@@ -225,11 +286,12 @@
             const input_motivo = this.querySelector('[name="motivo"]');
             const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
             const input_fecha = this.querySelector('[name="filtroFecha"]').value;
-            const input_razon = this.querySelector('[name="razon"]').value;
-            let prioridad = (input_razon != "") ? {"URGENTE" : input_razon} : {"NORMAL" : "Normal"};
+            const input_modo = this.querySelector('[name="modo"]').value;
+            let prioridad = (input_modo.toUpperCase() != "NORMAL") ? {"URGENTE" : input_motivo} : {"NORMAL" : "Normal"};
             const input_aula = this.querySelector('[name="aula"]');
             const dato_aula = input_aula.options[input_aula.selectedIndex].value;
             const input_horario = this.querySelector('[name="horario"]').value;
+            const input_grupo = this.querySelector('[name="grupo"]');
             let arreglo_horario = input_horario.split(" - ");
             let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
 
@@ -291,7 +353,8 @@
                 'PRIORIDAD':json_prioridad,
                 'MOTIVO':dato_motivo,
                 'MATERIA':dato_materia,
-                'AMBIENTE':dato_aula
+                'AMBIENTE':dato_aula,
+                'GRUPOS':JSON.stringify(input_grupo)
             };
 
             // Mostrar el modal de confirmación con los datos del formulario
@@ -319,10 +382,10 @@
             'TIPO': 'Solicitud',
             'FECHA':formData['FECHA_RESERVA'],
             'MATERIA':formData['MATERIA'],
-            'AMBIENTE':formData['AMBIENTE'],
-            'ESTADO':'PENDIENTE'
+            'AMBIENTE':formData['AMBIENTE']
         }
         const json_send = JSON.stringify(formData)
+        
         fetch(document.getElementById('solicitudForm').action, {
             method: 'POST',
             headers: {
@@ -400,38 +463,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js">
 </script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const grupoInput = document.getElementById('grupo');
-
-        grupoInput.addEventListener('keydown', function(event) {
-            let inputValue = grupoInput.value;
-
-            // Convertir todo el texto a mayúsculas
-            inputValue = inputValue.toUpperCase();
-
-            // Mantener solo números, letras y comas
-            inputValue = inputValue.replace(/[^0-9A-Z,]/g, '');
-
-            // Si la tecla presionada es espacio (código 32), agregar una coma
-            if (event.keyCode === 32) {
-                // Obtener la última parte de la cadena después de la última coma
-                const lastPart = inputValue.split(',').pop().trim();
-
-                // Si la última parte no está vacía, agregar una coma
-                if (lastPart !== '') {
-                    inputValue += ',';
-                }
-            }
-
-            // Actualizar el valor del campo de entrada con la entrada filtrada
-            grupoInput.value = inputValue;
-        });
-    });
-</script>
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

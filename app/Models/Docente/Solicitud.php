@@ -11,6 +11,9 @@ class Solicitud extends Model
 {
     use HasFactory;
     protected $table = 'solicitud';
+    protected $primaryKey = 'ID_SOLICITUD';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['ID_SOLICITUD', 'ID_DOCENTE_s', 'CANTIDAD_EST', 'FECHA_RE', 'HORAINI', 'HORAFIN', 'FECHAHORA_SOLI', 'MOTIVO', 'PRIORIDAD', 'ID_MATERIA', 'GRUPOS', 'ID_AMBIENTE', 'ESTADO'];
 
     public function solicitud_relacion_reserva(){

@@ -9,6 +9,9 @@ class Horario extends Model
 {
     use HasFactory;
     protected $table = 'horario';
+    protected $primaryKey = 'ID_HORARIO';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['ID_HORARIO', 'INICIO', 'FIN', 'DIA'];
 
     function horario_relacion_dahm(){

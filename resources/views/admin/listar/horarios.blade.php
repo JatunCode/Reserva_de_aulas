@@ -28,6 +28,7 @@
         <div class="col-md-4" id="containerDocente">
             <label class="form-label" for="docente">Docente</label>
             <input class="form-control" type="text" name="docente" placeholder="Buscar docente">
+            <div id="lista-docentes" class="list-group" style="display: none; position: absolute;"></div>
             <p id="messageErrorDocente" style="display: none; color: red">*No se encontro el docente</p>
         </div>
         <div class="col-md-2">
@@ -139,6 +140,82 @@
             }
         }
     )
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('containerDocente');
+        const listaDocentes = document.getElementById('lista-docentes');
+        const message = document.getElementById('messageErrorDocente');
+
+        // selectMateria.addEventListener('change', (event) => {
+        //     docentes_relacionados = [];
+        //     const idMateriaSeleccionada = event.target.value;
+        //     extra_materias = materias;
+        //     grupos_relacionados = extra_materias.find(materia => materia['NOMBRE'] === idMateriaSeleccionada);
+        //     grupos_relacionados = [...new Set(grupos_relacionados['GRUPOS'])];
+            
+        //     for (let i = 0; i < docentes.length; i++) {
+        //         const docente = docentes[i];
+        //         for (let j = 0; j < docente['MATERIAS'].length; j++) {
+        //             const materia = docente['MATERIAS'][j];
+        //             if (materia['NOMBRE'] === idMateriaSeleccionada) {
+        //                 docentes_relacionados.push(docente);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     console.log('Grupos: ', grupos_relacionados);
+        //     console.log('Materias: ', materias);
+        //     console.log('Docentes: ', docentes_relacionados);
+        // });
+
+        container.addEventListener('keydown', (event) => {
+            if (event.target && event.target.matches('input[name="nombre"]')) {
+                const inputNombre = event.target;
+
+                listaDocentes.innerHTML = '';
+                listaDocentes.style.width = `${inputNombre.offsetWidth}px`;
+                listaDocentes.style.left = `${inputNombre.offsetLeft}px`;
+                listaDocentes.style.top = `${inputNombre.offsetTop + inputNombre.offsetHeight}px`;
+
+                if (inputNombre.value.toUpperCase()) {
+                    let filtro_lista = docentes.filter(docente => 
+                        docente['NOMBRE'].includes(inputNombre.value.toUpperCase())
+                    );
+                    if (filtro_lista.length > 0) {
+                        message.style.display = 'none';
+                        listaDocentes.style.display = 'block';
+                        filtro_lista.forEach(docente => {
+                            const item = document.createElement('a');
+                            item.className = 'list-group-item list-group-item-action';
+                            item.textContent = docente['NOMBRE'];
+                            item.addEventListener('click', () => {
+                                inputNombre.value = docente['NOMBRE'];
+                                listaDocentes.style.display = 'none';
+                            });
+                            listaDocentes.appendChild(item);
+                        });
+                    } else {
+                        listaDocentes.style.display = 'none';
+                        message.style.display = 'block';
+                    }
+                } else {
+                    listaDocentes.style.display = 'none';
+                }
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('#container') && !event.target.closest('#lista-docentes')) {
+                listaDocentes.style.display = 'none';
+            }
+        });
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('#container') && !event.target.closest('#lista-docentes')) {
+            listaDocentes.style.display = 'none';
+        }
+    });
 
     function agregarTabla(lista, tabla){
         lista.forEach(elemento => {

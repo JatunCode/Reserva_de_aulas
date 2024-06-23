@@ -9,6 +9,9 @@ class Relacion_DM extends Model
 {
     use HasFactory;
     protected $table = 'relacion_dm';
+    protected $primaryKey = 'ID_RELACION';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['ID_RELACION', 'ID_DOCENTE', 'ID_MATERIA', 'GRUPO'];
 
     function  dm_relacion_materia(){

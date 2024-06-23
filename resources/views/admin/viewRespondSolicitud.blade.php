@@ -49,11 +49,6 @@
                 <label for="motivo" class="form-label">Motivo</label>
                 <input type="text" name="motivo" class="form-control" readonly>
             </div>
-            
-            <div class="col-md-12" id="desc-modo">
-                <label for="desc" class="form-label">Descripcion</label>
-                <input type="textarea" name="desc" class="form-control" readonly>
-            </div>
         </div>
 
         <div class="row">
@@ -93,7 +88,7 @@
         })
 
         let nombres = []
-
+        console.log('Razones: ', actualizacion)
         soli_aten['NOMBRE_DOCENTES'].forEach(
             nombre => {
                 nombres.push(nombre['Nombre_docente'])
