@@ -351,7 +351,7 @@ return [
             'text'       => 'Visualizar mis reservas',
             'icon'       => 'fa fa-book',
             'icon_color' => 'green',
-            'route'      => 'docente.solicitud.normal',
+            'route'      => 'docente.reservas.listar',
             'can'    => 'docente',
         ],
         // [

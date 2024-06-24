@@ -39,6 +39,20 @@
                         <tbody id="tablaSolicitudes">
                         </tbody>
                     </table>
+                    <div id="reglas">
+                        <strong style="color: red">*Debe seleccionar una materia antes de seleccionar el docente</strong>
+                        <br>
+                        <strong style="color: blue">*Presione cualquier vocal para ver la lista de docentes</strong>
+                        <br>
+                        <strong style="color: red">*Solo se podra realizar reservas dos horas antes de la hora actual</strong>
+                        <br>
+                        <strong style="color: red">*Las solicitudes que se realicen los Sabados luego de las 12:45 seran canceladas de inmediato</strong>
+                        <br>
+                        <strong style="color: blue">*Las solicitudes que sean menores de 5 horas seran atedidas por el administrador</strong>
+                        <br>
+                        <strong style="color: red">*Las solicitudes que sean menores a un minuto de la hora actual y sigan pendientes se cancelaran</strong>
+                        <br>
+                    </div>
                 </div>
 
                 <!-- <div class="card-footer clearfix">
@@ -207,8 +221,12 @@
         });
 
         function actualizarTabla() {
+            const div_eliminar = document.getElementById('reglas');
             const fecha = filtroFechaInput.value;
             const aulaSeleccionada = ambiente.value;
+            if(div_eliminar){
+                div_eliminar.remove();
+            }
             const cadena = 'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
             console.log('Cadena fetch: ', cadena);
             if (fecha !== '' && aulaSeleccionada !== '') {
@@ -242,6 +260,7 @@
                     console.log("Solicitudes libres: ", solicitudes);
                 }
             }
+
         }
 
         function obtenerAmbientes(cant){
@@ -297,6 +316,7 @@
             const input_aula = this.querySelector('[name="aula"]');
             const dato_aula = (input_aula.options[input_aula.selectedIndex]) ? input_aula.options[input_aula.selectedIndex].value:'';
             const input_horario = this.querySelector('[name="horario"]').value;
+            const input_horario2 = this.querySelector('[name="horario"]');
             const input_grupo = this.querySelector('[name="grupo"]');
             let arreglo_horario = input_horario.split(" - ");
             let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
@@ -328,7 +348,8 @@
             }
 
             // Asignar un valor predeterminado al campo "modo"
-            document.getElementById('modo').value = 'Normal';
+
+            //document.getElementById('modo').value = 'Normal';
             // Obtener los datos del formulario y convertirlos en un objeto
             const formData = new FormData(this);
             const formDataObject = {};
@@ -367,15 +388,12 @@
             console.log('Bandera materia: ', banderaMateria);
             verificarDocente(input_nombre);
             console.log('Bandera nombre: ', banderaDocente);
-            verificarGrupo(input_grupo);
             console.log('Bandera grupo: ', banderaGrupo);
-            verificarCantidad(input_cant);
             console.log('Bandera cantidad: ', banderaCant);
-            verificarMotivo(dato_motivo);
+            verificarMotivo(input_motivo);
             console.log('Bandera motivo: ', banderaMotivo);
-            verificarFecha(input_fecha);
             console.log('Bandera fecha: ', banderaFecha);
-            verificarHorario(input_horario);
+            verificarHorario(input_horario2);
             console.log('Bandera horario: ', banderaHorario);
             bandera = banderaMateria && banderaDocente && banderaGrupo && banderaCant && banderaMotivo && banderaFecha && banderaHorario
             // Mostrar el modal de confirmación con los datos del formulario
@@ -450,6 +468,13 @@
 
     function sendNotificacion(data){
         const cuerpo = JSON.stringify(data['BODY'])
+        Swal.fire({
+            title: 'Enviando notificacion al o los docentes.',
+            text: 'Por favor, espera.',
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         fetch('http://127.0.0.1:8000/api/fetch/notificacion/store',
             {
                 method:'POST', 
@@ -463,6 +488,7 @@
             response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
         ).then(
             response => {
+                    Swal.close();
                     window.location.reload();
                     if (response.status == 200) {
                         return response;
@@ -509,7 +535,7 @@
         }else if(encontrado == false){
             banderaDocente = false;
             message.textContent = '*El docente no es de la materia';
-            message.style.display = 'none';
+            message.style.display = 'block';
         }else{
             banderaDocente = true;
             message.textContent = '';
@@ -518,8 +544,9 @@
     }
 
     function verificarGrupo(text){
+        const new_text = text.value;
         const message = document.getElementById('messageErrorGrupo');
-        if(text == ''){
+        if(new_text == ''){
             banderaGrupo = false;
             message.textContent = '*Debe completar el campo';
             message.style.display = 'block';
@@ -531,16 +558,17 @@
     }
 
     function verificarCantidad(text){
+        const new_text = text.value;
         const message = document.getElementById('messageErrorCantidad');
-        if(text == ''){
+        if(new_text == ''){
             banderaCant = false;
             message.textContent = '*Debe completar el campo';
             message.style.display = 'block';
-        }else if(parseInt(text, 10) <= 0){
+        }else if(parseInt(new_text, 10) <= 0){
             banderaCant = false;
             message.textContent = '*La cantidad debe ser mayor a 0';
             message.style.display = 'block';
-        }else if(parseInt(text, 10) < 1 || parseInt(text, 10) > 250){
+        }else if(parseInt(new_text, 10) < 1 || parseInt(new_text, 10) > 250){
             banderaCant = false;
             message.textContent = '*La cantidad debe ser entre 1 y 250';
             message.style.display = 'block';
@@ -563,8 +591,9 @@
     }
 
     function verificarFecha(text){
+        const new_text = text.value;
         const message = document.getElementById('messageErrorFecha');
-        if(text == ''){
+        if(new_text == ''){
             banderaFecha = false;
             message.style.display = 'block';
         }else{
@@ -575,13 +604,19 @@
 
     function verificarHorario(text){
         const message = document.getElementById('messageErrorHorario');
-        const hora = text.split(' - ');
-        const hora_inicio = (text!='') ? parseTime(hora[0]):'';
-        const hora_fin = (text!='') ? parseTime(hora[1]):'';
+        const new_text = text.value;
+        console.log('TExto del horario: ', new_text);
+        console.log('Tipo de texto: ', typeof new_text);
+
+        const hora = new_text.split(' - ');
+        const fecha_actual = new Date();
+        const hora_actual = fecha_actual.getHours() * 60 + fecha_actual.getMinutes();
+        const hora_inicio = (new_text!='') ? parseTime(hora[0]):'';
+        const hora_fin = (new_text!='') ? parseTime(hora[1]):'';
         const hora_min = parseTime('06:45');
         const hora_max = parseTime('21:45');
         
-        if(text === ''){
+        if(new_text === ''){
             banderaHorario = false;
             message.textContent = '*Debe ingresar o seleccionar un horario';
             message.style.display = 'block';
@@ -593,7 +628,11 @@
             banderaHorario = false;
             message.textContent = '*Rango de horario: 06:45 - 21:45';
             message.style.display = 'block';
-        } else {
+        } else if(hora_inicio.getHours() * 60 + hora_inicio.getMinutes() < hora_actual){
+            banderaHorario = false;
+            message.textContent = '*El horario que ingreso ya paso';
+            message.style.display = 'block';
+        }else{
             banderaHorario = true;
             message.textContent = '';
             message.style.display = 'none';

@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-<h1></h1>
+<h1>Visualizar reservas de docente</h1>
 @stop
 
 @section('content')
@@ -12,33 +12,68 @@
 
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Lista de Solicitudes disponibles</h3>
+        <form class="row">
+            <div class="form-group col-lg-4 col-md-3 align-self-center">
+                <label for="inputSearch" class="mr-2">Materia:</label>
+                <select type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
+                    <option value="" disabled selected>Seleccione una materia</option>
+                    <option value="TODAS LAS MATERIAS">TODAS LAS MATERIAS</option>
+                    @foreach($materias as $materia)
+                        <option value="{{ $materia['NOMBRE'] }}">{{ $materia['NOMBRE'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group col-lg-2 col-md-3 align-self-center">
+                <label for="selectMode" class="mr-2">Modo:</label>
+                <select class="form-control" id="selectMode">
+                    <option value="Todos" selected>Todos</option>
+                    <option value="NORMAL">Normal</option>
+                    <option value="URGENTE">Urgente</option>
+                </select>
+            </div>
+            <div class="form-group col-lg-2 col-md-3 align-self-center">
+                <label for="selectStatus" class="mr-2">Estado:</label>
+                <select class="form-control" id="selectStatus">
+                    <option value="Todos" selected>Todos</option>
+                    <option value="ACEPTADO">Reservado</option>
+                    <option value="PENDIENTE">Solicitando</option>
+                    <option value="CANCELADO">Cancelado</option>
+                </select>
+            </div>
+            <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
+                <label for="selectMode" class="mr-2"></label>
+                <button type="button" id="btnBuscar" class="btn btn-primary w-100" style="background-color: green">Buscar</button>
+    
+            </div>
+        </form>
     </div>
 
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th style="width: 10px">#</th>
+                    <th style="width: 10px">Fecha solicitud</th>
                     <th>Aula</th>
                     <th>Horario</th>
-                    <th>Fecha </th>
-                    <th style="width: 40px">Acciones</th>
+                    <th>Fecha reserva</th>
+                    <th>Materia</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach($solicitudes as $solicitud)
+            <tbody id='tablaReservas'>
+                @foreach($solis_no_reser as $solicitud)
                 <tr>
-                    <td>{{ $solicitud->id }}</td>
-                    <td>{{ $solicitud->aula }}</td>
-                    <td>{{ $solicitud->horario }}</td>
-                    <td>{{ $solicitud->fecha }}</td>
+                    <td>{{ $solicitud['FECHA_HORASOLI'] }}</td>
+                    <td>{{ $solicitud['AMBIENTE'] }}</td>
+                    <td>{{ $solicitud['HORARIO'] }}</td>
+                    <td>{{ $solicitud['FECHA_RESERVA'] }}</td>
+                    <td>{{ $solicitud['MATERIA'] }}</td>
                     <td>
-                        <button class="btn btn-sm btn-success solicitar-btn" type="button"
-                            data-aula="{{ $solicitud->aula }}" data-horario="{{ $solicitud->horario }}"
-                            data-fecha="{{ $solicitud->fecha }}" data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-                            Solicitar
+                        <button class="btn btn-sm btn-info solicitar-btn" type="button"
+                            data-id="{{ $solicitud['ID'] }}" data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+                            value="{{ $solicitud['ID'] }}">
+                            VER INFORMACION
                         </button>
                     </td>
                 </tr>
@@ -59,7 +94,7 @@
 </div>
 
 
-@include('docente.components.formularioSolicitud')
+@include('docente.components.formularioReserva')
 
 
 
@@ -79,27 +114,117 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Obtener los botones de solicitud
-    var solicitarButtons = document.querySelectorAll(".solicitar-btn");
-    // Agregar un event listener a cada botón
-    solicitarButtons.forEach(function(button) {
-        button.addEventListener("click", function() {
-            // Obtener los datos de la fila asociados al botón
-            var aula = button.getAttribute("data-aula");
-            var horario = button.getAttribute("data-horario");
-            var fecha = button.getAttribute("data-fecha");
-            console.log(fecha)
-            // Rellenar el formulario con los datos de la fila
-            document.getElementById("aula").value = aula;
-            document.getElementById("horario").value = horario;
-            document.getElementById("fecha").value = fecha;
+    const soli_pend = @json($solis_no_reser);
+    let soli_aten = null;
+    console.log('Solicitudes: ', soli_pend);
+    document.addEventListener("DOMContentLoaded", function() {
+        // Obtener los botones de solicitud
+        var solicitarButtons = document.querySelectorAll(".solicitar-btn");
+        // Agregar un event listener a cada botón
+        solicitarButtons.forEach(function(button) {
+            button.addEventListener("click", function(event) {
+                const id = event.target.value;
+                const canva = document.getElementById('offcanvasRight');
+                canva.style.setProperty('width', '500px');
+                soli_aten = soli_pend.find(elemento => elemento['ID'] == id);
+                console.log('Solicitud: ', soli_aten);
+                if(soli_aten){
+                    const docentes = document.getElementById('docentes');
+                    const fechasoli = document.querySelector('[name="fechasoli"]');
+                    const fechares = document.querySelector('[name="fechares"]');
+                    const capacidad = document.querySelector('[name="capacidad"]');
+                    const grupos = document.querySelector('[name="grupos"]');
+                    const materia = document.querySelector('[name="materia"]');
+                    const ambiente = document.querySelector('[name="ambiente"]');
+                    const horario = document.querySelector('[name="horario"]');
+                    const motivo = document.querySelector('[name="motivo"]');
+                    const modo = document.querySelector('[name="modo"]');
+                    const div = document.getElementById('desc-modo');;
+                    docentes.innerHTML = '';
+                    soli_aten['NOMBRE_DOCENTES'].forEach(element => {
+                        docentes.innerHTML +=`<input type="text" class="form-control" value="${element['Nombre_docente']}" readonly>`
+                    });
+                    fechasoli.value = soli_aten['FECHA_HORASOLI'];
+                    fechares.value = soli_aten['FECHA_RESERVA'];
+                    capacidad.value = soli_aten['CANTIDAD'];
+                    grupos.value = soli_aten['GRUPOS'];
+                    materia.value = soli_aten['MATERIA'];
+                    ambiente.value = soli_aten['AMBIENTE'];
+                    horario.value = soli_aten['HORARIO'];
+                    motivo.value = soli_aten['MOTIVO'];
+                    modo.value = soli_aten['MODO'];
+                }else{
+                    console.log("Fallo al obtener los datos alv no puede ser >:VVVVVVVV");
+                }
+            });
         });
     });
-});
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("btnBuscar").addEventListener('click', function() {
+            const input_busqueda = document.getElementById('inputSearch')
+            const input_modo = document.getElementById('selectMode')
+            const input_estado = document.getElementById('selectStatus')
+            console.log('Input modo: ', input_modo)
+            const materia = input_busqueda.options[input_busqueda.selectedIndex].value
+            const modo_value = input_modo.options[input_modo.selectedIndex].value
+            const estado_value = input_estado.options[input_estado.selectedIndex].value
+
+            console.log('Dato busqueda: ', input_busqueda)
+            console.log('Dato modo: ', modo_value)
+
+            const filtroSolis = soli_pend.filter(solicitud => {
+                                const materiaMatch = (materia === 'TODAS LAS MATERIAS' || solicitud.MATERIA == materia.toUpperCase())
+                                const modoMatch = (modo_value === 'Todos' || solicitud.MODO === modo_value.toUpperCase())
+                                const estadoMatch = (estado_value === 'Todos' || solicitud.ESTADO == estado_value.toUpperCase())
+                                return materiaMatch && modoMatch && estadoMatch
+                                })
+            const tabla = document.getElementById('tablaReservas')
+            console.log('Arreglo ambientes: ', filtroSolis)
+            agregarTabla(filtroSolis, tabla)
+        });
+    });
+
+    function agregarTabla(data, tabla) {
+        // Eliminar los elementos existentes en el cuerpo de la tabla
+        tabla.innerHTML = '';
+        let contador = 1;
+        // Iterar sobre los nuevos datos y agregar cada solicitud como una fila en la tabla
+        data.forEach(solicitud => {
+            // Crear una nueva fila
+            var row = document.createElement('tr');
+            
+            // Agregar las celdas con los datos de la solicitud a la fila
+            row.innerHTML = `
+                
+                <td>${solicitud['FECHA_HORASOLI']}</td>
+                <td>${solicitud['AMBIENTE']}</td>
+                <td>${solicitud['HORARIO']}</td>
+                <td>${solicitud['FECHA_RESERVA']}</td>
+                <td>${solicitud['MATERIA']}</td>
+                <td >
+                    <span class="btn  btn-sm btn-block" style="background-color: ${solicitud['MODO'] === 'NORMAL' ? '#198754' : '#dc3545'};color: white">
+                        ${(isObject(solicitud['MODO']) || solicitud['MODO'].includes('URGENTE'))? 'URGENTE': 'NORMAL'}
+                    </span>
+                </td>
+
+                <td style="width: 40px"><button class="btn btn-sm btn-info solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+                    data-id="${solicitud['ID']}" value="${solicitud['ID']}">Atender</button>
+                </td>
+            `;
+            
+            // Agregar la fila al cuerpo de la tabla
+            tabla.appendChild(row);
+        });
+    }
+
+    function isObject(params) {
+        return typeof params === "object" && params !== null
+    }
 </script>
 
-
+{{-- 
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -240,6 +365,6 @@ document.addEventListener('DOMContentLoaded', function() {
 function insertAfter(newNode, referenceNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
-</script>
+</script> --}}
 
 @stop

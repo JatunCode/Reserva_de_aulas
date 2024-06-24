@@ -26,7 +26,7 @@
 
     <div class="col-6" id="div-grupo">
         <label for="grupo" class="form-label">Grupo(s):</label>
-        <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3">
+        <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3" onchange="verificarGrupo(this)">
         <div id="listaGrupos" class="list-group" style="display: none; position: absolute;"></div>
         <p id="messageErrorGrupo" style="display: none ;color: red"></p>
     </div>
@@ -34,7 +34,7 @@
     <div class="col-md-6">
         <label for="cantidad_estudiantes" class="form-label">N° de Estudiantes:</label>
         <input type="number" class="form-control" id="cantidad_estudiantes" name="cantidad_estudiantes"
-            placeholder="Ingrese la cantidad de estudiantes">
+            placeholder="Ingrese la cantidad de estudiantes" onchange="verificarCantidad(this)">
             <p id="messageErrorCantidad" style="color: red; display: none">*Debe ingresar la cantidad</p>
     </div>
     <div class="col-md-12">
@@ -53,7 +53,7 @@
     </div>
     <div class="col-md-6">
         <label for="filtroFecha">Fecha:</label>
-        <input type="date" class="form-control" id="filtroFecha" name="filtroFecha" min="{{ date('Y-m-d') }}">
+        <input type="date" class="form-control" id="filtroFecha" name="filtroFecha" min="{{ date('Y-m-d') }}" onchange="verificarFecha(this)">
         <p id="messageErrorFecha" style="color: red; display: none">*Debe seleccionar una fecha</p>
         <!-- Campo oculto para enviar el valor de "modo" -->
         <!-- <input type="hidden" id="modo" name="modo"> -->
@@ -74,7 +74,7 @@
 
     <div class="col-6">
         <label for="horario" class="form-label">Horario:</label>
-        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario">
+        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario" onchange="verificarHorario(this)">
         <p id="messageErrorHorario" style="color: red; display: none">*Debe seleccionar la materia</p>
     </div>
 

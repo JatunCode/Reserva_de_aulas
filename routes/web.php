@@ -123,11 +123,13 @@ Route::prefix('docente')
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
     //Route::get('/reservas', [ReservasController::class, 'index'])->name('docente.reservas');
     //Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
-    Route::get('/solicitudes/cancelar', [ReservasController::class, 'cancelar_solicitud'])->name('docente.solicitud.cancelar');
-    Route::put('/solicitudes/{solicitud}/cancelar', [ReservasController::class, 'cancelar'])->name('docente.reservas.cancelar');
+    Route::post('/notificacion/store', [NotificacionController::class, 'store'])->name('send.notificaciones');
+
+    Route::get('/solicitudes/cancelar', [ReservasController::class, 'index'])->name('docente.solicitud.cancelar');
+    Route::put('/solicitud/cancelar', [ReservasController::class, 'store'])->name('docente.reservas.cancelar');
 
     //Hu registro reservas
-    Route::get('/registroReservas', [ReservasController::class, 'registroReservas'])->name('docente.registroReservas');
+    Route::get('/reservas', [ReservasController::class, 'indexCancelar'])->name('docente.reservas.listar');
     Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
     Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
         

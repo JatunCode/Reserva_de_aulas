@@ -39,6 +39,20 @@
                         <tbody id="tablaSolicitudes">
                         </tbody>
                     </table>
+                    <div id="reglas">
+                        <strong style="color: red">*Debe seleccionar una materia antes de seleccionar el docente</strong>
+                        <br>
+                        <strong style="color: blue">*Presione cualquier vocal para ver la lista de docentes</strong>
+                        <br>
+                        <strong style="color: red">*Solo se podra realizar reservas dos horas antes de la hora actual</strong>
+                        <br>
+                        <strong style="color: red">*Las solicitudes que se realicen los Sabados luego de las 12:45 seran canceladas de inmediato</strong>
+                        <br>
+                        <strong style="color: blue">*Las solicitudes que sean menores de 5 horas seran atedidas por el administrador</strong>
+                        <br>
+                        <strong style="color: red">*Las solicitudes que sean menores a un minuto de la hora actual y sigan pendientes se cancelaran</strong>
+                        <br>
+                    </div>
                 </div>
 
                 <!-- <div class="card-footer clearfix">
@@ -194,8 +208,6 @@
             if (fechaSeleccionada > fechaActual) {
                 // Si la fecha seleccionada es mayor a la fecha actual + 2 días, establecer modo como "Normal"
                 modoInput.value = 'Normal';
-                // Ocultar el campo de razón
-                campoRazon.style.display = 'none';
             } else {
                 // Si la fecha seleccionada está dentro de los 2 días próximos, establecer modo como "Urgente"
                 modoInput.value = 'Urgente';
@@ -209,8 +221,12 @@
         });
 
         function actualizarTabla() {
+            const div_eliminar = document.getElementById('reglas');
             const fecha = filtroFechaInput.value;
             const aulaSeleccionada = ambiente.value;
+            if(div_eliminar){
+                div_eliminar.remove();
+            }
             const cadena = 'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
             console.log('Cadena fetch: ', cadena);
             if (fecha !== '' && aulaSeleccionada !== '') {
@@ -244,6 +260,7 @@
                     console.log("Solicitudes libres: ", solicitudes);
                 }
             }
+
         }
 
         function obtenerAmbientes(cant){
@@ -272,6 +289,14 @@
 </script>
 
 <script>
+    let banderaMateria = false;
+    let banderaDocente = false;
+    let banderaGrupo = false;
+    let banderaCant = false;
+    let banderaMotivo = false;
+    let banderaFecha = false;
+    let banderaHorario = false;
+
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('solicitudForm').addEventListener('submit', function(event) {
             // Evitar que el formulario se envíe automáticamente
@@ -287,10 +312,11 @@
             const dato_motivo = input_motivo.options[input_motivo.selectedIndex].value;
             const input_fecha = this.querySelector('[name="filtroFecha"]').value;
             const input_modo = this.querySelector('[name="modo"]').value;
-            let prioridad = (input_modo.toUpperCase() != "NORMAL") ? {"URGENTE" : input_motivo} : {"NORMAL" : "Normal"};
+            let prioridad = (input_modo.toUpperCase() != "NORMAL") ? {"URGENTE" : dato_motivo} : {"NORMAL" : "Normal"};
             const input_aula = this.querySelector('[name="aula"]');
-            const dato_aula = input_aula.options[input_aula.selectedIndex].value;
+            const dato_aula = (input_aula.options[input_aula.selectedIndex]) ? input_aula.options[input_aula.selectedIndex].value:'';
             const input_horario = this.querySelector('[name="horario"]').value;
+            const input_horario2 = this.querySelector('[name="horario"]');
             const input_grupo = this.querySelector('[name="grupo"]');
             let arreglo_horario = input_horario.split(" - ");
             let arreglo_nombres = Array.from(input_nombre).map(element => element.value);
@@ -322,7 +348,8 @@
             }
 
             // Asignar un valor predeterminado al campo "modo"
-            document.getElementById('modo').value = 'Normal';
+
+            //document.getElementById('modo').value = 'Normal';
             // Obtener los datos del formulario y convertirlos en un objeto
             const formData = new FormData(this);
             const formDataObject = {};
@@ -357,21 +384,35 @@
                 'GRUPOS':JSON.stringify(input_grupo)
             };
 
+            verificarMateria(dato_materia);
+            console.log('Bandera materia: ', banderaMateria);
+            verificarDocente(input_nombre);
+            console.log('Bandera nombre: ', banderaDocente);
+            console.log('Bandera grupo: ', banderaGrupo);
+            console.log('Bandera cantidad: ', banderaCant);
+            verificarMotivo(input_motivo);
+            console.log('Bandera motivo: ', banderaMotivo);
+            console.log('Bandera fecha: ', banderaFecha);
+            verificarHorario(input_horario2);
+            console.log('Bandera horario: ', banderaHorario);
+            bandera = banderaMateria && banderaDocente && banderaGrupo && banderaCant && banderaMotivo && banderaFecha && banderaHorario
             // Mostrar el modal de confirmación con los datos del formulario
-            Swal.fire({
-                icon: 'info',
-                title: 'Confirmación de envío',
-                html: modalContent,
-                showCancelButton: true,
-                confirmButtonText: 'Enviar',
-                cancelButtonText: 'Cancelar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Enviar el formulario si se confirma la acción
-                    console.log("Formato del json: ", json_send);
-                    sendForm(json_send);
-                }
-            });
+            if(bandera){
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Confirmación de envío',
+                    html: modalContent,
+                    showCancelButton: true,
+                    confirmButtonText: 'Enviar',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Enviar el formulario si se confirma la acción
+                        console.log("Formato del json: ", json_send);
+                        sendForm(json_send);
+                    }
+                });
+            }
         });
     });
 
@@ -385,8 +426,8 @@
             'AMBIENTE':formData['AMBIENTE']
         }
         const json_send = JSON.stringify(formData)
-        
-        fetch(document.getElementById('solicitudForm').action, {
+        console.log('Datos: ', json_send);
+        fetch('http://127.0.0.1:8000/admin/solicitud/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -417,7 +458,7 @@
             }
         }).then(
             data => {
-                console.log("Datos: ", data)
+                console.log("Datos: ", data);
             }
         ).catch(error => {
             console.error('Error:', error);
@@ -427,7 +468,14 @@
 
     function sendNotificacion(data){
         const cuerpo = JSON.stringify(data['BODY'])
-        fetch('http://127.0.0.1:8000/api/fetch/notificacion/store',
+        Swal.fire({
+            title: 'Enviando notificacion al o los docentes.',
+            text: 'Por favor, espera.',
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        fetch(document.getElementById('solicitudForm').action,
             {
                 method:'POST', 
                 headers:{
@@ -440,6 +488,7 @@
             response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
         ).then(
             response => {
+                    Swal.close();
                     window.location.reload();
                     if (response.status == 200) {
                         return response;
@@ -449,14 +498,156 @@
             }
         ).catch(
             error => {
-                console.log('Error del servidor: ', error)
+                console.log('Error del servidor: ', error);
             }
         )
     }
+
+    function verificarMateria(text){
+        const message = document.getElementById('messageErrorMateria');
+        if(text == 'ninguno'){
+            banderaMateria = false;
+            message.style.display = 'block';
+        }else{
+            banderaMateria = true;
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarDocente(inputsDocentes){
+        const message = document.getElementById('messageErrorDocente');
+        let allFill = true;
+        let encontrado = true;
+        inputsDocentes.forEach(input => {
+            if (input.value.trim() === '') {
+                allFill = false;
+            }else if(!docentes_relacionados.find(docente => docente['NOMBRE_DOCENTE'] == input.value.trim())){
+                encontrado = false;
+            }
+        });
+
+        console.log('Bandera allfill: ', allFill);
+        console.log('Bandera encontrado: ', encontrado);
+        if(allFill == false){
+            banderaDocente = false;
+            message.textContent = '*Debe completar los campos vacios o eliminarlos';
+            message.style.display = 'block';
+        }else if(encontrado == false){
+            banderaDocente = false;
+            message.textContent = '*El docente no es de la materia';
+            message.style.display = 'block';
+        }else{
+            banderaDocente = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarGrupo(text){
+        const new_text = text.value;
+        const message = document.getElementById('messageErrorGrupo');
+        if(new_text == ''){
+            banderaGrupo = false;
+            message.textContent = '*Debe completar el campo';
+            message.style.display = 'block';
+        }else{
+            banderaGrupo = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarCantidad(text){
+        const new_text = text.value;
+        const message = document.getElementById('messageErrorCantidad');
+        if(new_text == ''){
+            banderaCant = false;
+            message.textContent = '*Debe completar el campo';
+            message.style.display = 'block';
+        }else if(parseInt(new_text, 10) <= 0){
+            banderaCant = false;
+            message.textContent = '*La cantidad debe ser mayor a 0';
+            message.style.display = 'block';
+        }else if(parseInt(new_text, 10) < 1 || parseInt(new_text, 10) > 250){
+            banderaCant = false;
+            message.textContent = '*La cantidad debe ser entre 1 y 250';
+            message.style.display = 'block';
+        }else{
+            banderaCant = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarMotivo(text){
+        const message = document.getElementById('messageErrorMotivo');
+        if(text == 'ninguno'){
+            banderaMotivo = false;
+            message.style.display = 'block';
+        }else{
+            banderaMotivo = true;
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarFecha(text){
+        const new_text = text.value;
+        const message = document.getElementById('messageErrorFecha');
+        if(new_text == ''){
+            banderaFecha = false;
+            message.style.display = 'block';
+        }else{
+            banderaFecha = true;
+            message.style.display = 'none';
+        }
+    }
+
+    function verificarHorario(text){
+        const message = document.getElementById('messageErrorHorario');
+        const new_text = text.value;
+        console.log('TExto del horario: ', new_text);
+        console.log('Tipo de texto: ', typeof new_text);
+
+        const hora = new_text.split(' - ');
+        const fecha_actual = new Date();
+        const hora_actual = fecha_actual.getHours() * 60 + fecha_actual.getMinutes();
+        const hora_inicio = (new_text!='') ? parseTime(hora[0]):'';
+        const hora_fin = (new_text!='') ? parseTime(hora[1]):'';
+        const hora_min = parseTime('06:45');
+        const hora_max = parseTime('21:45');
+        
+        if(new_text === ''){
+            banderaHorario = false;
+            message.textContent = '*Debe ingresar o seleccionar un horario';
+            message.style.display = 'block';
+        } else if(hora_inicio >= hora_fin){
+            banderaHorario = false;
+            message.textContent = '*Formato de horario incorrecto';
+            message.style.display = 'block';
+        } else if(hora_inicio < hora_min || hora_max < hora_fin){
+            banderaHorario = false;
+            message.textContent = '*Rango de horario: 06:45 - 21:45';
+            message.style.display = 'block';
+        } else if(hora_inicio.getHours() * 60 + hora_inicio.getMinutes() < hora_actual){
+            banderaHorario = false;
+            message.textContent = '*El horario que ingreso ya paso';
+            message.style.display = 'block';
+        }else{
+            banderaHorario = true;
+            message.textContent = '';
+            message.style.display = 'none';
+        }
+    }
+
+    function parseTime(timeString) {
+        if(timeString != ''){
+            const [hours, minutes] = timeString.split(':').map(Number);
+            const date = new Date();
+            date.setHours(hours, minutes, 0, 0);
+            return date;
+        }
+    }
 </script>
-
-
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">
 </script>
@@ -503,6 +694,13 @@
     function insertAfter(newNode, referenceNode) {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
+
+    $(document).ready(function() {
+        window.Echo.channel('admin-channel')
+            .listen('SolicitudCreada', (e) => {
+                alert('Nueva solicitud creada por: ' + e.solicitud.nombre_docente);
+            });
+    });
 </script>
 
 @stop

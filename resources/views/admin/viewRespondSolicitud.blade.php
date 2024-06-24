@@ -137,7 +137,7 @@
                 title: `Confirmación de ${(text == 'ACEPTADO') ? 'aceptacion.' : 'cancelacion.'}`,
                 html: modalContent,
                 showCancelButton: true,
-                confirmButtonText: 'Enviar',
+                confirmButtonText: 'Confirmar',
                 cancelButtonText: 'Cancelar',
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -199,6 +199,13 @@
     }
     function sendNotificacion(data){
         const cuerpo = JSON.stringify(data['BODY'])
+        Swal.fire({
+            title: 'Enviando notificacion al o los docentes.',
+            text: 'Por favor, espera.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
         fetch('http://127.0.0.1:8000/admin/notificacion/store',
             {
                 method:'POST', 
@@ -212,9 +219,10 @@
             response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
         ).then(
             response => {
-                    window.location.reload();
+                    Swal.close()
+                    window.location.reload()
                     if (response.status == 200) {
-                        return response;
+                        return response
                     } else {
                         console.log('Response: ', response);
                     }
