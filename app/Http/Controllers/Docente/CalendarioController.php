@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Docente;
 use DateTime;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\Automatizacion;
 use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Docente\Solicitudes;
 use App\Models\Admin\Relacion_DAHM;
@@ -18,6 +19,8 @@ class CalendarioController extends Controller
      */
     public function index()
     {
+        $atumatizar = new Automatizacion();
+        $atumatizar->updateAll();
         // ? TODOS LOS HORARIOS Obtener todas las relaciones_dahm filtradas por el ID del docente
         // $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
         //                             ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')

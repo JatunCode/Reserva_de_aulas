@@ -175,16 +175,22 @@
     document.addEventListener('DOMContentLoaded', () => {
         const tableRows = document.querySelectorAll('#tableAmbientes tr');
         const hora_actual = new Date();
+        console.log('Hora actual: ', hora_actual.getTime());
         const hora_mas_cinco = new Date(hora_actual);
         hora_mas_cinco.setHours(hora_actual.getHours() + 5);
-
+        console.log('Hora mas cinco: ', hora_mas_cinco.getTime());
+        
         tableRows.forEach(element => {
-            const text = element.querySelector('.modo span').textContent;
-            const hora = element.querySelector('.reserva').textContent.split(' ')[1];
-            const hora_reserva = new Date();
-            hora_reserva.setHours(...hora.split(':'));
+            const text = element.querySelector('.modo span').textContent.trim();
+            const reserva_text = element.querySelector('.reserva').textContent;
+            const hora = reserva_text.split(' ')[1];
             
-            if (text === 'URGENTE' && hora_reserva >= hora_actual && hora_reserva < hora_mas_cinco) {
+            const [hours, minutes] = hora.split(':');
+            const hora_reserva = new Date(reserva_text);
+            
+            console.log('Hora de reserva: ', hora_reserva.getTime());
+            if (text === 'URGENTE' && hora_reserva > hora_actual && hora_reserva < hora_mas_cinco) {
+                console.log('Solicitud: ', element);
                 element.classList.add('blink');
             }
         });

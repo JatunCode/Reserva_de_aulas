@@ -35,23 +35,19 @@ class ReservasController extends Controller
                 'solicitud_relacion_ambiente',
                 'solicitud_relacion_materia',
             )->where('ESTADO', 'PENDIENTE')->where('PRIORIDAD', 'LIKE', '%NORMAL%')->orderBy('FECHAHORA_SOLI')->get();
+            $solicitudes = $solicitudes->merge($solicitudes_urgentes)->merge($solicitudes_normales);
         }else{
-            $solicitudes_urgentes = Solicitud::with(
+            $solicitudes = Solicitud::with(
                 'solicitud_relacion_ambiente',
                 'solicitud_relacion_materia',
             )->where('ESTADO', 'PENDIENTE')->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")
-            ->where('PRIORIDAD', 'URGENTE')->orderBy('FECHAHORA_SOLI')->get();
-            $solicitudes_normales = Solicitud::with(
-                'solicitud_relacion_ambiente',
-                'solicitud_relacion_materia',
-            )->where('ESTADO', 'PENDIENTE')->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")
-            ->where('PRIORIDAD', 'NORMAL')->orderBy('FECHAHORA_SOLI')->get();
-        }
-        $solicitudes = $solicitudes->merge($solicitudes_urgentes)->merge($solicitudes_normales);
-        $materias = Materia::whereHas('materia_relacion_dm', 
+            ->orderBy('FECHAHORA_SOLI')->get();
+
+            $materias = Materia::whereHas('materia_relacion_dm', 
                     function($query)use($usuario){
                         $query->where('ID_DOCENTE', $usuario->ID_DOCENTE);
                     })->get(['NOMBRE']);
+        }
         $solicitudes_estructuradas = [];
         $nombre_docentes = [];
         foreach($solicitudes as $solicitud){
@@ -84,11 +80,22 @@ class ReservasController extends Controller
 
     public function indexCancelar()
     {
-        $buscador =  new EncontrarTodo();
-        $solicitudes = Solicitud::with(
-                        'solicitud_relacion_ambiente',
-                        'solicitud_relacion_materia',
-                        )->where('ESTADO', 'ACEPTADO')->orderBy('FECHA_RE')->get();
+        $usuario = Auth::user();
+        $buscador = new EncontrarTodo();
+        $materias = Materia::whereHas('materia_relacion_dm', 
+                    function($query)use($usuario){
+                        $query->where('ID_DOCENTE', $usuario->ID_DOCENTE);
+                    })->get(['NOMBRE']);
+        $solicitudes = ($usuario->cargo == 'admin') ? Solicitud::with(
+            'solicitud_relacion_ambiente',
+            'solicitud_relacion_materia',
+            )->where('ESTADO', 'ACEPTADO')->orderBy('FECHA_RE')->get() : 
+            Solicitud::with(
+                'solicitud_relacion_ambiente',
+                'solicitud_relacion_materia',
+                )
+            ->where('ESTADO', 'ACEPTADO')
+            ->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")->orderBy('FECHA_RE')->get();
         $solicitudes_estructuradas = [];
         $nombre_docentes = [];
         foreach($solicitudes as $solicitud){
@@ -114,7 +121,11 @@ class ReservasController extends Controller
             ];
         }
         $razones = Razones::all();
-        return view('admin.layouts.reservasCancelar', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]);
+        if($usuario->cargo == 'admin'){
+            return view('admin.layouts.reservasCancelar', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]);
+        }else{
+            return view('docente.reserva', ['solis_no_reser' => $solicitudes_estructuradas, 'materias' => $materias]);
+        }
     }
    
     public function datos(Request $request)
@@ -183,7 +194,7 @@ class ReservasController extends Controller
         $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICITUD);
         try{
             $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store(json_decode($request->ACTUALIZACIONES)->LISTA_NO_REG):[];
-            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg):'Ninguno';
+            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge(isset($request->ACTUALIZACIONES['LISTA_REG']) ? $request->ACTUALIZACIONES['LISTA_REG'] : [], $razones_no_reg):'Ninguno';
             Reserva::create([
                 'ID_RESERVA' => $id,
                 'ID_SOLICITUD' => $request->ID_SOLICITUD,
