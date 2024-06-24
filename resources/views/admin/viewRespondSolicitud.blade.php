@@ -5,64 +5,71 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <div class="row">
-            <div class="col-md-12" >
-                <label for="docentes" class="form-label">Docentes</label>
-                <div id="docentes">
-
+        <div class="card">
+            <div class="card-header">
+                <strong>Informacion de la solicitud</strong>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12" >
+                        <label for="docentes" class="form-label">Docentes</label>
+                        <div id="docentes">
+        
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fechasoli" class="form-label">Fecha solicitud</label>
+                        <input type="text" name="fechasoli" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fechares" class="form-label">Fecha reserva</label>
+                        <input type="text" name="fechares" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="capacidad" class="form-label">Capacidad</label>
+                        <input type="text" name="capacidad" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="grupos" class="form-label">Grupos</label>
+                        <input type="text" name="grupos" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="horario" class="form-label">Horario</label>
+                        <input type="text" name="horario" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="modo" class="form-label">Modo</label>
+                        <input type="text" name="modo" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="materia" class="form-label">Materia</label>
+                        <input type="text" name="materia" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ambiente" class="form-label">Ambiente</label>
+                        <select name="ambiente" class="form-control" readonly>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="motivo" class="form-label">Motivo</label>
+                        <input type="text" name="motivo" class="form-control" readonly>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <label for="fechasoli" class="form-label">Fecha solicitud</label>
-                <input type="text" name="fechasoli" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="fechares" class="form-label">Fecha reserva</label>
-                <input type="text" name="fechares" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="capacidad" class="form-label">Capacidad</label>
-                <input type="text" name="capacidad" class="form-control" readonly>
-            </div>
-            <div class="col-md-3">
-                <label for="grupos" class="form-label">Grupos</label>
-                <input type="text" name="grupos" class="form-control" readonly>
-            </div>
-            <div class="col-md-5">
-                <label for="horario" class="form-label">Horario</label>
-                <input type="text" name="horario" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="modo" class="form-label">Modo</label>
-                <input type="text" name="modo" class="form-control" readonly>
-            </div>
-            <div class="col-md-12">
-                <label for="materia" class="form-label">Materia</label>
-                <input type="text" name="materia" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="ambiente" class="form-label">Ambiente</label>
-                <select name="ambiente" class="form-control" readonly>
-                </select>
-            </div>
-            <div class="col-md-8">
-                <label for="motivo" class="form-label">Motivo</label>
-                <input type="text" name="motivo" class="form-control" readonly>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
-                <button type="button" class="btn btn-primary d-inline-block w-75" name="confirmar" style="background-color: green" onclick="cambiarEstado(this)" value="ACEPTADO">Confirmar</button>
+                <button type="button" class="btn btn-success d-inline-block w-75" name="confirmar" style="background-color: green" onclick="cambiarEstado(this)" value="ACEPTADO">CONFIRMAR</button>
             </div>
             <div class="col-md-6">
-                <button class="btn btn-primary d-inline-block w-75" type="button" data-bs-toggle="offcanvas"
+                <button class="btn btn-danger d-inline-block w-75" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasRightRa" aria-controls="offcanvasRight"
-                        style="background-color:red" >Cancelar</button>
+                        style="background-color:red" >CANCELAR</button>
             </div>
         </div>
         <div>
-            <button type="button" class="btn btn-primary d-inline-block w-75" name="atras" style="background-color:red" onclick="cerrarMain()">Atras</button>
+            <button type="button" class="btn btn-danger d-inline-block w-100" name="atras" style="background-color:red" onclick="cerrarMain()">ATRAS</button>
         </div>
     </div>
 </div>
@@ -127,7 +134,7 @@
 
             Swal.fire({
                 icon: 'info',
-                title: 'Confirmación de modificacion',
+                title: `Confirmación de ${(text == 'ACEPTADO') ? 'aceptacion.' : 'cancelacion.'}`,
                 html: modalContent,
                 showCancelButton: true,
                 confirmButtonText: 'Enviar',

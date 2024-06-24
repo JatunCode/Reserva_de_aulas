@@ -100,11 +100,12 @@
             const lista_grupos = document.getElementById('listaGrupos');
             extra_materias = materias;
             grupos_relacionados = extra_materias.find(materia => materia['NOMBRE'] === idMateriaSeleccionada);
-            grupos_relacionados = grupos_relacionados['GRUPOS'].filter((item, index, self) =>
-                                                                            index === self.findIndex((t) => (
-                                                                                t.GRUPO === item.GRUPO && t.ID_MATERIA === item.ID_MATERIA && t.NOMBRE === item.NOMBRE
-                                                                            ))
-                                                                        );
+            grupos_relacionados = grupos_relacionados['GRUPOS'].filter(
+                (item, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.GRUPO === item.GRUPO && t.ID_MATERIA === item.ID_MATERIA && t.NOMBRE === item.NOMBRE
+                    ))
+                );
             
             for (let i = 0; i < docentes.length; i++) {
                 const docente = docentes[i];
@@ -122,7 +123,7 @@
             console.log('Lista de grupos: ', lista_grupos);
         });
 
-        container.addEventListener('keyup', (event) => {
+        container.addEventListener('input', (event) => {
             if (event.target && event.target.matches('input[name="nombre"]')) {
                 const inputNombre = event.target;
 
