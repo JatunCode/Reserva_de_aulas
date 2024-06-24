@@ -7,80 +7,88 @@
     <div class="offcanvas-body">
         <div class="row">
             <div class="col-md-6">
-                <div class="card body">
-                    <div class="row">
-                        <div class="col-md-12" >
-                            <label for="docentes" class="form-label">Docentes</label>
-                            <div id="docentes">
-            
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Informacion de la reserva</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12" >
+                                <label for="docentes" class="form-label">Docentes</label>
+                                <div id="docentes">
+                
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="fechasoli" class="form-label">Fecha solicitud</label>
-                            <input type="text" name="fechasoli" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="fechares" class="form-label">Fecha reserva</label>
-                            <input type="text" name="fechares" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="capacidad" class="form-label">Capacidad</label>
-                            <input type="text" name="capacidad" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="grupos" class="form-label">Grupos</label>
-                            <input type="text" name="grupos" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-12">
-                            <label for="materia" class="form-label">Materia</label>
-                            <input type="text" name="materia" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="ambiente" class="form-label">Ambiente</label>
-                            <input type="text" name="ambiente" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-5">
-                            <label for="horario" class="form-label">Horario</label>
-                            <input type="text" name="horario" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-7">
-                            <label for="motivo" class="form-label">Motivo</label>
-                            <input type="text" name="motivo" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="modo" class="form-label">Modo</label>
-                            <input type="text" name="modo" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-12" id="desc-modo">
-                            <label for="desc" class="form-label">Descripcion</label>
-                            <input type="textarea" name="desc" class="form-control" readonly>
+                            <div class="col-md-4">
+                                <label for="fechasoli" class="form-label">Fecha solicitud</label>
+                                <input type="text" name="fechasoli" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="fechares" class="form-label">Fecha reserva</label>
+                                <input type="text" name="fechares" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="capacidad" class="form-label">Capacidad</label>
+                                <input type="text" name="capacidad" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="grupos" class="form-label">Grupos</label>
+                                <input type="text" name="grupos" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="materia" class="form-label">Materia</label>
+                                <input type="text" name="materia" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ambiente" class="form-label">Ambiente</label>
+                                <input type="text" name="ambiente" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="horario" class="form-label">Horario</label>
+                                <input type="text" name="horario" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-7">
+                                <label for="motivo" class="form-label">Motivo</label>
+                                <input type="text" name="motivo" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="modo" class="form-label">Modo</label>
+                                <input type="text" name="modo" class="form-control" readonly>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="col-md-6">
-                <div class="card body">
-                    <ul style="list-style: none" id="list-razones">
-                        @foreach ($razones as $razon)
-                            <li>
-                                <input type="checkbox" name="razonli" value="{{ $razon['id_razones'] }}"><label for="razonli" class="form-label">{{ $razon['razon'] }}</label>
-                            </li>
-                        @endforeach
-                    </ul>
-                    <p id="messageErrorRazon" style="color: red; display: none">*Seleccione una razon</p>
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Razones de cancelacion</strong>
+                    </div>
+                    <div class="card-body">
+                        <ul style="list-style: none" id="list-razones">
+                            @foreach ($razones as $razon)
+                                <li>
+                                    <input type="checkbox" name="razonli" value="{{ $razon['id_razones'] }}"><label for="razonli" class="form-label">{{ $razon['razon'] }}</label>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <p id="messageErrorRazon" style="color: red; display: none">*Seleccione una razon</p>
+                    </div>
                 </div>
     
-                <div class="col-md-8">
-                    <label for="razon" class="form_label">Registrar nueva razon</label>
-                    <input type="text" class="form-control" name="razon" placeholder="Escriba la razon de cancelacion de reserva">    
-                    <p id="messageErrorRazon" style="display: none; color: red">*La razon ya existe</p>
-                </div>
-                
-                <div class="col-md-4 d-flex align-items-end">
-                    <button class="btn btn-success" type="button" id="ref-add" onclick="agregarRazon()">
-                        <i class="bi bi-clipboard-plus"></i>
-                    </button>
+                <div class="row">
+                    <div class="col-md-8">
+                        <label for="razon" class="form_label">Registrar nueva razon</label>
+                        <input type="text" class="form-control" name="razon" placeholder="Escriba la razon de cancelacion de reserva">    
+                        <p id="messageErrorRazon" style="display: none; color: red">*La razon ya existe</p>
+                    </div>
+                    
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button class="btn btn-success" type="button" id="ref-add" onclick="agregarRazon()">
+                            <i class="bi bi-clipboard-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -215,7 +223,7 @@
 
             Swal.fire({
                 icon: 'info',
-                title: 'Confirmación de modificacion',
+                title: 'Confirmación de cancelacion.',
                 html: modalContent,
                 showCancelButton: true,
                 confirmButtonText: 'Enviar',

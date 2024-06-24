@@ -63,7 +63,7 @@
                                     btn-danger
                                 @endif
                                 " aria-controls="offcanvasRight">
-                                {{ @$retVal = (!is_object($solicitud['MODO'])) ? 'NORMAL' : 'URGENTE' ; }}
+                                {{ $solicitud['MODO'] }}
                             </span>
                         </td>
                         <td>
@@ -192,6 +192,7 @@
     function pressAtention(button){
         const id = button.value
         const canva = document.getElementById('offcanvasRight')
+        canva.style.setProperty('width', '500px')
         soli_aten = soli_pend.find(elemento => elemento['ID'] == id)
         let ambientes_filtrado = obtenerAmbientes(soli_aten['CANTIDAD'])
         console.log('Solicitud: ', soli_aten)

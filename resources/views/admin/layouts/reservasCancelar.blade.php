@@ -79,9 +79,9 @@
                             </span>
 
                         </td>
-                        <td style="width: 40px"><button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
+                        <td style="width: 40px"><button class="btn btn-sm btn-danger" type="button" data-bs-toggle="offcanvas"
                             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
-                            data-id="{{ $solicitud['ID'] }}" style="background-color:red" onclick="pressAtention(this)" value="{{$solicitud['ID']}}">Cancelar</button></td>
+                            data-id="{{ $solicitud['ID'] }}" style="background-color:red" onclick="pressAtention(this)" value="{{$solicitud['ID']}}">CANCELAR</button></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -145,7 +145,6 @@
             const horario = document.querySelector('[name="horario"]')
             const motivo = document.querySelector('[name="motivo"]')
             const modo = document.querySelector('[name="modo"]')
-            const desc = document.querySelector('[name="desc"]')
             const div = document.getElementById('desc-modo');
             docentes.innerHTML = ''
             soli_aten['NOMBRE_DOCENTES'].forEach(element => {
@@ -160,8 +159,6 @@
             horario.value = soli_aten['HORARIO']
             motivo.value = soli_aten['MOTIVO']
             modo.value = soli_aten['MODO']
-            desc.value = soli_aten['DESC'].split(':')[1]
-            div.style.display = (soli_aten['MODO'] == 'NORMAL') ? 'none':'block'
         }else{
             console.log("Fallo al obtener los datos alv no puede ser >:VVVVVVVV")
         }

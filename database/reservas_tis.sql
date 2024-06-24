@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `horario` (
   PRIMARY KEY (`ID_HORARIO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.horario: ~74 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.horario: ~78 rows (aproximadamente)
 DELETE FROM `horario`;
 INSERT INTO `horario` (`ID_HORARIO`, `INICIO`, `FIN`, `DIA`, `created_at`, `updated_at`) VALUES
 	('004e1a3f-bffa-432f-bd25-d908f1d6a644', '11:15:00', '12:45:00', 'MIERCOLES', NULL, '2024-06-05 17:27:10'),
@@ -257,7 +257,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.migrations: ~10 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.migrations: ~16 rows (aproximadamente)
 DELETE FROM `migrations`;
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(31, '2024_04_02_115834_create_solicituds_table', 1),
@@ -288,7 +288,7 @@ CREATE TABLE IF NOT EXISTS `notificacion` (
   KEY `notificacion_id_docente_foreign` (`ID_DOCENTE`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.notificacion: ~85 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.notificacion: ~94 rows (aproximadamente)
 DELETE FROM `notificacion`;
 INSERT INTO `notificacion` (`ID_NOTIFICACION`, `CUERPO`, `ID_DOCENTE`, `created_at`, `updated_at`) VALUES
 	('022cc67f-30fa-4089-bc50-dd7b169e5c0a', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 21:16:01', '2024-05-31 21:16:01'),
@@ -312,6 +312,7 @@ INSERT INTO `notificacion` (`ID_NOTIFICACION`, `CUERPO`, `ID_DOCENTE`, `created_
 	('3d79e4d1-62cf-4a58-b627-abee76153d29', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 20:59:55', '2024-05-31 20:59:55'),
 	('4084235c-2c11-4abe-bd48-9d5dd0cbfa49', '{"FECHA": "29/05/2024", "MATERIA": "FISICA BASICA I", "AMBIENTE": "691A"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-11 17:51:40', '2024-06-11 17:51:40'),
 	('426c44f9-61b3-4493-b053-c4a7158b4411', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 20:54:11', '2024-05-31 20:54:11'),
+	('4353e989-673d-43b9-96b4-f98f79da5f2f', '{"TIPO": "Reserva", "FECHA": "2024-06-27 16:30:00", "ESTADO": "CANCELADO", "MATERIA": "FISICA BASICA I", "AMBIENTE": "691B"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-23 07:25:02', '2024-06-23 07:25:02'),
 	('4427b306-73ec-4e19-be22-235444fa2c44', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:52:21', '2024-05-31 23:52:21'),
 	('4480d172-524f-4cd2-9718-7667d2633786', '{"FECHA": "2024-06-05 11:15:00", "MATERIA": "BIOLOGIA GENERAL", "AMBIENTE": "622"}', '007ff40d-5105-47d1-9744-82a199a8436f', '2024-06-05 17:06:55', '2024-06-05 17:06:55'),
 	('48bfa2ee-56e9-435d-b56e-283085a172e9', '{"TIPO": "Solicitud", "FECHA": "2024-06-19 11:15", "ESTADO": "PENDIENTE", "MATERIA": "PROBABILIDAD Y ESTADISTICA II", "AMBIENTE": "690MAT"}', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', '2024-06-17 18:19:33', '2024-06-17 18:19:33'),
@@ -320,10 +321,12 @@ INSERT INTO `notificacion` (`ID_NOTIFICACION`, `CUERPO`, `ID_DOCENTE`, `created_
 	('51aff0ba-cc6f-40ff-bf3b-995b2cde15f9', '"Cuerpo inicial"', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', '2024-05-31 23:12:08', '2024-05-31 23:12:08'),
 	('52dd913f-0d07-4259-9298-f2ae193b1f52', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 00:28:45', '2024-06-01 00:28:45'),
 	('534c9764-4bd6-4c60-bb4e-474144c01950', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:35:22', '2024-05-31 23:35:22'),
+	('53550bdd-1818-4b8c-acec-0f9ac058cfb5', '{"TIPO": "Solicitud", "FECHA": "2024-06-24 09:45", "ESTADO": "PENDIENTE", "MATERIA": "PROBABILIDAD Y ESTADISTICA II", "AMBIENTE": "Auditorio de Sistemas Informatica"}', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', '2024-06-24 00:03:42', '2024-06-24 00:03:42'),
 	('556bc213-6fde-4db7-ba3c-18426ae00e46', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 21:13:42', '2024-05-31 21:13:42'),
 	('5891562d-751b-430c-8abc-bc7c96d7926f', '{"FECHA": "19/06/2024", "MATERIA": "FISICA BASICA I", "AMBIENTE": "691A"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-11 17:44:00', '2024-06-11 17:44:00'),
 	('59986ef5-18cc-44a7-9af6-8b133513937c', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:31:12', '2024-05-31 23:31:12'),
 	('5b59aaf2-78b2-45f0-a458-eecf7581c278', '{"TIPO": "Reserva", "FECHA": "18/06/2024", "ESTADO": "ACEPTADO", "MATERIA": "ALGEBRA LINEAL", "AMBIENTE": "Auditorio  de Ingerieria Civil"}', '968acc82-30de-4bbf-8b40-9be8d5251468', '2024-06-17 18:48:08', '2024-06-17 18:48:08'),
+	('5e059f5a-fbee-4821-beec-c30b3bcff395', '{"TIPO": "Solicitud", "FECHA": "2024-06-26 12:45", "ESTADO": "PENDIENTE", "MATERIA": "GEOMETRIA", "AMBIENTE": "691F"}', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', '2024-06-24 02:26:08', '2024-06-24 02:26:08'),
 	('5fca31cb-bc4d-46f8-a010-88d3dac2d6e3', '{"FECHA": "2024-06-05 11:15:00", "MATERIA": "BIOLOGIA GENERAL", "AMBIENTE": "622"}', '007ff40d-5105-47d1-9744-82a199a8436f', '2024-06-05 17:05:45', '2024-06-05 17:05:45'),
 	('60507e9e-7f92-498d-8dc3-030ad0329514', '{"FECHA": "19/06/2024", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-16 08:27:17', '2024-06-16 08:27:17'),
 	('63c71a25-87c4-4226-8b23-d233d1710899', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 20:52:47', '2024-05-31 20:52:47'),
@@ -343,8 +346,10 @@ INSERT INTO `notificacion` (`ID_NOTIFICACION`, `CUERPO`, `ID_DOCENTE`, `created_
 	('7f644b1f-b2e9-463e-93e7-9290e80268df', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 01:10:07', '2024-06-01 01:10:07'),
 	('7f67cc01-44a9-4755-9acc-d0ee1167aa4f', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:07:07', '2024-05-31 23:07:07'),
 	('820c3d5c-c009-4398-b85e-d710674e6731', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 01:11:32', '2024-06-01 01:11:32'),
+	('837a5026-db54-47f5-98aa-4a11b81a767f', '{"TIPO": "Reserva", "FECHA": "2024-06-26 16:30:00", "ESTADO": "CANCELADO", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-23 07:31:31', '2024-06-23 07:31:31'),
 	('83ddcb91-c9f2-47ee-81e3-0e101c41b919', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 00:32:02', '2024-06-01 00:32:02'),
 	('87cdf2ca-c4e3-41c9-b284-47b983e161df', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:34:14', '2024-05-31 23:34:14'),
+	('92d81aeb-c4db-4e6f-be9e-e47019c7e5c6', '{"TIPO": "Reserva", "FECHA": "2024-06-26 16:30:00", "ESTADO": "CANCELADO", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', '2024-06-23 07:31:33', '2024-06-23 07:31:33'),
 	('96c142dd-a3f2-4644-adae-66c162f1b651', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:09:18', '2024-05-31 23:09:18'),
 	('9971a2d0-8bfa-4ec0-9c20-aeb00ff4fd81', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 00:30:46', '2024-06-01 00:30:46'),
 	('9a246023-424c-43c4-b0c7-ea5c087843c1', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 01:10:33', '2024-06-01 01:10:33'),
@@ -352,8 +357,10 @@ INSERT INTO `notificacion` (`ID_NOTIFICACION`, `CUERPO`, `ID_DOCENTE`, `created_
 	('9d95cd41-470a-4554-ba6d-6fc16e4cfb42', '{"FECHA": "27/05/2024", "MATERIA": "COMPUTACION I", "AMBIENTE": "690A"}', '039c16c5-4de9-48d6-8238-f24e657c5eb6', '2024-06-11 17:41:11', '2024-06-11 17:41:11'),
 	('a9f7c8c3-b0b9-40a9-bdb0-d23923d50aed', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 00:17:58', '2024-06-01 00:17:58'),
 	('aaac223f-700a-4977-bb3a-423f17e423c1', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:43:50', '2024-05-31 23:43:50'),
+	('ad44d98f-6630-401b-b615-3d32b2d7ff60', '{"TIPO": "Reserva", "FECHA": "2024-06-26 16:30:00", "ESTADO": "CANCELADO", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-23 07:27:12', '2024-06-23 07:27:12'),
 	('b041e427-2b8f-4ba3-ab84-71ca7eacdfb7', '{"FECHA": "13/06/2024", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-11 17:28:54', '2024-06-11 17:28:54'),
 	('b2467b8e-2ed1-42f7-9a18-c9e4de887d68', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 01:53:28', '2024-06-01 01:53:28'),
+	('b37710d1-6535-451d-88d4-9a4822d8f316', '{"TIPO": "Reserva", "FECHA": "2024-06-26 16:30:00", "ESTADO": "CANCELADO", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', 'c7460556-b09c-4b10-8460-05e6183e4e42', '2024-06-23 07:31:35', '2024-06-23 07:31:35'),
 	('b39a0f6a-a51e-42c9-86b6-f547eafabf3c', '{"FECHA": "2024-06-05 09:45:00", "MATERIA": "FISICA I", "AMBIENTE": "690MAT"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-05 05:50:38', '2024-06-05 05:50:38'),
 	('b3c45f7b-f222-4d0a-b1ae-8104488d0d16', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:40:10', '2024-05-31 23:40:10'),
 	('b49bf3d2-3859-49af-b237-e98c96669d5f', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 21:19:10', '2024-05-31 21:19:10'),
@@ -382,6 +389,7 @@ INSERT INTO `notificacion` (`ID_NOTIFICACION`, `CUERPO`, `ID_DOCENTE`, `created_
 	('ee152b31-e8e6-4977-be4f-3326047b5f85', '{"FECHA": "2024-06-05 09:45:00", "MATERIA": "BIOLOGIA GENERAL", "AMBIENTE": "690MAT"}', '007ff40d-5105-47d1-9744-82a199a8436f', '2024-06-05 17:04:34', '2024-06-05 17:04:34'),
 	('f2b5b97a-9f08-4840-8046-0500a945acb8', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-05-31 23:32:19', '2024-05-31 23:32:19'),
 	('f8a81007-e26a-42cb-9f01-01ffff75287e', '{"FECHA": "2024-06-28 16:30", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-06 03:44:14', '2024-06-06 03:44:14'),
+	('facf241c-727b-4838-a2d1-f10e0ce057ac', '{"TIPO": "Reserva", "FECHA": "2024-06-26 20:15:00", "ESTADO": "CANCELADO", "MATERIA": "FISICA BASICA I", "AMBIENTE": "691A"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-23 07:41:38', '2024-06-23 07:41:38'),
 	('fbd8d12f-e7e0-44f4-930f-3cd6ae17ab51', '{"FECHA": "2024-06-18 16:30", "MATERIA": "FISICA BASICA I", "AMBIENTE": "690MAT"}', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-06 03:46:16', '2024-06-06 03:46:16'),
 	('fee5c109-aeeb-4795-a794-ce4056480bd1', '"Cuerpo inicial"', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '2024-06-01 01:55:20', '2024-06-01 01:55:20');
 
@@ -464,7 +472,7 @@ CREATE TABLE IF NOT EXISTS `relacion_dahm` (
   CONSTRAINT `relacion_dahm_ibfk_4` FOREIGN KEY (`ID_MATERIA`) REFERENCES `materia` (`ID_MATERIA`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.relacion_dahm: ~71 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.relacion_dahm: ~75 rows (aproximadamente)
 DELETE FROM `relacion_dahm`;
 INSERT INTO `relacion_dahm` (`ID_RELACION`, `ID_DOCENTE`, `ID_AMBIENTE`, `ID_HORARIO`, `ID_MATERIA`, `created_at`, `updated_at`) VALUES
 	('0657eec4-abb3-4af2-8151-cb5c950e5737', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '0f5b1b2e-012d-4725-ae34-1f0692d9d991', '6365cf12-a823-4068-97e2-5fe397be1144', 2008214, '2024-05-15 17:10:28', '2024-06-05 17:27:10'),
@@ -479,7 +487,7 @@ INSERT INTO `relacion_dahm` (`ID_RELACION`, `ID_DOCENTE`, `ID_AMBIENTE`, `ID_HOR
 	('1f0601f5-334c-4d4e-89a7-0ba0e3f3bf33', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '0eb51b13-2b9d-4d68-a62d-c7869d3a2db5', '09d5656e-9be0-4982-bdc9-03cd4252a557', 2008214, '2024-05-15 17:10:26', '2024-06-05 17:27:10'),
 	('2305af5c-79ad-41de-a75a-5d646ec8c4c7', 'c7460556-b09c-4b10-8460-05e6183e4e42', '0eb51b13-2b9d-4d68-a62d-c7869d3a2db5', 'bb2ca027-88aa-4e60-8caa-2ece1cbbe5a5', 2006027, NULL, '2024-06-05 17:27:10'),
 	('27707e86-b691-4c80-9096-dd52e20a84a0', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'cffbfb53-32e4-40d4-b11d-93854262c972', 2008081, '2024-05-25 01:52:45', '2024-05-25 01:52:45'),
-	('2a75c585-9eac-41c5-bcba-3cb8897079ee', 'bafdb61e-b676-40b1-a09d-eb3e9c1a1d19', '58ee914d-2c7e-4b15-99f7-a79b6dcfa836', '3061c225-d17b-498b-a3dd-31518e6552d1', 2008077, NULL, NULL),
+	('2a75c585-9eac-41c5-bcba-3cb8897079ee', '1570c086-4356-433b-9ba1-9777c192a6db', '58ee914d-2c7e-4b15-99f7-a79b6dcfa836', '3061c225-d17b-498b-a3dd-31518e6552d1', 2008077, NULL, NULL),
 	('315b9fb3-8bd1-4c92-b7eb-639dd6818817', '46f460de-2da8-4ce8-8ffe-5a646073e95a', 'a186dee8-926a-4e19-b564-41df44e83233', '4f94f667-8044-4687-bc95-e147302a4023', 2008214, '2024-05-15 17:10:22', '2024-06-05 17:27:10'),
 	('33a7be28-6d75-4ea7-998e-9fcf7c054c3e', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '0eb51b13-2b9d-4d68-a62d-c7869d3a2db5', '631e7df5-3eff-4ba2-a122-e20ecdbe49b5', 2008214, '2024-05-15 17:10:26', '2024-06-05 17:27:10'),
 	('3676fa9e-bfc6-4b58-88bd-737ef2d38bb9', '039c16c5-4de9-48d6-8238-f24e657c5eb6', '77b4c945-39af-4ad1-9109-1947f2bd1847', '0b68ffd5-99e9-4344-b99b-95378596059d', 2010008, NULL, '2024-06-04 15:37:32'),
@@ -491,7 +499,7 @@ INSERT INTO `relacion_dahm` (`ID_RELACION`, `ID_DOCENTE`, `ID_AMBIENTE`, `ID_HOR
 	('549dddc8-9b43-40ce-a735-0eb46cb559c4', '4a72b14b-9529-4aa9-83fa-ebb55a210e82', '136eedd3-f082-42c0-aacd-0063d5f3562f', '2e5b02c2-f68d-4331-a085-89cc41d6e793', 2008080, NULL, '2024-06-17 19:11:55'),
 	('55b6b04d-ba32-4188-92ca-60ef1b6eb1e3', '275e16e1-5fdf-41bb-9399-653941e76f71', '2b56ffbe-fbcb-4c9d-adc0-c13749585e98', 'e5ba9e69-a43f-454a-9267-6a877fec907b', 2008054, NULL, '2024-06-05 17:15:01'),
 	('583154f9-0341-4064-afe1-651598c7b15b', '007ff40d-5105-47d1-9744-82a199a8436f', '0638f3f0-2c69-4e31-a5a3-f5d84ce82f17', 'b837a451-f557-4fa6-8bd1-50544891ec2e', 2002004, NULL, '2024-06-04 16:46:28'),
-	('58b86cf2-16a3-491b-850d-5fab553bb9d9', 'bfef68a6-c6e5-4798-ab26-c639bd29bb29', '58ee914d-2c7e-4b15-99f7-a79b6dcfa836', 'bba89453-393c-4a9e-acea-c5a80e8a675d', 2008077, NULL, NULL),
+	('58b86cf2-16a3-491b-850d-5fab553bb9d9', '1570c086-4356-433b-9ba1-9777c192a6db', '58ee914d-2c7e-4b15-99f7-a79b6dcfa836', 'bba89453-393c-4a9e-acea-c5a80e8a675d', 2008077, NULL, NULL),
 	('59c69e1a-ccad-4bed-bb55-38075e069b65', '7cf7f927-02c7-4442-a8dc-d045b4c612d7', '1a732a32-4d03-44ef-b68f-415295d316d2', 'f38e3c4b-282b-4449-a696-8a157f86d099', 2008053, '2024-05-25 02:02:09', '2024-05-25 02:02:09'),
 	('5c88b215-80ab-4b3e-8d90-f8fbcc89133b', '7cf7f927-02c7-4442-a8dc-d045b4c612d7', '668a058c-ad61-48d2-a189-7215ebcab256', '44235137-514c-49da-994d-1f86a837a472', 2008053, NULL, NULL),
 	('5ee5311b-dccc-4bfd-8b74-7d0c33c652b1', '007ff40d-5105-47d1-9744-82a199a8436f', '4f0c9cf2-e60c-4c17-8339-89a9a3f7361b', 'eb2de201-7174-49fe-a5c7-8901a2b229f3', 2002004, NULL, '2024-06-04 16:46:28'),
@@ -503,7 +511,7 @@ INSERT INTO `relacion_dahm` (`ID_RELACION`, `ID_DOCENTE`, `ID_AMBIENTE`, `ID_HOR
 	('75eefc6e-a8a2-4be4-84a7-12558040fd7e', 'ab5d4702-a8ff-4884-ab4d-02db4e560e12', '136eedd3-f082-42c0-aacd-0063d5f3562f', '0aae2f87-f810-4c8a-9c61-56f71b046dc4', 2008075, NULL, '2024-06-04 17:06:49'),
 	('78c326f8-4a22-4e67-a209-a4997f9bb5a0', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '0eb51b13-2b9d-4d68-a62d-c7869d3a2db5', 'bb2ca027-88aa-4e60-8caa-2ece1cbbe5a5', 2008214, '2024-05-15 17:10:25', '2024-06-05 17:27:10'),
 	('7f74cb5c-36ca-4072-8652-cee78a8f636f', '039c16c5-4de9-48d6-8238-f24e657c5eb6', '2b56ffbe-fbcb-4c9d-adc0-c13749585e98', 'cc6ba429-7098-4902-af61-3cd22cfe6397', 2010008, NULL, '2024-06-04 15:37:32'),
-	('80bcf7c0-f5ba-425e-8ffa-9024d011afd1', '9e05d053-f73b-4800-a3c7-f61f38c1d388', '5fe66ff0-bb2a-4940-8bbb-57363a2478ba', '13bbbf56-13b7-474c-8b14-2849faf6ddab', 2004046, NULL, NULL),
+	('80bcf7c0-f5ba-425e-8ffa-9024d011afd1', '1570c086-4356-433b-9ba1-9777c192a6db', '5fe66ff0-bb2a-4940-8bbb-57363a2478ba', '13bbbf56-13b7-474c-8b14-2849faf6ddab', 2004046, NULL, NULL),
 	('80ee6112-516a-4ece-873c-d4f9a76ed1de', '275e16e1-5fdf-41bb-9399-653941e76f71', 'a099246b-9a37-4a88-b8a5-3cd917ca51ee', '842eb2ce-080e-4194-98e2-80a6c31e43a5', 2008054, NULL, '2024-06-05 17:15:01'),
 	('8bce4c67-70f9-46c9-bbf4-501f047f16b7', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '7b3a1bae-2462-44fa-8a2a-2658364f1de2', '7952448f-b07c-41b8-9ed5-70e3555597c8', 2008214, '2024-05-25 01:47:14', '2024-06-05 17:27:10'),
 	('90b881a6-f506-4a14-9c74-c79bec74e0d5', '22daa7a1-81d4-49ce-ae01-44d10201b837', '28bda7e0-431a-4d59-bb24-6a91d31c32a8', '8632c8dd-298a-48fb-b955-5160a3694080', 2008054, NULL, '2024-06-09 18:38:46'),
@@ -522,7 +530,7 @@ INSERT INTO `relacion_dahm` (`ID_RELACION`, `ID_DOCENTE`, `ID_AMBIENTE`, `ID_HOR
 	('b33ca758-9beb-4c0e-87c3-d2d84845cfd0', '1570c086-4356-433b-9ba1-9777c192a6db', '0f5b1b2e-012d-4725-ae34-1f0692d9d991', '8a6c2273-d406-450d-8c36-3d6c142027a0', 2004046, NULL, NULL),
 	('b9df5330-1911-4442-9a5c-4fda58eae767', 'c7460556-b09c-4b10-8460-05e6183e4e42', '5d7d0044-0aab-44c5-9e51-a4e7ee7b4667', 'ad813392-430f-49d4-a8c2-2412a02aadcb', 2006027, NULL, NULL),
 	('bd842207-e2c3-4a8a-bc01-1884c952dab2', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '7b3a1bae-2462-44fa-8a2a-2658364f1de2', '004e1a3f-bffa-432f-bd25-d908f1d6a644', 2008214, NULL, '2024-06-05 17:27:10'),
-	('c20814ce-0651-4ee0-a23e-771113672812', 'a9bc1344-1f8f-48a9-b37a-e9e4ac141e87', '58ee914d-2c7e-4b15-99f7-a79b6dcfa836', '645a1e1e-e4fb-49e4-bc08-48f4cd96cdf4', 2008077, NULL, NULL),
+	('c20814ce-0651-4ee0-a23e-771113672812', '1570c086-4356-433b-9ba1-9777c192a6db', '58ee914d-2c7e-4b15-99f7-a79b6dcfa836', '645a1e1e-e4fb-49e4-bc08-48f4cd96cdf4', 2008077, NULL, NULL),
 	('c2c3ca32-8c21-41aa-ba94-e18bc5c57f59', '7cf7f927-02c7-4442-a8dc-d045b4c612d7', 'ba8d666e-601d-46bf-bbe4-88fa9b9e2623', '4d1d8511-ce79-44a2-9da3-f05f8a0a768e', 2008053, NULL, NULL),
 	('c95b1129-e5d1-476e-acad-f01216255542', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '7b3a1bae-2462-44fa-8a2a-2658364f1de2', '66fa9666-914d-4419-aa70-c0bd7d69518a', 2008214, NULL, '2024-06-05 17:27:10'),
 	('cc60c9b4-efc7-4822-b179-aa7ff75d74ae', 'c7460556-b09c-4b10-8460-05e6183e4e42', '77b4c945-39af-4ad1-9109-1947f2bd1847', '0b7d8d61-6f00-466c-b519-ee1f2eeabfd6', 2006027, NULL, NULL),
@@ -536,7 +544,7 @@ INSERT INTO `relacion_dahm` (`ID_RELACION`, `ID_DOCENTE`, `ID_AMBIENTE`, `ID_HOR
 	('d84106d3-3686-4df5-997d-5313b09b6078', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', '136eedd3-f082-42c0-aacd-0063d5f3562f', '8b7a3821-79b0-43c3-a74d-36771f4797d5', 2008081, NULL, NULL),
 	('d9f88d2e-acb5-4cff-abee-aa59f6a5ddb2', '46f460de-2da8-4ce8-8ffe-5a646073e95a', '0eb51b13-2b9d-4d68-a62d-c7869d3a2db5', '32d69a46-24f7-457e-8c6e-12b58c137d29', 2008214, '2024-05-15 17:10:17', '2024-06-05 17:27:10'),
 	('dcf89a59-9bdb-4bb5-a0bb-9e0a963dc85e', '007ff40d-5105-47d1-9744-82a199a8436f', '0638f3f0-2c69-4e31-a5a3-f5d84ce82f17', 'eaf8bd6c-7625-45a6-97be-a7090c44b2dc', 2002004, NULL, '2024-06-04 16:46:28'),
-	('de4e1581-2e50-4705-88af-f62525de337b', '2e196af2-f995-4628-849c-81e83596bb3a', '28bda7e0-431a-4d59-bb24-6a91d31c32a8', 'c32508d8-66f4-4b84-ab99-f10c27a66031', 2004046, NULL, NULL),
+	('de4e1581-2e50-4705-88af-f62525de337b', '1570c086-4356-433b-9ba1-9777c192a6db', '28bda7e0-431a-4d59-bb24-6a91d31c32a8', 'c32508d8-66f4-4b84-ab99-f10c27a66031', 2004046, NULL, NULL),
 	('e3a49d60-f3ef-46c7-bee7-7b3eac8028b9', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', 'a186dee8-926a-4e19-b564-41df44e83233', 'c829752f-3944-4884-8c1c-033687b4d247', 2008081, NULL, NULL),
 	('e64ab34a-6853-43d8-be08-427e4ee401b5', '968acc82-30de-4bbf-8b40-9be8d5251468', '77b4c945-39af-4ad1-9109-1947f2bd1847', '38b3ef70-7ce0-42e2-94af-3e1375c8a081', 2008055, NULL, NULL),
 	('e7daaa9e-d357-4888-aabe-c4e3bb9ae1ea', 'ab5d4702-a8ff-4884-ab4d-02db4e560e12', '4d609316-26c8-4eea-8712-4b10557b4812', '24b6950a-917c-40a9-8b32-a2d23e757fad', 2008075, NULL, '2024-06-04 17:06:49'),
@@ -558,7 +566,7 @@ CREATE TABLE IF NOT EXISTS `relacion_dm` (
   CONSTRAINT `relacion_dm_id_materia_foreign` FOREIGN KEY (`ID_MATERIA`) REFERENCES `materia` (`ID_MATERIA`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.relacion_dm: ~19 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.relacion_dm: ~21 rows (aproximadamente)
 DELETE FROM `relacion_dm`;
 INSERT INTO `relacion_dm` (`ID_RELACION`, `ID_DOCENTE`, `ID_MATERIA`, `GRUPO`, `created_at`, `updated_at`) VALUES
 	('139a62a0-d92b-4cce-9f86-f36bbfd2c4d6', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', 2008070, '1', NULL, NULL),
@@ -571,11 +579,13 @@ INSERT INTO `relacion_dm` (`ID_RELACION`, `ID_DOCENTE`, `ID_MATERIA`, `GRUPO`, `
 	('7fa001a0-f52b-4d2e-a9ea-59fd26fd35dc', 'c7460556-b09c-4b10-8460-05e6183e4e42', 2006027, '1', NULL, NULL),
 	('811e1195-992a-4008-ad81-1a29ce856a00', '039c16c5-4de9-48d6-8238-f24e657c5eb6', 2010008, '2', NULL, NULL),
 	('81e65eb8-3f3e-4db7-b774-a73229ca934e', '4a72b14b-9529-4aa9-83fa-ebb55a210e82', 2008080, '1', NULL, NULL),
+	('8e11a3d7-4162-4889-875d-0f1a5d7c839e', '1570c086-4356-433b-9ba1-9777c192a6db', 2008077, '1', NULL, NULL),
 	('b12028e8-b8bb-4030-b708-af4ed27219f2', 'c34627f2-6dec-4853-a50c-614af0e17e66', 2010008, '2', NULL, NULL),
 	('c2b0db45-41df-4102-858f-6c69435683e1', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', 2006018, 'M', NULL, NULL),
 	('cc5cfd49-5825-44a5-8e5c-213124d30272', '007ff40d-5105-47d1-9744-82a199a8436f', 2008214, '1', '2024-06-13 16:34:18', '2024-06-13 16:34:18'),
 	('da4bcb0e-b334-485d-a318-f433e7719913', '039c16c5-4de9-48d6-8238-f24e657c5eb6', 2010008, '4', NULL, NULL),
 	('da9387f5-f86e-49d5-bbd8-7590843c28a4', 'ab5d4702-a8ff-4884-ab4d-02db4e560e12', 2008075, '1', NULL, NULL),
+	('dfb972a8-4104-4b5e-84ea-8e2647e9f6d6', '1570c086-4356-433b-9ba1-9777c192a6db', 2004046, '3', NULL, NULL),
 	('eeb354f5-30b6-4779-b911-0e0d84c1c496', '7cf7f927-02c7-4442-a8dc-d045b4c612d7', 2008053, '5', NULL, NULL),
 	('f0cfa652-e9d2-4e05-ad29-7d0f0fbb12d8', '007ff40d-5105-47d1-9744-82a199a8436f', 2002004, '1', NULL, NULL),
 	('faaf6488-a8b4-4284-9095-eadda8848cce', '2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d', 2008081, '1', NULL, NULL),
@@ -594,7 +604,7 @@ CREATE TABLE IF NOT EXISTS `reserva` (
   CONSTRAINT `reserva_id_solicitud_foreign` FOREIGN KEY (`ID_SOLICITUD`) REFERENCES `solicitud` (`ID_SOLICITUD`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.reserva: ~62 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.reserva: ~66 rows (aproximadamente)
 DELETE FROM `reserva`;
 INSERT INTO `reserva` (`ID_RESERVA`, `ID_SOLICITUD`, `RAZONES`, `FECHAHORA_RESER`, `created_at`, `updated_at`) VALUES
 	('00d8fd42-96ca-425f-9886-3db56e606bd4', 'd3796064-bc83-4ea3-866a-f68ab47e3e5a', '"Ninguno"', '2024-06-05 00:00:00', '2024-06-05 16:23:54', '2024-06-05 16:23:54'),
@@ -611,6 +621,8 @@ INSERT INTO `reserva` (`ID_RESERVA`, `ID_SOLICITUD`, `RAZONES`, `FECHAHORA_RESER
 	('258e32c0-15eb-4e77-8638-5a6fd8d30429', '47918aa9-5ab3-418d-82d5-5f417b43c8ab', '"Ninguno"', '2024-06-11 00:00:00', '2024-06-11 17:28:12', '2024-06-11 17:28:12'),
 	('29cd3429-3e9d-4f90-9c7c-a36e3ce5f47d', '02b17668-68dd-4d2e-9d12-85d8ffff6172', '["4", "5"]', '2024-06-16 00:00:00', '2024-06-16 08:35:43', '2024-06-16 08:35:43'),
 	('2ee17843-23dd-4c49-9197-94d38193f5d6', '8adb44d0-8a85-4e74-9443-8bf3d47a83c3', '["4"]', '2024-06-16 00:00:00', '2024-06-16 08:53:56', '2024-06-16 08:53:56'),
+	('32d40a15-fd89-4f95-af2f-67b84e8c71ab', '980f1f13-9f1a-4181-8593-25e278c27310', '["4", "5"]', '2024-06-23 00:00:00', '2024-06-23 07:27:07', '2024-06-23 07:27:07'),
+	('33a01149-d2cf-47fd-a170-d528d03ef497', 'c848bd22-9c9d-401d-9710-89dc34ac5903', '["5"]', '2024-06-23 00:00:00', '2024-06-23 07:31:26', '2024-06-23 07:31:26'),
 	('356094b5-9b2e-431d-b9e9-fb5354f69bf4', 'd6473fcf-7553-40f4-9d50-e61e2be85acf', '["3", "4"]', '2024-06-16 00:00:00', '2024-06-16 08:36:38', '2024-06-16 08:36:38'),
 	('402d0343-16c5-4df5-a885-b24e651cdca3', '451a9251-f5c6-4eb9-a441-02809fb8f4af', '["4"]', '2024-06-16 00:00:00', '2024-06-16 08:30:17', '2024-06-16 08:30:17'),
 	('44b582e3-245a-473f-8757-9151a906ec66', '8a3ead27-febf-411c-ac09-8d5f9b8500c0', '["3"]', '2024-06-16 00:00:00', '2024-06-16 08:49:21', '2024-06-16 08:49:21'),
@@ -653,6 +665,7 @@ INSERT INTO `reserva` (`ID_RESERVA`, `ID_SOLICITUD`, `RAZONES`, `FECHAHORA_RESER
 	('dc61dad0-8ebc-435e-8dcb-a8e4fa4f28b6', '99e4a1f9-f476-49ce-b62d-614f6cf43f99', '["Razon valida por mi"]', '2024-06-11 00:00:00', '2024-06-11 12:45:52', '2024-06-11 12:45:52'),
 	('dc7f6852-7af4-445f-aecf-d0d1d2e4c822', 'f86e4d5c-729b-4358-a094-3facecaf862c', '[1, 3]', '2024-06-09 00:00:00', '2024-06-09 19:40:25', '2024-06-09 19:40:25'),
 	('dcc9403a-293c-42e7-9601-3ec2f88fabdc', 'a8dbece7-ea32-446a-abae-cdb02b005181', '["1", "3"]', '2024-06-11 00:00:00', '2024-06-11 16:01:11', '2024-06-11 16:01:11'),
+	('dda1cb25-9954-4961-b0a1-d5fbfc7df55c', '817bad04-746f-457f-b3c0-5d856a7078b5', '["1"]', '2024-06-23 00:00:00', '2024-06-23 07:24:42', '2024-06-23 07:24:42'),
 	('ddd14f1a-2998-45ab-bbdc-e24a5569b0f7', '550e8400-e29b-41d4-a716-446655440000', '[]', '2024-05-28 00:00:00', '2024-05-28 22:18:42', '2024-06-11 16:43:13'),
 	('e19ed034-72b5-4179-82ed-76a8452f84ef', '93d18237-2ac3-4306-b96b-b75d0122ad84', '["5"]', '2024-06-16 00:00:00', '2024-06-16 08:50:30', '2024-06-16 08:50:30'),
 	('e9acee66-918a-407e-8b6d-441d882ef5c2', 'e0ae3da0-1ddf-4384-a400-58c52aed2243', '"Ninguno"', '2024-06-05 00:00:00', '2024-06-05 16:52:52', '2024-06-05 16:52:52'),
@@ -660,6 +673,7 @@ INSERT INTO `reserva` (`ID_RESERVA`, `ID_SOLICITUD`, `RAZONES`, `FECHAHORA_RESER
 	('eaaea66e-26ea-499f-9e29-2480037f0a8c', 'dad83a18-6b91-4700-9554-e1e93530df28', '"Ninguno"', '2024-06-17 00:00:00', '2024-06-17 18:48:03', '2024-06-17 18:48:03'),
 	('ee1da7ef-15dc-43e0-9ca9-6b434a07a581', '5c8dff33-e6d0-4a75-87ee-84cdf265a1c8', '"Ninguno"', '2024-06-09 00:00:00', '2024-06-09 18:14:09', '2024-06-09 18:14:09'),
 	('eeb49fc5-df6d-414c-81af-33a561013e71', '8e3e9204-60d3-461b-bb11-923b717048eb', '"Ninguno"', '2024-06-09 00:00:00', '2024-06-09 18:16:52', '2024-06-09 18:16:52'),
+	('efbdc361-fa3e-4de1-9a84-ccc759dbe8bd', '2f4a2c71-e2ea-42cd-9db0-971fa897df8c', '[]', '2024-06-23 00:00:00', '2024-06-23 07:41:33', '2024-06-23 07:41:33'),
 	('f3bc220c-0d31-49ef-ad4f-3191cbaec20d', '219dfede-d38a-4e74-b628-4070d61e4339', '["3", "4"]', '2024-06-09 00:00:00', '2024-06-09 19:04:47', '2024-06-11 17:51:36'),
 	('f7e55ec6-4d48-4c3e-b838-92902451f23d', '4963fbe8-7e68-4505-ac23-14ca38716309', '[]', '2024-06-09 00:00:00', '2024-06-09 19:43:01', '2024-06-09 19:43:01'),
 	('ffceb241-51a9-475e-b227-8d3376bce597', '55919abf-0dad-4bc1-98fd-0e1f72e6fc17', '"Ninguno"', '2024-06-05 00:00:00', '2024-06-06 03:56:12', '2024-06-06 03:56:12');
@@ -688,11 +702,11 @@ CREATE TABLE IF NOT EXISTS `solicitud` (
   CONSTRAINT `solicitud_id_materia_foreign` FOREIGN KEY (`ID_MATERIA`) REFERENCES `materia` (`ID_MATERIA`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.solicitud: ~55 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.solicitud: ~75 rows (aproximadamente)
 DELETE FROM `solicitud`;
 INSERT INTO `solicitud` (`ID_SOLICITUD`, `ID_DOCENTE_s`, `CANTIDAD_EST`, `FECHA_RE`, `HORAINI`, `HORAFIN`, `FECHAHORA_SOLI`, `MOTIVO`, `PRIORIDAD`, `ID_MATERIA`, `GRUPOS`, `ID_AMBIENTE`, `ESTADO`, `created_at`, `updated_at`) VALUES
 	('02b17668-68dd-4d2e-9d12-85d8ffff6172', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-28 16:30:00', '16:30:00', '17:00:00', '2024-06-05 23:44:09', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-06-06 03:44:10', '2024-06-16 08:35:43'),
-	('0c51a069-49b2-4e30-8f25-52525e7ff75f', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 12, '2024-06-19 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:15:43', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008081, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-06-17 18:15:43', '2024-06-17 18:15:43'),
+	('0c51a069-49b2-4e30-8f25-52525e7ff75f', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 12, '2024-06-19 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:15:43', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008081, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-06-17 18:15:43', '2024-06-23 00:29:29'),
 	('0e42f8c9-1e3f-4c4e-8b6b-16a3b2c6e6bc', '{"id1": "bfef68a6-c6e5-4798-ab26-c639bd29bb29", "id2": "354db6b6-be0f-4aca-a9ea-3c31e412c49d"}', 250, '2024-05-17 11:15:00', '11:15:00', '12:45:00', '2024-05-14 17:43:12', 'Examen final', '{"NORMAL": "Ninguno"}', 2006018, '{"grupo1": 1, "grupo2": "M"}', '0f5b1b2e-012d-4725-ae34-1f0692d9d991', 'CANCELADO', NULL, '2024-06-11 17:50:11'),
 	('106ecf63-1f16-4f72-9460-42375a679ffa', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:02:49', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-05-31 20:02:49', '2024-06-09 19:17:11'),
 	('1f4ef4d4-758a-4651-82c9-eb450e55c7d4', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:04:05', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-05-31 20:04:05', '2024-06-05 17:09:35'),
@@ -701,18 +715,19 @@ INSERT INTO `solicitud` (`ID_SOLICITUD`, `ID_DOCENTE_s`, `CANTIDAD_EST`, `FECHA_
 	('22690513-2dc5-4767-a1d8-130dbffdfbfa', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d", "2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 13, '2024-06-13 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:07:06', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M", "1"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'ACEPTADO', '2024-05-31 23:07:06', '2024-06-11 17:28:45'),
 	('240b5650-f131-43f8-998f-49740fd193bd', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 28, '2024-06-06 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:28:40', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'ACEPTADO', '2024-05-31 23:28:40', '2024-06-06 04:04:03'),
 	('2534898e-59f8-4281-8ded-51a62a71716e', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 4, '2024-06-04 16:30:00', '16:30:00', '17:00:00', '2024-05-31 21:53:25', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-06-01 01:53:25', '2024-06-05 16:57:11'),
-	('287a0e72-f9c4-43fb-8790-b93797025a86', '["4f97364e-8534-48fd-981f-822aa93d94a4"]', 50, '2024-06-20 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:06:11', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008056, '[null]', '1a732a32-4d03-44ef-b68f-415295d316d2', 'PENDIENTE', '2024-06-17 18:06:11', '2024-06-17 18:06:11'),
-	('299e4c6f-0da7-44da-beba-ba596979f637', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 9, '2024-06-20 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:15:20', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'PENDIENTE', '2024-05-31 20:15:20', '2024-05-31 20:15:20'),
+	('287a0e72-f9c4-43fb-8790-b93797025a86', '["4f97364e-8534-48fd-981f-822aa93d94a4"]', 50, '2024-06-20 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:06:11', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008056, '[null]', '1a732a32-4d03-44ef-b68f-415295d316d2', 'CANCELADO', '2024-06-17 18:06:11', '2024-06-23 00:29:29'),
+	('299e4c6f-0da7-44da-beba-ba596979f637', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 9, '2024-06-20 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:15:20', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 20:15:20', '2024-06-23 00:29:29'),
 	('2f373fae-4156-432a-bb4a-b619ab1e9aab', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 9, '2024-06-27 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:09:17', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 23:09:17', '2024-06-16 08:52:42'),
-	('2f4a2c71-e2ea-42cd-9db0-971fa897df8c', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 13, '2024-06-26 20:15:00', '20:15:00', '21:45:00', '2024-06-05 23:50:33', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'PENDIENTE', '2024-06-06 03:50:33', '2024-06-06 03:50:33'),
+	('2f4a2c71-e2ea-42cd-9db0-971fa897df8c', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 13, '2024-06-26 20:15:00', '20:15:00', '21:45:00', '2024-06-05 23:50:33', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-06-06 03:50:33', '2024-06-23 07:41:33'),
+	('31bdf8e1-5a04-47bd-9bbc-8abc03764061', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 23, '2024-06-24 09:45:00', '09:45:00', '11:15:00', '2024-06-23 20:03:21', 'Examen final', '"{\\"URGENTE\\":\\"Examen final\\"}"', 2008081, '["1", "1"]', '8b2c60a7-b88b-4825-b4a5-1e43924f85c7', 'PENDIENTE', '2024-06-24 00:03:21', '2024-06-24 00:03:21'),
 	('31d378de-6667-4405-a15c-9c7d47f08156', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:07:23', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:07:23', '2024-06-11 04:26:48'),
 	('32753435-10d2-4455-b093-17eecee35449', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-05-29 16:30:00', '16:30:00', '17:00:00', '2024-05-28 22:33:22', 'Examen parcial', '"{\\"URGENTE\\":\\"Razon de la docente\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'ACEPTADO', '2024-05-29 02:33:22', '2024-05-29 19:12:34'),
-	('3c92f7a6-22a7-46cf-b9e6-b781ddf5b417', '["4a72b14b-9529-4aa9-83fa-ebb55a210e82"]', 49, '2024-06-20 20:15:00', '20:15:00', '21:45:00', '2024-06-17 14:12:05', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008080, '[null]', '2b56ffbe-fbcb-4c9d-adc0-c13749585e98', 'PENDIENTE', '2024-06-17 18:12:05', '2024-06-17 18:12:05'),
-	('431eeac7-3a00-4827-b77a-55c01b3e2e94', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 22, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 18:52:10', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'PENDIENTE', '2024-05-31 22:52:10', '2024-05-31 22:52:10'),
+	('3c92f7a6-22a7-46cf-b9e6-b781ddf5b417', '["4a72b14b-9529-4aa9-83fa-ebb55a210e82"]', 49, '2024-06-20 20:15:00', '20:15:00', '21:45:00', '2024-06-17 14:12:05', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008080, '[null]', '2b56ffbe-fbcb-4c9d-adc0-c13749585e98', 'CANCELADO', '2024-06-17 18:12:05', '2024-06-23 00:29:29'),
+	('431eeac7-3a00-4827-b77a-55c01b3e2e94', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 22, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 18:52:10', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 22:52:10', '2024-06-23 00:29:29'),
 	('451a9251-f5c6-4eb9-a441-02809fb8f4af', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 22, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:54:10', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 20:54:11', '2024-06-16 08:30:17'),
 	('47918aa9-5ab3-418d-82d5-5f417b43c8ab', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:07:43', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-05-31 20:07:43', '2024-06-11 17:28:12'),
 	('4963fbe8-7e68-4505-ac23-14ca38716309', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 36, '2024-06-13 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:09:07', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 20:09:07', '2024-06-09 19:43:01'),
-	('4e0a5b91-9053-4fad-b9ef-7e6d488024e4', '["22daa7a1-81d4-49ce-ae01-44d10201b837", "275e16e1-5fdf-41bb-9399-653941e76f71"]', 140, '2024-06-20 11:15:00', '11:15:00', '12:45:00', '2024-06-11 01:03:00', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null, null]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'PENDIENTE', '2024-06-11 05:03:00', '2024-06-11 05:03:00'),
+	('4e0a5b91-9053-4fad-b9ef-7e6d488024e4', '["22daa7a1-81d4-49ce-ae01-44d10201b837", "275e16e1-5fdf-41bb-9399-653941e76f71"]', 140, '2024-06-20 11:15:00', '11:15:00', '12:45:00', '2024-06-11 01:03:00', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null, null]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-06-11 05:03:00', '2024-06-23 00:29:29'),
 	('4e586262-a093-4e15-8dac-435a8afd3f5e', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:06:32', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:06:32', '2024-06-11 04:35:24'),
 	('550e8400-e29b-41d4-a716-446655440000', '{"id1": "2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"}', 200, '2024-05-15 14:30:00', '14:30:00', '15:30:00', '2024-05-14 16:19:07', 'Examen parcial', '{"URGENTE": "Examen parcial postergado desde hace 4 semanas"}', 2008081, '{"grupo1": 1}', 'c694c7e4-9f03-4857-b282-7922962b4038', 'ACEPTADO', NULL, '2024-05-28 22:29:55'),
 	('55919abf-0dad-4bc1-98fd-0e1f72e6fc17', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 4, '2024-06-04 16:30:00', '16:30:00', '17:00:00', '2024-05-31 20:32:01', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-06-01 00:32:01', '2024-06-06 03:56:12'),
@@ -722,43 +737,49 @@ INSERT INTO `solicitud` (`ID_SOLICITUD`, `ID_DOCENTE_s`, `CANTIDAD_EST`, `FECHA_
 	('62f59fe2-28b0-4eee-b6f8-1c5381b2f533', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 6, '2024-06-12 16:30:00', '16:30:00', '17:00:00', '2024-05-31 20:17:57', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-06-01 00:17:57', '2024-06-11 15:31:05'),
 	('6365d385-b59e-44fe-a0a3-66e1b154e33d', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-11 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:52:20', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 23:52:20', '2024-06-09 19:41:02'),
 	('67a44c15-ac3a-4c22-bfaa-f95536738b65', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:04:29', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:04:29', '2024-06-11 15:32:51'),
+	('6eab7332-f6be-471b-9878-042ba56c9240', '["275e16e1-5fdf-41bb-9399-653941e76f71"]', 12, '2024-06-25 12:45:00', '12:45:00', '14:15:00', '2024-06-23 05:10:01', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008054, '["13"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-06-23 09:10:01', '2024-06-23 09:10:01'),
 	('729f028c-73cd-4dce-9ab9-75ac8af828ab', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 6, '2024-06-12 16:30:00', '16:30:00', '17:00:00', '2024-05-31 20:28:44', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'ACEPTADO', '2024-06-01 00:28:44', '2024-06-11 16:10:33'),
-	('7a5135b4-c205-41d4-9d5f-ead3dc04a05b', '["4a72b14b-9529-4aa9-83fa-ebb55a210e82"]', 49, '2024-06-20 20:15:00', '20:15:00', '21:45:00', '2024-06-17 14:08:50', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008080, '[null]', '2b56ffbe-fbcb-4c9d-adc0-c13749585e98', 'PENDIENTE', '2024-06-17 18:08:51', '2024-06-17 18:08:51'),
-	('80dca888-dc3e-468e-9fb4-b2953421ea2e', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d", "46f460de-2da8-4ce8-8ffe-5a646073e95a"]', 45, '2024-06-20 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:02:55', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M", "1"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-05-31 23:02:55', '2024-05-31 23:02:55'),
-	('817bad04-746f-457f-b3c0-5d856a7078b5', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 24, '2024-06-27 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:10:15', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'PENDIENTE', '2024-05-31 20:10:15', '2024-05-31 20:10:15'),
+	('7a5135b4-c205-41d4-9d5f-ead3dc04a05b', '["4a72b14b-9529-4aa9-83fa-ebb55a210e82"]', 49, '2024-06-20 20:15:00', '20:15:00', '21:45:00', '2024-06-17 14:08:50', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008080, '[null]', '2b56ffbe-fbcb-4c9d-adc0-c13749585e98', 'CANCELADO', '2024-06-17 18:08:51', '2024-06-23 00:29:29'),
+	('80dca888-dc3e-468e-9fb4-b2953421ea2e', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d", "46f460de-2da8-4ce8-8ffe-5a646073e95a"]', 45, '2024-06-20 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:02:55', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M", "1"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 23:02:55', '2024-06-23 00:29:29'),
+	('817bad04-746f-457f-b3c0-5d856a7078b5', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 24, '2024-06-27 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:10:15', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:10:15', '2024-06-23 07:24:42'),
 	('8a3ead27-febf-411c-ac09-8d5f9b8500c0', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 34, '2024-06-27 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:24:06', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:24:06', '2024-06-16 08:49:21'),
 	('8adb44d0-8a85-4e74-9443-8bf3d47a83c3', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 290, '2024-06-21 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:20:03', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:20:03', '2024-06-16 08:53:56'),
-	('8d4f1154-2d2b-4aba-a605-f77b54bc92d5', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:52:54', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-05-31 20:52:54', '2024-05-31 20:52:54'),
+	('8d4f1154-2d2b-4aba-a605-f77b54bc92d5', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:52:54', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 20:52:54', '2024-06-23 00:29:29'),
 	('8dcb3f24-0860-4cb1-b045-0f8a36f86d4d', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:40:09', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 23:40:09', '2024-06-16 08:26:53'),
 	('8e3e9204-60d3-461b-bb11-923b717048eb', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d", "007ff40d-5105-47d1-9744-82a199a8436f", "039c16c5-4de9-48d6-8238-f24e657c5eb6"]', 1, '2024-06-06 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:48:43', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M", "1", "4"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'ACEPTADO', '2024-05-31 23:48:43', '2024-06-09 18:16:52'),
 	('9351acc4-7cef-4c02-aa09-51cdf6906fef', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 45, '2024-06-14 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:18:04', 'Examen 2da instancia', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:18:04', '2024-06-11 16:08:29'),
 	('93d18237-2ac3-4306-b96b-b75d0122ad84', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 4, '2024-07-04 16:30:00', '16:30:00', '17:00:00', '2024-05-31 18:56:21', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 22:56:21', '2024-06-16 08:50:30'),
 	('952a417c-0b32-4776-9b69-9d748eefc79c', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 18, '2024-06-21 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:42:33', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 23:42:33', '2024-06-16 08:34:21'),
-	('980f1f13-9f1a-4181-8593-25e278c27310', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-26 16:30:00', '16:30:00', '17:00:00', '2024-06-05 22:47:47', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-06-06 02:47:47', '2024-06-06 02:47:47'),
+	('980f1f13-9f1a-4181-8593-25e278c27310', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-26 16:30:00', '16:30:00', '17:00:00', '2024-06-05 22:47:47', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-06-06 02:47:47', '2024-06-23 07:27:07'),
 	('99e4a1f9-f476-49ce-b62d-614f6cf43f99', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:31:11', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 23:31:11', '2024-06-11 12:45:52'),
 	('9d39fe05-9485-4414-a5bf-e32ba6d05392', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 15:59:51', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-05-31 19:59:51', '2024-06-09 18:42:18'),
 	('9dad343d-cde4-42aa-b817-90dbae465049', '["039c16c5-4de9-48d6-8238-f24e657c5eb6"]', 50, '2024-06-28 11:15:00', '11:15:00', '12:45:00', '2024-06-15 13:25:38', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2010008, '[null]', 'df7da622-3321-460f-a813-b2382cfd14e6', 'PENDIENTE', '2024-06-15 17:25:38', '2024-06-15 17:25:38'),
-	('9daea5a2-6a08-4c33-af77-d9bf85f78000', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 22, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 17:19:10', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'PENDIENTE', '2024-05-31 21:19:10', '2024-05-31 21:19:10'),
+	('9daea5a2-6a08-4c33-af77-d9bf85f78000', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 22, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 17:19:10', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 21:19:10', '2024-06-23 00:29:29'),
 	('9e1e3798-7481-4b22-9954-e4249068e77d', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-05-29 16:30:00', '16:30:00', '17:00:00', '2024-05-28 22:28:32', 'Examen parcial', '"{\\"URGENTE\\":\\"Razon de la docente\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'ACEPTADO', '2024-05-29 02:28:32', '2024-06-10 01:09:36'),
 	('9edee4f0-794c-45db-bb49-72283075beca', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 4, '2024-06-04 16:30:00', '16:30:00', '17:00:00', '2024-05-31 21:03:56', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-06-01 01:03:56', '2024-06-05 16:58:18'),
 	('9f8c7c12-5a4d-4d72-8d9b-14a3b2c6e5ab', '{"id1": "22daa7a1-81d4-49ce-ae01-44d10201b837"}', 30, '2024-05-20 20:15:00', '20:15:00', '21:45:00', '2024-05-14 11:09:07', 'Examen auxiliar', '{"URGENTE": "Estoy mintiendo"}', 2008054, '{"grupo1": 13}', '77b4c945-39af-4ad1-9109-1947f2bd1847', 'CANCELADO', NULL, NULL),
-	('a2b60c92-d335-4d65-a9bf-3a3a720572d7', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 12, '2024-06-19 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:13:30', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008081, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-06-17 18:13:30', '2024-06-17 18:13:30'),
+	('a2b60c92-d335-4d65-a9bf-3a3a720572d7', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 12, '2024-06-19 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:13:30', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008081, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-06-17 18:13:30', '2024-06-23 00:29:29'),
 	('a4be1a50-cdd1-4cd1-a1cf-5288fbdcd99a', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 15, '2024-06-20 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:21:17', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-05-31 20:21:17', '2024-06-09 19:16:12'),
 	('a8dbece7-ea32-446a-abae-cdb02b005181', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:08:34', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:08:34', '2024-06-11 16:01:11'),
 	('adfc0d65-ec50-42c8-9b2e-abc82c23b556', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 98, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:50:59', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 23:50:59', '2024-06-16 08:33:04'),
-	('b2e5a6d1-ba13-4633-9372-9a56c2e38809', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 12, '2024-06-19 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:19:10', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008081, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-06-17 18:19:10', '2024-06-17 18:19:10'),
+	('b2e5a6d1-ba13-4633-9372-9a56c2e38809', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 12, '2024-06-19 11:15:00', '11:15:00', '12:45:00', '2024-06-17 14:19:10', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008081, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-06-17 18:19:10', '2024-06-23 00:29:29'),
 	('bff1ede3-5f34-48b7-8de9-f9c603a1ce8d', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 4, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:43:49', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'CANCELADO', '2024-05-31 23:43:49', '2024-06-16 08:33:22'),
 	('c11b1e77-d49b-4b24-a481-858f1739b517', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 29, '2024-06-28 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:54:37', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 23:54:37', '2024-06-16 08:34:35'),
-	('c848bd22-9c9d-401d-9710-89dc34ac5903', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d", "2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d", "c7460556-b09c-4b10-8460-05e6183e4e42"]', 12, '2024-06-26 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:12:08', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M", "1", "1"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-05-31 23:12:08', '2024-05-31 23:12:08'),
+	('c52a8176-41e9-4cf8-be4a-e2a1367cdd40', '["275e16e1-5fdf-41bb-9399-653941e76f71"]', 12, '2024-06-25 12:45:00', '12:45:00', '14:15:00', '2024-06-23 05:10:35', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008054, '["13"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-06-23 09:10:35', '2024-06-23 09:10:35'),
+	('c848bd22-9c9d-401d-9710-89dc34ac5903', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d", "2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d", "c7460556-b09c-4b10-8460-05e6183e4e42"]', 12, '2024-06-26 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:12:08', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M", "1", "1"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 23:12:08', '2024-06-23 07:31:26'),
+	('c9f2db44-05ca-4680-a8ae-0dee693edfc9', '["039c16c5-4de9-48d6-8238-f24e657c5eb6"]', 23, '2024-06-24 06:45:00', '06:45:00', '08:15:00', '2024-06-23 20:01:20', 'Examen de mesa', '"{\\"URGENTE\\":\\"Examen de mesa\\"}"', 2010008, '["2", "4"]', '0638f3f0-2c69-4e31-a5a3-f5d84ce82f17', 'PENDIENTE', '2024-06-24 00:01:20', '2024-06-24 00:01:20'),
 	('d3796064-bc83-4ea3-866a-f68ab47e3e5a', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 29, '2024-06-03 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:32:18', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-05-31 23:32:18', '2024-06-05 16:23:55'),
 	('d43ec0ad-5a01-4f3e-8daa-0e4f02954f79', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-05-29 16:30:00', '16:30:00', '17:00:00', '2024-05-28 22:32:43', 'Examen parcial', '"{\\"URGENTE\\":\\"Razon de la docente\\"}"', 2006018, '["M"]', '157fb7c2-97f6-4300-b9b2-d6dbb97b1b04', 'ACEPTADO', '2024-05-29 02:32:43', '2024-06-05 16:20:08'),
-	('d4c9ef0e-f012-495e-adea-055a7ac7209a', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:35:21', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-05-31 23:35:21', '2024-05-31 23:35:21'),
+	('d4c9ef0e-f012-495e-adea-055a7ac7209a', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 12, '2024-06-19 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:35:21', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'CANCELADO', '2024-05-31 23:35:21', '2024-06-23 00:29:29'),
 	('d6473fcf-7553-40f4-9d50-e61e2be85acf', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 56, '2024-06-27 16:30:00', '16:30:00', '17:00:00', '2024-05-31 16:22:22', 'Examen 2da instancia', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-05-31 20:22:22', '2024-06-16 08:36:38'),
+	('d71426b8-1e88-4286-a1a5-1e3e241d3a55', '["275e16e1-5fdf-41bb-9399-653941e76f71"]', 12, '2024-06-25 12:45:00', '12:45:00', '14:15:00', '2024-06-23 05:08:48', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008054, '["13"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-06-23 09:08:48', '2024-06-23 09:08:48'),
 	('d8583ed0-0951-4e7d-a63e-4a1188a3d652', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 24, '2024-06-06 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:34:13', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'ACEPTADO', '2024-05-31 23:34:13', '2024-06-10 01:11:35'),
 	('dad83a18-6b91-4700-9554-e1e93530df28', '["968acc82-30de-4bbf-8b40-9be8d5251468"]', 50, '2024-06-18 20:15:00', '20:15:00', '21:45:00', '2024-06-17 14:45:54', 'Examen parcial', '"{\\"URGENTE\\":\\"Necesito dar el examen para un viaje\\"}"', 2008055, '[null]', 'df7da622-3321-460f-a813-b2382cfd14e6', 'ACEPTADO', '2024-06-17 18:45:54', '2024-06-17 18:48:03'),
 	('dbdae2bb-b725-45a8-9f9b-1f5c1086927e', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 32, '2024-06-07 16:30:00', '16:30:00', '17:00:00', '2024-05-31 19:30:22', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', 'f82530b9-9e02-4a7f-81be-0642303812db', 'ACEPTADO', '2024-05-31 23:30:22', '2024-06-10 01:25:55'),
 	('e0ae3da0-1ddf-4384-a400-58c52aed2243', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 13, '2024-06-05 16:30:00', '16:30:00', '17:00:00', '2024-05-29 00:29:35', 'Examen de mesa', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '["M"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'ACEPTADO', '2024-05-29 04:29:35', '2024-06-05 16:52:52'),
-	('e2ee8d64-f56d-4faa-bd7e-7bfcec88ecde', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 13, '2024-06-20 16:30:00', '16:30:00', '17:00:00', '2024-06-05 23:31:05', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'PENDIENTE', '2024-06-06 03:31:05', '2024-06-06 03:31:05'),
+	('e2ee8d64-f56d-4faa-bd7e-7bfcec88ecde', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 13, '2024-06-20 16:30:00', '16:30:00', '17:00:00', '2024-06-05 23:31:05', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', 'f2433f5a-3285-4ffb-b9b2-c890141fa144', 'CANCELADO', '2024-06-06 03:31:05', '2024-06-23 00:29:29'),
+	('e366bfb5-fc1f-4b77-812b-9202486ecd09', '["2b4d3c2f-09f2-4c2b-95d2-8d355afa5e4d"]', 25, '2024-06-26 12:45:00', '12:45:00', '14:15:00', '2024-06-23 22:25:51', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008070, '["1", "1"]', 'a099246b-9a37-4a88-b8a5-3cd917ca51ee', 'PENDIENTE', '2024-06-24 02:25:51', '2024-06-24 02:25:51'),
+	('e4dccfa5-3c96-49b4-b64a-5ddb436c73c4', '["275e16e1-5fdf-41bb-9399-653941e76f71"]', 12, '2024-06-25 12:45:00', '12:45:00', '14:15:00', '2024-06-23 05:03:14', 'Examen final', '"{\\"NORMAL\\":\\"Normal\\"}"', 2008054, '["13"]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'PENDIENTE', '2024-06-23 09:03:14', '2024-06-23 09:03:14'),
 	('ea30ce83-98e0-49de-aa4f-40f47e254343', '["46f460de-2da8-4ce8-8ffe-5a646073e95a"]', 13, '2024-06-19 11:15:00', '11:15:00', '12:45:00', '2024-06-11 12:12:32', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', '8b2c60a7-b88b-4825-b4a5-1e43924f85c7', 'CANCELADO', '2024-06-11 16:12:32', '2024-06-16 08:24:11'),
 	('ef228f43-a121-469a-b1ab-079d5d329e4a', '["354db6b6-be0f-4aca-a9ea-3c31e412c49d"]', 123, '2024-06-18 16:30:00', '16:30:00', '17:00:00', '2024-06-05 23:46:12', 'Examen parcial', '"{\\"NORMAL\\":\\"Normal\\"}"', 2006018, '[null]', '136eedd3-f082-42c0-aacd-0063d5f3562f', 'ACEPTADO', '2024-06-06 03:46:12', '2024-06-11 17:30:25'),
 	('f47ac10b-58cc-4372-a567-0e02b2c3d479', '{"id1": "039c16c5-4de9-48d6-8238-f24e657c5eb6", "id2": "c34627f2-6dec-4853-a50c-614af0e17e66"}', 150, '2024-05-27 14:30:00', '14:30:00', '15:30:00', '2024-05-14 16:19:07', 'Examen de mesa', '{"NORMAL": "Ninguno"}', 2010008, '{"grupo1": 2, "grupo2": 4}', '0638f3f0-2c69-4e31-a5a3-f5d84ce82f17', 'ACEPTADO', NULL, '2024-05-29 19:24:46'),
@@ -793,7 +814,7 @@ CREATE TABLE IF NOT EXISTS `solicitudes` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.solicitudes: ~23 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.solicitudes: ~24 rows (aproximadamente)
 DELETE FROM `solicitudes`;
 INSERT INTO `solicitudes` (`id`, `nombre`, `nombre1`, `nombre2`, `nombre3`, `nombre4`, `nombre5`, `materia`, `grupo`, `cantidad_estudiantes`, `motivo`, `modo`, `razon`, `aula`, `fecha`, `horario`, `estado`, `ID_DOCENTE`, `hInicio`, `hFin`, `created_at`, `updated_at`) VALUES
 	(1, 'TORRICO TROCHE MILKA MONICA', NULL, NULL, NULL, NULL, NULL, 'FISICA BASICA I', '2', 12, 'Examen Mesa', 'Urgente', NULL, '691A', '2024-05-01', '15:45 PM - 16:15 PM', 'Cancelado', '354db6b6-be0f-4aca-a9ea-3c31e412c49d', '11:15:00', '12:45:51', '2024-03-30 13:00:31', '2024-05-01 14:11:27'),
@@ -839,7 +860,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   CONSTRAINT `users_id_docente_foreign` FOREIGN KEY (`ID_DOCENTE`) REFERENCES `docente` (`ID_DOCENTE`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Volcando datos para la tabla reservas_tis.users: ~6 rows (aproximadamente)
+-- Volcando datos para la tabla reservas_tis.users: ~7 rows (aproximadamente)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `cargo`, `remember_token`, `created_at`, `updated_at`, `ID_DOCENTE`) VALUES
 	(1, 'admin', 'admin@jatun.code.com', NULL, 'Cond@tr3m4r$', 'admin', NULL, NULL, NULL, NULL),

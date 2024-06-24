@@ -25,18 +25,29 @@ class ReservasController extends Controller
     {
         $usuario = Auth::user();
         $buscador =  new EncontrarTodo();
-        $solicitudes = ($usuario->cargo == 'admin') ?
-        Solicitud::with(
-            'solicitud_relacion_ambiente',
-            'solicitud_relacion_materia',
-        )->where('ESTADO', 'PENDIENTE')
-        ->orderBy('FECHAHORA_SOLI')
-        ->orderByRaw("CASE WHEN PRIORIDAD LIKE '%URGENTE%' THEN 1 ELSE 2 END, FECHAHORA_SOLI")->get() : 
-        Solicitud::with(
-            'solicitud_relacion_ambiente',
-            'solicitud_relacion_materia',
-        )->where('ESTADO', 'PENDIENTE')->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")
-        ->orderByRaw("CASE WHEN PRIORIDAD LIKE '%URGENTE%' THEN 1 ELSE 2 END, FECHAHORA_SOLI")->orderBy('FECHAHORA_SOLI')->get();
+        $solicitudes = collect();
+        if($usuario->cargo == 'admin'){
+            $solicitudes_urgentes = Solicitud::with(
+                'solicitud_relacion_ambiente',
+                'solicitud_relacion_materia',
+            )->where('ESTADO', 'PENDIENTE')->where('PRIORIDAD','LIKE' ,'%URGENTE%')->orderBy('FECHAHORA_SOLI')->get();
+            $solicitudes_normales = Solicitud::with(
+                'solicitud_relacion_ambiente',
+                'solicitud_relacion_materia',
+            )->where('ESTADO', 'PENDIENTE')->where('PRIORIDAD', 'LIKE', '%NORMAL%')->orderBy('FECHAHORA_SOLI')->get();
+        }else{
+            $solicitudes_urgentes = Solicitud::with(
+                'solicitud_relacion_ambiente',
+                'solicitud_relacion_materia',
+            )->where('ESTADO', 'PENDIENTE')->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")
+            ->where('PRIORIDAD', 'URGENTE')->orderBy('FECHAHORA_SOLI')->get();
+            $solicitudes_normales = Solicitud::with(
+                'solicitud_relacion_ambiente',
+                'solicitud_relacion_materia',
+            )->where('ESTADO', 'PENDIENTE')->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")
+            ->where('PRIORIDAD', 'NORMAL')->orderBy('FECHAHORA_SOLI')->get();
+        }
+        $solicitudes = $solicitudes->merge($solicitudes_urgentes)->merge($solicitudes_normales);
         $materias = Materia::whereHas('materia_relacion_dm', 
                     function($query)use($usuario){
                         $query->where('ID_DOCENTE', $usuario->ID_DOCENTE);
@@ -171,7 +182,7 @@ class ReservasController extends Controller
         $razones = new Razones();
         $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICITUD);
         try{
-            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):[];
+            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store(json_decode($request->ACTUALIZACIONES)->LISTA_NO_REG):[];
             $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg):'Ninguno';
             Reserva::create([
                 'ID_RESERVA' => $id,
