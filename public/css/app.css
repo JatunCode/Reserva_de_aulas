@@ -11,3 +11,16 @@ body {
 .flex-grow-1 {
   flex-grow: 1;
 }
+.stat {
+  position: relative;
+  text-align: center;
+  padding: 20px;
+  opacity: 0; /* Inicialmente ocultamos los elementos */
+  transform: translateY(20px); /* Movemos los elementos hacia abajo */
+  transition: opacity 0.6s, transform 0.6s;
+}
+
+.stat.animated {
+  opacity: 1; /* Mostramos los elementos con animación */
+  transform: translateY(0);
+}
