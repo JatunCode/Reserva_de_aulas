@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-<h1>Lista de Solicitudes </h1>
+<h1>Lista de Solicitudes</h1>
 @stop
 
 @section('content')
@@ -13,48 +13,47 @@
 <div class="card">
     <div class="card-header">
         <form class="row">
-        <div class="form-group col-lg-4 col-md-3 align-self-center">
-            <label for="inputSearch" class="mr-2">Materia:</label>
-            <select type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
-                <option value="" disabled selected>Seleccione una materia</option>
-                <option value="TODAS LAS MATERIAS">TODAS LAS MATERIAS</option>
-                @foreach($materias as $materia)
-                    <option value="{{ $materia['NOMBRE'] }}">{{ $materia['NOMBRE'] }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="form-group col-lg-2 col-md-3 align-self-center">
-            <label for="selectMode" class="mr-2">Modo:</label>
-            <select class="form-control" id="selectMode">
-                <option value="Todos" selected>Todos</option>
-                <option value="Normal">Normal</option>
-                <option value="Urgente">Urgente</option>
-            </select>
-        </div>
-        <div class="form-group col-lg-2 col-md-3 align-self-center">
-            <label for="selectStatus" class="mr-2">Estado:</label>
-            <select class="form-control" id="selectStatus">
-                <option value="Todos" selected>Todos</option>
-                <option value="Aceptado">Reservado</option>
-                <option value="Pendiente">Solicitando</option>
-                <option value="Cancelado">Cancelado</option>
-            </select>
-        </div>
-        <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
-            <label for="selectMode" class="mr-2"></label>
-            <button type="button" id="btnBuscar" class="btn btn-primary w-100" style="background-color: green">Buscar</button>
-
-        </div>
+            <div class="form-group col-lg-4 col-md-3 align-self-center">
+                <label for="inputSearch" class="mr-2">Materia:</label>
+                <select type="text" class="form-control w-100" id="inputSearch" list="materias" placeholder="Ingrese texto">
+                    <option value="" disabled selected>Seleccione una materia</option>
+                    <option value="TODAS LAS MATERIAS">TODAS LAS MATERIAS</option>
+                    @foreach($materias as $materia)
+                        <option value="{{ $materia['NOMBRE'] }}">{{ $materia['NOMBRE'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group col-lg-2 col-md-3 align-self-center">
+                <label for="selectMode" class="mr-2">Modo:</label>
+                <select class="form-control" id="selectMode">
+                    <option value="Todos" selected>Todos</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Urgente">Urgente</option>
+                </select>
+            </div>
+            <div class="form-group col-lg-2 col-md-3 align-self-center">
+                <label for="selectStatus" class="mr-2">Estado:</label>
+                <select class="form-control" id="selectStatus">
+                    <option value="Todos" selected>Todos</option>
+                    <option value="Aceptado">Reservado</option>
+                    <option value="Pendiente">Solicitando</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+            </div>
+            <div class="form-group col-lg-2 col-md-3 ml-auto align-self-center">
+                <label for="selectMode" class="mr-2"></label>
+                <button type="button" id="btnBuscar" class="btn btn-primary w-100" style="background-color: green">Buscar</button>
+            </div>
         </form>
     </div>
     <div class="card-body table-responsive">
-        <table class="table table-bordered">
-            <thead>
+        <table class="table table-bordered table-hover">
+        <thead style="background-color: #00455c; color: white;">
                 <tr>
                     <th style="width: 10px">#</th>
                     <th>Aula</th>
-                    <th>materia</th>
-                    <th>Fecha </th>
+                    <th>Materia</th>
+                    <th>Fecha</th>
                     <th style="width: 40px">Modo</th>
                     <th style="width: 40px">Estado</th>
                     <th style="width: 10px">Detalles</th>
@@ -66,18 +65,15 @@
                 @endphp
                 @foreach($solicitudes as $solicitud)
                     <tr style="@if($solicitud['ESTADO'] == 'CANCELADO') background-color: #E8E8E8; color: black; @endif">
-
                         <td>{{ $contador++ }}</td>
                         <td>{{ $solicitud['AMBIENTE'] }}</td>
                         <td>{{ $solicitud['MATERIA'] }}</td>
                         <td>{{ $solicitud['FECHA_SOLICITUD'] }}</td>
-
                         <td class="modo">
                             <span class="btn  btn-sm btn-block
                                 @if($solicitud['ESTADO'] == 'CANCELADO')
-                                    background-color: #FFC0B7;btn btn-outline-secondary ;
+                                    background-color: #FFC0B7; btn btn-outline-secondary;
                                 @elseif($solicitud['MODO'] == 'NORMAL')
-                                    ;
                                     btn-success
                                 @else
                                     btn-danger
@@ -89,7 +85,7 @@
                         <td>
                             <span class="btn btn-sm btn-block
                                     @if($solicitud['ESTADO'] == 'CANCELADO')
-                                        background-color: #FFC0B7;btn btn-outline-secondary
+                                        background-color: #FFC0B7; btn btn-outline-secondary
                                     @elseif($solicitud['ESTADO'] == 'ACEPTADO')
                                         btn-success
                                     @elseif($solicitud['ESTADO'] == 'PENDIENTE')
@@ -100,7 +96,6 @@
                                     " aria-controls="offcanvasRight">
                                 <span class="text-truncate">{{ $solicitud['ESTADO'] }}</span>
                             </span>
-
                         </td>
                         <td class="d-flex justify-content-between">
                             <button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
@@ -110,19 +105,13 @@
                                     <i class="bi bi-eye"></i> <!-- Icono "eye" de Bootstrap Icons -->
                                 </span>
                             </button>
-
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        
     </div>
-
-
-
 @include('admin.components.formularioReserva')
-
 @stop
 
 @section('css')
@@ -132,11 +121,21 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+<style>
+    thead.table-dark th {
+        background-color: #343a40;
+        color: white;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+</style>
 @stop
 
 @section('js')
-
-
 <script>
     $(document).ready(function() {
         $('#inputSearch').on('input', function() {
@@ -155,7 +154,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
-
 <script>
     const solicitudes = @json($solicitudes);
     function obtenerDatosSolicitud(button) {
@@ -195,14 +193,8 @@
         }
     }
 </script>
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js">
-</script>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js">
-</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("btnBuscar").addEventListener('click', function() {
@@ -243,14 +235,13 @@
             
             // Agregar las celdas con los datos de la solicitud a la fila
             row.innerHTML = `
-                
                 <td>${contador++}</td>
                 <td>${solicitud['AMBIENTE']}</td>
                 <td>${solicitud['MATERIA']}</td>
                 <td>${solicitud['FECHA_RESERVA']}</td>
                 <td >
-                    <span class="btn  btn-sm btn-block" style="background-color: ${solicitud['MODO'] === 'NORMAL' ? '#198754' : '#dc3545'};color: white">
-                        ${(isObject(solicitud['MODO']) || solicitud['MODO'].includes('URGENTE'))? 'URGENTE': 'NORMAL'}
+                    <span class="btn  btn-sm btn-block" style="background-color: ${solicitud['MODO'] === 'NORMAL' ? '#198754' : '#dc3545'}; color: white">
+                        ${(isObject(solicitud['MODO']) || solicitud['MODO'].includes('URGENTE')) ? 'URGENTE' : 'NORMAL'}
                     </span>
                 </td>
                 <td>
@@ -258,7 +249,6 @@
                         ${solicitud['ESTADO']}
                     </span>
                 </td>
-
                 <td>
                     <button class="btn btn-sm solicitar-btn mx-1" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
@@ -278,9 +268,5 @@
     function isObject(params) {
         return typeof params === "object" && params !== null
     }
-
 </script>
-
-
-
 @stop

@@ -11,46 +11,50 @@
 <!-- Contenido de la página -->
 
 <div class="card">
-    <div class="card-header row">
-        <div class="col-md-2">
-            <label class="form-label" for="dia">Dia</label>
-            <select class="form-select" name="dia">
-                <option value="" selected>Todos los dias</option>
-                <option value="LUNES">Lunes</option>
-                <option value="MARTES">Martes</option>
-                <option value="MIERCOLES">Miercoles</option>
-                <option value="JUEVES">Jueves</option>
-                <option value="VIERNES">Viernes</option>
-                <option value="SABADO">Sabado</option>
-            </select>
-        </div>
-        
-        <div class="col-md-4" id="containerDocente">
-            <label class="form-label" for="docente">Docente</label>
-            <input class="form-control" type="text" name="docente" placeholder="Buscar docente">
-            <div id="lista-docentes" class="list-group" style="display: none; position: absolute;"></div>
-            <p id="messageErrorDocente" style="display: none; color: red">*No se encontro el docente</p>
-        </div>
-        <div class="col-md-2">
-            <select class="form-select" name="blockfree">
-                <option value="" selected>Todos los horarios</option>
-                <option value="NO HABILITADO">Horarios bloqueados</option>
-                <option value="HABILITADO">Horarios libres</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary d-inline-block w-7" style="background-color:green" onclick="findHorario()">Buscar</button>
-        </div>
+<div class="card-header row" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+    <div class="col-md-2" style="flex: 1;">
+        <label class="form-label" for="dia">Día</label>
+        <select class="form-select" name="dia">
+            <option value="" selected>Todos los días</option>
+            <option value="LUNES">Lunes</option>
+            <option value="MARTES">Martes</option>
+            <option value="MIERCOLES">Miércoles</option>
+            <option value="JUEVES">Jueves</option>
+            <option value="VIERNES">Viernes</option>
+            <option value="SABADO">Sábado</option>
+        </select>
     </div>
+    
+    <div class="col-md-4" id="containerDocente" style="flex: 2; position: relative;">
+        <label class="form-label" for="docente">Docente</label>
+        <input class="form-control" type="text" name="docente" placeholder="Buscar docente">
+        <div id="lista-docentes" class="list-group" style="display: none; position: absolute; z-index: 10; background: white; width: 100%;"></div>
+        <p id="messageErrorDocente" style="display: none; color: red;">*No se encontró el docente</p>
+    </div>
+    
+    <div class="col-md-2" style="flex: 1;">
+        <label class="form-label" for="blockfree">Estado del horario</label>
+        <select class="form-select" name="blockfree">
+            <option value="" selected>Todos los horarios</option>
+            <option value="NO HABILITADO">Horarios bloqueados</option>
+            <option value="HABILITADO">Horarios libres</option>
+        </select>
+    </div>
+    
+    <div class="col-md-2" style="flex: 1;">
+        <button class="btn btn-primary d-inline-block w-7" style="background-color: green; margin-top: 2rem;" onclick="findHorario()">Buscar</button>
+    </div>
+</div>
     <div class="card-header">
         <h3 class="card-title">Horarios registrados</h3>
     </div>
     <div class="card-body table-responsive">
         
-        <table class="table table-bordered">
-            <thead>
+        <table class="table table-bordered" style="width: 100%; border-collapse: collapse;">
+            <thead style="background-color: #00455c; color: white; text-align: center; vertical-align: middle;">
                 <tr>
-                    <th style="width: 40px">Dia</th>
+                    <th style="width: 40px">#</th>
+                    <th style="width: 40px">Día</th>
                     <th style="width: 100px">Materia</th>
                     <th style="width: 40px">Hora Entrada</th>
                     <th style="width: 40px">Hora Salida</th>
@@ -59,22 +63,52 @@
                 </tr>
             </thead>
             <tbody id="tableHorarios">
-                @foreach($horarios as $horario)
-                    <tr>
-                        <th style="width: 40px">{{ $horario->DIA }}</td>
-                        <th style="width: 100px">{{ $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
-                        <th style="width: 40px">{{ $horario->INICIO }}</td>
-                        <th style="width: 40px">{{ $horario->FIN }}</td>
-                        <th style="width: 100px">{{ $horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
-                        <th style="width: 40px">{{ $horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>
-                        
+                @foreach($horarios as $index => $horario)
+                    <tr style="background-color: {{ $index % 2 == 0 ? '#f9f9f9' : '#ffffff' }};">
+                        <td style="width: 40px; text-align: center;">{{ $index + 1 }}</td>
+                        <td style="width: 40px; text-align: center;">{{ $horario->DIA }}</td>
+                        <td style="width: 100px; text-align: center;">{{ $horario['horario_relacion_dahm']['dahm_relacion_materia']['NOMBRE'] ?? '' }}</td>
+                        <td style="width: 40px; text-align: center;">{{ $horario->INICIO }}</td>
+                        <td style="width: 40px; text-align: center;">{{ $horario->FIN }}</td>
+                        <td style="width: 100px; text-align: center;">{{ $horario['horario_relacion_dahm']['dahm_relacion_docente']['NOMBRE'] ?? ''}}</td>
+                        <td style="width: 40px; text-align: center;">{{ $horario['horario_relacion_dahm']['dahm_relacion_ambiente']['NOMBRE'] ?? '' }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    
 </div>
+
+<style>
+    .card-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .form-label, .form-select, .form-control {
+        display: block;
+        width: 100%;
+    }
+
+    .table thead th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table tbody td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+</style>
 
 @stop
 
@@ -218,19 +252,22 @@
     });
 
     function agregarTabla(lista, tabla){
-        lista.forEach(elemento => {
-            tabla.innerHTML += 
-            `<tr>
-                <td style="width: 35px">${elemento['DIA']}</td>
-                <td style="width: 35px">${elemento['MATERIA']}</td>
-                <td style="width: 35px">${elemento['INICIO']}</td>
-                <td style="width: 150px">${elemento['FIN']}</td>
-                <td style="width: 20px">${elemento['DOCENTE']}</td>
-                <td style="width: 20px">${elemento['AMBIENTE']}</td>
-            </tr>`
-            console.log('Ingresando al inner')
-        })
-    }
+    tabla.innerHTML = '';
+    lista.forEach((elemento, index) => {
+        tabla.innerHTML += 
+        `<tr style="background-color: ${index % 2 === 0 ? '#f2f2f2' : '#ffffff'};">
+            <td style="width: 30px;">${index + 1}</td>
+            <td style="width: 35px;">${elemento['DIA']}</td>
+            <td style="width: 35px;">${elemento['MATERIA']}</td>
+            <td style="width: 35px;">${elemento['INICIO']}</td>
+            <td style="width: 150px;">${elemento['FIN']}</td>
+            <td style="width: 20px;">${elemento['DOCENTE']}</td>
+            <td style="width: 20px;">${elemento['AMBIENTE']}</td>
+        </tr>`;
+        console.log('Ingresando al inner');
+    });
+}
+
 
     function findHorario(){
         tipo = ""
