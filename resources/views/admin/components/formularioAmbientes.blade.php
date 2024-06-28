@@ -19,15 +19,18 @@
     <div class="col-md-10">
         <div id="referencias">
             <label for="refers" class="form-label">Referencias</label>
-            <input type="text" class="form-control" name="refers" placeholder="Bliblioteca FCyT/Area verde" onchange="caracterReferencia(this)">
+            <div class="row">
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="refers" placeholder="Bliblioteca FCyT/Area verde" onchange="caracterReferencia(this)">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class=" btn btn-success agregar-nombre" type="button" id="ref-add">
+                        <i class="bi bi-globe"></i>
+                    </button>
+                </div>
+            </div>
         </div>
         <p id="messageErrorReferencias" style="display: none; color: red"></p>
-    </div>
-
-    <div class="col-md-2 d-flex align-items-end">
-        <button class=" btn btn-success agregar-nombre" type="button" id="ref-add">
-            <i class="bi bi-globe"></i>
-        </button>
     </div>
 
     <div class="col-md-6">

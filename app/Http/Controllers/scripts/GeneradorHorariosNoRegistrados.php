@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Date;
 
 class GeneradorHorariosNoRegistrados extends Controller
 {
-    public function horarios_no_reg($tipo, $horarios, $ambiente, $fecha){
+    public function horarios_no_reg($tipo, $horarios, $ambiente, $fecha = ''){
         $lista_horarios_no_reg = [];
         $dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
         if($tipo == "horarios"){

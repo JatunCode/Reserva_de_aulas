@@ -86,7 +86,7 @@ Route::controller(ReservasController::class)->group(
 Route::controller(SolicitudController::class)->group(
     function(){
         Route::get('/fetch/normal', 'normal');
-        Route::get('/fetch/solicitudes', 'index');
+        Route::get('/fetch/solicitudes', 'indexSolicitudes');
         Route::post('/fetch/solicitudes/store', 'store');
         Route::get('/fetch/solicitud/count', 'counts');
     }

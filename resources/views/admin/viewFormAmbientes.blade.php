@@ -47,24 +47,6 @@
 
 @section('js')
 <script>
-    import Echo from "laravel-echo";
-    import Pusher from "pusher-js";
-
-    window.Pusher = Pusher;
-
-    window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: process.env.MIX_PUSHER_APP_KEY,
-        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-        encrypted: true
-    });
-
-    Echo.private('solicitud')
-        .listen('NuevaSolicitud', (e) => {
-            alert('Solicitudes pendientes: '+e.count_solis_pendientes+'\nSolicitudes urgentes'+e.count_solis_pend_urgentes);
-        });
-</script>
-<script>
     let i = 1
     let banderaambiente = true
     let banderareferencia = true
@@ -88,27 +70,61 @@
 
     fetchAmbientes()
 
+    document.getElementById('ref-add').addEventListener('click', function(){
+        const container =  document.getElementById('referencias')
+        const new_div = document.createElement('div')
+        const refer = document.createElement('input')
+        new_div.classList.add('row')
+        new_div.innerHTML = `
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="refers" placeholder="Bliblioteca FCyT/Area verde" onchange="caracterReferencia(this)">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger agregar-nombre" type="button" name="delete">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </div>`
+        refer.onchange = function(){
+            caracterReferencia(this)
+        }
+        if(i < 4){
+            container.appendChild(new_div)
+            const deleteButton = new_div.querySelector('button[name="delete"]');
+            deleteButton.addEventListener('click', function() {
+                container.removeChild(new_div);
+                i -= 1
+            });
+            i++
+        }
+        console.log("Contador de inputs: ", i)
+    })
     function agregarCampos(){
-        document.getElementById('ref-add').addEventListener('click', function(){
-            let container =  document.getElementById('referencias')
-            container.classList.add('col-md-10')
+        
+    //   const div_ambientes = document.getElementById('ambientes');
+    //     function addNewDiv() {
+    //         const newDiv = document.createElement('div');
+    //         newDiv.classList.add('row', 'ambiente-add');
+    //         newDiv.innerHTML = `
+    //             <div class="col-md-8">
+    //                 <select class="form-control" id="aula" name="aula"></select>
+    //             </div>
+    //             <div class="col-md-4">
+    //                 <button class="btn btn-danger agregar-nombre" type="button" name="delete">
+    //                     <i class="bi bi-x-circle-fill"></i>
+    //                 </button>
+    //             </div>
+    //         `;
+    //         div_ambientes.appendChild(newDiv);
 
-            let refer = document.createElement('input')
+    //         // Añadir event listener al botón de eliminar
+    //         
+    //         i += 1;
+    //     }
 
-            refer.classList.add('form-control')
-            refer.type = 'text'
-            refer.name = 'refers'
-            refer.placeholder = 'Bliblioteca FCyT/Area verde'
-            refer.isrequired = true
-            refer.onchange = function(){
-                caracterReferencia(this)
-            }
-            if(i < 4){
-                container.appendChild(refer)
-                i++
-            }
-            console.log("Contador de inputs: ", i)
-        })
+    //     // Agregar un nuevo div inicialmente para demostración
+    //     if(i < 2){
+    //         addNewDiv();
+    //     }
     }
 
     function eliminarCampos(){
