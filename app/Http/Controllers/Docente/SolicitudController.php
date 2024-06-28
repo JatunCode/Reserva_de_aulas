@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Docente;
 
 use App\Events\SolicitudCreada;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\scripts\Automatizacion;
 use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Http\Controllers\scripts\GeneradorHorariosNoRegistrados;
 use App\Models\Admin\Ambiente;
@@ -152,7 +153,7 @@ class SolicitudController extends Controller
             $fecha_reserva = Carbon::parse($request->FECHA_RESERVA);
             $bandera = ($fecha_reserva->dayOfWeek == Carbon::SUNDAY || ($fecha_reserva->dayOfWeek == Carbon::SATURDAY && $request->HORA_INICIO > '12:45:00')) ? false : true;
             $idsygruposDocente = $buscardor->getGruposyIdsDocentes(json_decode($request->NOMBRES), $id_materia);
-            $solicitud = Solicitud::create([
+            Solicitud::create([
                 'ID_SOLICITUD' => $uuid->toString(),
                 'ID_DOCENTE_s' => $idsygruposDocente[0],
                 'CANTIDAD_EST' => $request->CANTIDAD,
@@ -167,7 +168,7 @@ class SolicitudController extends Controller
                 'ID_AMBIENTE' => $buscardor->getIdAmbiente($request->AMBIENTE),
                 'ESTADO' => ($bandera) ? 'PENDIENTE' : 'CANCELADO'
             ]);
-            event(new SolicitudCreada($solicitud));
+            event(new SolicitudCreada());
             return response()->json(["message" => "Solicitud creada exitosamente"], 200);
         } catch (\Exception $e) {
             return response()->json(["message" => "Hubo un error en el servidor: $e"], 500);
@@ -257,6 +258,19 @@ class SolicitudController extends Controller
         return response()->json(['message' => 'Solicitud actualizada exitosamente', 'solicitud' => $solicitud]);
     }
 
+    /**
+     * Obtendra el conteo de las solicitudes urgentes y pendientes
+     * @return Array
+     */
+    public function counts(){
+        $horaActual = Date::now();
+        $auto = new Automatizacion();
+        $auto->updateAll();
+        $solicitudesUrgentes = Solicitud::where('ESTADO', 'PENDIENTE')->where('PRIORIDAD', 'LIKE', '%URGENTE%')->where('FECHA_RE', '>=', "$horaActual")->count();
+        $solicitudesPendientes = Solicitud::where('ESTADO', 'PENDIENTE')->where('FECHA_RE', '>=', "$horaActual")->count();
+        
+        return response()->json(['pendientes' => $solicitudesPendientes, 'urgentes' => $solicitudesUrgentes]);
+    }
     /**
      * Remove the specified resource from storage.
      *

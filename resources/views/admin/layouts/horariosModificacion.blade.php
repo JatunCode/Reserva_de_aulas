@@ -66,7 +66,6 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-
 <script>
     let docentes = []
     let ambientes = []
@@ -79,6 +78,18 @@
 
     let banderaAmbiente = true
     let banderaHora = true
+    let countPendientes = 0
+    let countUrgentes = 0
+    fetch("http://127.0.0.1:8000/api/fetch/solicitud/count")
+        .then(response => response.json())
+        .then(data => {
+            countPendientes = data['pendientes']
+            countUrgentes = data['urgentes']
+            console.log('Datos: ', data)
+        })
+        .catch(error => {
+            console.log("Error al obtener los conteos de datos.", error)
+        })
     fetch('http://127.0.0.1:8000/api/fetch/docentes').then(
         response => response.json()
     ).then(
@@ -96,14 +107,46 @@
     ).then(
         data => {
             ambientes = data
+            mensaje()
         }
     ).catch(
         error => {
             console.log("Error encontrado: ", error)
         }
     )
-    function fetchs(){
-        
+
+    function mensaje(){
+        Swal.fire({
+            title: "<strong>Tiene solicitudes por atender</strong>",
+            html: `<strong>Solicitudes pendientes: ${countPendientes}</strong>
+                    <br>
+                    <strong style="color: red">Solicitudes urgentes: ${countUrgentes}</strong>
+                `,
+            icon: "info",
+            showCancelButton:true,
+            cancelButtonColor: "",
+            cancelButtonText: "Seguir en la paigna",
+            confirmButtonColor: "#7ebd5b",
+            confirmButtonText: "Atender solicitudes",
+            showClass: {
+                popup: `
+                animate__animated
+                animate__fadeInUp
+                animate__faster
+                `,
+            },
+            hideClass: {
+                popup: `
+                animate__animated
+                animate__fadeOutDown
+                animate__faster
+                `,
+            },
+        }).then((result) => {
+            if(result.isConfirmed){
+                window.location.href = "http://127.0.0.1:8000/admin/reservas/atencion";
+            }
+        })
     }
 
     function pressEdicion(button){

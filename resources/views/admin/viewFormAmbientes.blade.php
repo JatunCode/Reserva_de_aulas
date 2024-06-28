@@ -46,7 +46,24 @@
 @stop
 
 @section('js')
+<script>
+    import Echo from "laravel-echo";
+    import Pusher from "pusher-js";
 
+    window.Pusher = Pusher;
+
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: process.env.MIX_PUSHER_APP_KEY,
+        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        encrypted: true
+    });
+
+    Echo.private('solicitud')
+        .listen('NuevaSolicitud', (e) => {
+            alert('Solicitudes pendientes: '+e.count_solis_pendientes+'\nSolicitudes urgentes'+e.count_solis_pend_urgentes);
+        });
+</script>
 <script>
     let i = 1
     let banderaambiente = true

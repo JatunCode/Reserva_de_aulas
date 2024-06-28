@@ -26,8 +26,8 @@
     "postcss": "^8.1.14",
     "prettier": "^3.2.5",
     "resolve-url-loader": "^5.0.0",
-    "sass": "^1.32.11",
-    "sass-loader": "^11.0.1"
+    "sass": "^1.77.6",
+    "sass-loader": "^11.1.1"
   },
   "name": "reserva_de_aulas",
   "description": "<!-- Plugin Instalados --> +-------------------------+-----------+ | Plugin Key              | Status    | +-------------------------+-----------+ | bootstrap4DualListbox   | Installed | | bootstrapColorpicker    | Installed | | bootstrapSlider         | Installed | | bootstrapSwitch         | Installed | | bsCustomFileInput       | Installed | | chartJs                 | Installed | | datatables              | Installed | | datatablesPlugins       | Installed | | daterangepicker         | Installed | | ekkoLightbox            | Installed | | fastclick               | Installed | | filterizr               | Installed | | flagIconCss             | Installed | | flot                    | Installed | | fullcalendar            | Installed | | icheckBootstrap         | Installed | | inputmask               | Installed | | ionRangslider           | Installed | | jqueryKnob              | Installed | | jqueryMapael            | Installed | | jqueryUi                | Installed | | jqueryValidation        | Installed | | jqvmap                  | Installed | | jsgrid                  | Installed | | paceProgress            | Installed | | select2                 | Installed | | sparklines              | Installed | | summernote              | Installed | | sweetalert2             | Installed | | tempusdominusBootstrap4 | Installed | | toastr                  | Installed | +-------------------------+-----------+ <!-- Bootstrap --> Instalado",
@@ -42,6 +42,7 @@
   "dependencies": {
     "bootstrap-icons": "^1.11.3",
     "laravel-echo": "^1.16.1",
-    "pusher-js": "^8.4.0-rc2"
+    "pusher-js": "^8.4.0-rc2",
+    "sweetalert2": "^11.12.0"
   }
 }

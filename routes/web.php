@@ -50,9 +50,6 @@ Route::prefix('admin')
     Route::get('/solicitud', [SolicitudController::class, 'docente_datos'])->name('admin.solicitud.registrar');
     //*Creacion de una en back solicitud
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
-    /**
-     * Rutas de los ambientes
-     */
     //*Muestra todos los ambientes
     Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes.list');
     //*Muestra el formulario para los ambientes
@@ -61,10 +58,6 @@ Route::prefix('admin')
     Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
     //*
     Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
-
-    /** 
-     * Urls para horarios
-    */
     //*Muestra todos los horarios
     Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios.list');
     //*Muestra el formulario de horarios
@@ -105,24 +98,12 @@ Route::prefix('docente')
 ->middleware('auth','can:docente')
 ->group(function () {
     Route::get('/', [CalendarioController::class, 'index'])->name('docente.inicio');
-    Route::get('/solicitud/normal/hola', [SolicitudController::class, 'fecha'])->name('docente.solicitud.fecha');
     Route::get('/solicitud/normal/', [SolicitudController::class, 'docente_datos'])->name('docente.solicitud.normal');
-    Route::get('/solicitud/urgente', [SolicitudController::class, 'urgente'])->name('docente.solicitud.urgente');
 
     //Route::get('/solicitudes/urgencia', [ReservasController::class, 'filtrar_modo'])->name('docente.solicitud.filtrar.urgente');
     Route::get('/solicitudes/listar', [SolicitudController::class, 'index'])->name('docente.solicitud.listar'); //si da
-    /**
-     * Se debe unir todas estas en una sola url y mandar por get
-     */
-    Route::get('/solicitudes/listar/cancelar', [ReservasController::class, 'index'])->name('docente.solicitud.filtrar.datos_cancelar'); //si da
-    Route::get('/solicitudes/listar/pendiente', [ReservasController::class, 'datos_solicitando'])->name('docente.solicitud.filtrar.datos_solicitando'); //si da
-    Route::get('/solicitudes/listar/reservado', [ReservasController::class, 'datos_reservado'])->name('docente.solicitud.filtrar.datos_reservado'); //si da 
-    
-    Route::get('/solicitudes/listar_filtro', [ReservasController::class, 'datos_filtro'])->name('docente.solicitud.filtrar.datos_filtro');
     
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
-    //Route::get('/reservas', [ReservasController::class, 'index'])->name('docente.reservas');
-    //Route::get('/reservas/{id}', [ReservasController::class, 'show'])->name('docente.reservas.show');
     Route::post('/notificacion/store', [NotificacionController::class, 'store'])->name('send.notificaciones');
 
     Route::get('/solicitudes/cancelar', [ReservasController::class, 'index'])->name('docente.solicitud.cancelar');
@@ -130,8 +111,6 @@ Route::prefix('docente')
 
     //Hu registro reservas
     Route::get('/reservas', [ReservasController::class, 'indexCancelar'])->name('docente.reservas.listar');
-    Route::get('/registroRazonDenoAsignacion', [ReservasController::class, 'registroRazonDenoAsignacion'])->name('docente.registroRazonDenoAsignacion');
-    Route::get('/registroRazonDenoAsignacion/{id}', [ReservasController::class, 'showReservas'])->name('docente.reservas.showReservas');
         
     Route::get('/mapa', [MapaControler::class, 'index'])->name('mapa.index');
 });

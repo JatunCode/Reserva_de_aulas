@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Docente\Solicitud;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,15 +15,18 @@ class SolicitudCreada
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public int $count_solis_pendientes = 0;
+    public int $count_solis_pend_urgentes = 0;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public $solicitud;
-    public function __construct($solicitud)
+    public function __construct()
     {
-        $this->solicitud = $solicitud;
+        $conteos = $this->countsSolicitudes();
+        $this->count_solis_pendientes = $conteos[0];
+        $this->count_solis_pend_urgentes = $conteos[1];
     }
 
     /**
@@ -33,5 +37,18 @@ class SolicitudCreada
     public function broadcastOn()
     {
         return new PrivateChannel('channel-name');
+    }
+
+    /**
+     * Contar las solicitudes pendientes
+     * Contar las solicitudes pendientes urgentes
+     * @return array
+     */
+    private function countsSolicitudes(){
+        $solicitudes = Solicitud::where('ESTADO', 'PENDIENTE');
+        return [
+            $solicitudes->count(),
+            $solicitudes->where('PRIORIDAD', 'LIKE', "%URGENTE%")->count()
+        ];
     }
 }

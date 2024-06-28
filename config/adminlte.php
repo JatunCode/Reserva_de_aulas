@@ -257,7 +257,7 @@ return [
     */
 
     'use_route_url' => false,
-    'dashboard_url' => 'home',
+    'dashboard_url' => '',
     'logout_url' => 'logout',
     'login_url' => 'login',
     'register_url' => 'register',
@@ -322,22 +322,22 @@ return [
         ],
         [
             'text'       => 'Registrar una solicitud',
-            'icon'       => 'fa fa-book',
+            'icon'       => 'bi bi-journal-plus',
             'icon_color' => 'green',
             'route'      => 'docente.solicitud.normal',
             'can'    => 'docente',
         ],
         [
             'text'       => 'Visualizar mis solicitudes',
-            'icon'       => 'fas fa-list',
-            'icon_color' => 'green',
+            'icon'       => 'bi bi-journal-text',
+            'icon_color' => 'yellow',
             'route'      => 'docente.solicitud.listar',
             'can'    => 'docente',
         
         ],
         [
             'text'       => 'Cancelar Solicitud',
-            'icon'       => 'fas fa-solid fa-ban',
+            'icon'       => 'bi bi-journal-x',
             'icon_color' => 'red',
             'route'      => 'docente.solicitud.cancelar',
             'can'    => 'docente',
@@ -380,6 +380,17 @@ return [
             'route'  => 'admin.inicio',
             'icon' => 'fa fa-home',
             'can'  => 'admin',
+        ],
+        [
+            'header' => 'Mensajes y notificaciones',
+            'can'    => 'admin',
+        ],
+        [
+            'text'       => 'MailBox',
+            'icon'       => 'bi bi-inboxes',
+            'icon_color' => 'yellow',
+            'route'      => 'admin.notificaciones.list',
+            'can'    => 'admin',
         ],
         [
             'header' => ' Solicitudes' ,
@@ -487,17 +498,6 @@ return [
             'icon'       => 'bi bi-map',
             'icon_color' => 'green',
             'route'      => 'admin.mapa.facultad',
-            'can'    => 'admin',
-        ],
-        [
-            'header' => 'Mensajes y notificaciones',
-            'can'    => 'admin',
-        ],
-        [
-            'text'       => 'MailBox',
-            'icon'       => 'bi bi-inboxes',
-            'icon_color' => 'yellow',
-            'route'      => 'admin.notificaciones.list',
             'can'    => 'admin',
         ]
     ],

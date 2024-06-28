@@ -220,6 +220,10 @@
             actualizarTabla();
         });
 
+        input_hora.addEventListener('input', function() {
+            this.value = this.value.replace(/[a-zA-Z]/g, '');
+        });
+
         function actualizarTabla() {
             const div_eliminar = document.getElementById('reglas');
             const fecha = filtroFechaInput.value;
@@ -400,7 +404,7 @@
             if(bandera){
                 Swal.fire({
                     icon: 'info',
-                    title: 'Confirmación de envío',
+                    title: 'Confirmación de solicitud',
                     html: modalContent,
                     showCancelButton: true,
                     confirmButtonText: 'Enviar',
@@ -427,7 +431,7 @@
         }
         const json_send = JSON.stringify(formData)
         console.log('Datos: ', json_send);
-        fetch('http://127.0.0.1:8000/admin/solicitud/create', {
+        fetch('http://127.0.0.1:8000/docente/solicitud/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -507,9 +511,11 @@
         const message = document.getElementById('messageErrorMateria');
         if(text == 'ninguno'){
             banderaMateria = false;
+            message.textContent = '*Seleccione una materia';
             message.style.display = 'block';
         }else{
             banderaMateria = true;
+            message.textContent = '';
             message.style.display = 'none';
         }
     }
@@ -549,6 +555,10 @@
         if(new_text == ''){
             banderaGrupo = false;
             message.textContent = '*Debe completar el campo';
+            message.style.display = 'block';
+        }else if(!grupos_relacionados.find(grupo => grupo['GRUPO'] == new_text)){
+            banderaGrupo = false;
+            message.textContent = '*El grupo no es del docente';
             message.style.display = 'block';
         }else{
             banderaGrupo = true;
@@ -608,19 +618,27 @@
         console.log('TExto del horario: ', new_text);
         console.log('Tipo de texto: ', typeof new_text);
 
-        const hora = new_text.split(' - ');
+        const hora = (new_text.includes('-')) ? new_text.split(' - '):[];
         const fecha_actual = new Date();
         const hora_actual = fecha_actual.getHours() * 60 + fecha_actual.getMinutes();
-        const hora_inicio = (new_text!='') ? parseTime(hora[0]):'';
-        const hora_fin = (new_text!='') ? parseTime(hora[1]):'';
+        const hora_inicio = (hora.length > 0 && new_text.includes(':')) ? parseTime(hora[0]):'';
+        const hora_fin = (hora.length > 0 && new_text.includes(':')) ? parseTime(hora[1]):'';
         const hora_min = parseTime('06:45');
         const hora_max = parseTime('21:45');
         
+        let horaInicioMinutos = (hora.length > 0) ? hora_inicio.getHours() * 60 + hora_inicio.getMinutes():0;
+        let horaFinMinutos =  (hora.length > 0) ? hora_fin.getHours() * 60 + hora_fin.getMinutes():0;
+
+        const duracionMinima = 1.5 * 60; 
+        const duracionMaxima = 4.5 * 60; 
+
+        let duracion = horaFinMinutos - horaInicioMinutos;
+
         if(new_text === ''){
             banderaHorario = false;
             message.textContent = '*Debe ingresar o seleccionar un horario';
             message.style.display = 'block';
-        } else if(hora_inicio >= hora_fin){
+        } else if(hora_inicio >= hora_fin || hora.length == 0 || hora_inicio == '' || hora_fin == ''){
             banderaHorario = false;
             message.textContent = '*Formato de horario incorrecto';
             message.style.display = 'block';
@@ -631,6 +649,10 @@
         } else if(hora_inicio.getHours() * 60 + hora_inicio.getMinutes() < hora_actual){
             banderaHorario = false;
             message.textContent = '*El horario que ingreso ya paso';
+            message.style.display = 'block';
+        }else if(duracion < duracionMinima || duracion > duracionMaxima){
+            banderaHorario = false;
+            message.textContent = '*El horario debe ser mayor a 1.50 horas y menor a 4.50 horas.';
             message.style.display = 'block';
         }else{
             banderaHorario = true;
