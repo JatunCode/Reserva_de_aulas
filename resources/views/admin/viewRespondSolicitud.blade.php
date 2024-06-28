@@ -131,7 +131,7 @@
                     <p><strong>${key}:</strong>${value}</p>
                 </div>`
             }).join('')
-
+            console.log('Datos que se tratan de enviar: ', ob_json)
             Swal.fire({
                 icon: 'info',
                 title: `Confirmación de ${(text == 'ACEPTADO') ? 'aceptacion.' : 'cancelacion.'}`,

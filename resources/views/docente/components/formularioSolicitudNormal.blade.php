@@ -27,7 +27,7 @@
     <div class="col-6" id="div-grupo">
         <label for="grupo" class="form-label">Grupo(s):</label>
         <input type="text" class="form-control" id="grupo" name="grupo" placeholder=" Ejm: 1,2,3" onchange="verificarGrupo(this)">
-        <div id="listaGrupos" class="list-group" style="display: none; position: absolute;"></div>
+        <div id="listaGrupos" class="list-group" style="display: none;"></div>
         <p id="messageErrorGrupo" style="display: none ;color: red"></p>
     </div>
 
@@ -66,10 +66,20 @@
         <!-- <input type="hidden" id="modo" name="modo"> -->
     </div>
 
-    <div class="col-6">
+    <div class="col-md-6" id="ambientes">
         <label for="aula" class="form-label">Aula:</label>
         <select class="form-control" id="aula" name="aula">
         </select>
+        {{-- <div class="row">
+            <div class="col-md-8">
+                
+            </div>
+            <div class="col-md-4">
+                <button class=" btn btn-success agregar-nombre" type="button" id="add-ambientes" disabled>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </button>
+            </div>
+        </div> --}}
     </div>
 
     <div class="col-6">
@@ -87,7 +97,7 @@
     let materias = @json($materias);
     let docentes_relacionados = [];
     let grupos_relacionados = [];
-
+    let i = 1;
     document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('container');
         const listaDocentes = document.getElementById('lista-docentes');
@@ -176,8 +186,13 @@
             item.className = 'list-group-item list-group-item-action';
             item.textContent = grupo['GRUPO'];
             item.addEventListener('click', () => {
-                inputGrupo.value += grupo['GRUPO'];
-                lista_grupos.style.display = 'none';
+                if(inputGrupo.value.length <= 1){
+                    inputGrupo.value = grupo['GRUPO'];
+                    lista_grupos.style.display = 'none'; 
+                }else{
+                    inputGrupo.value += ','+grupo['GRUPO'];
+                    lista_grupos.style.display = 'none'; 
+                }
             });
             lista_grupos.appendChild(item);
         });
@@ -188,4 +203,35 @@
             }
         });
     });
+
+    // document.getElementById('add-ambientes').addEventListener('click', function(){
+    //     const div_ambientes = document.getElementById('ambientes');
+    //     function addNewDiv() {
+    //         const newDiv = document.createElement('div');
+    //         newDiv.classList.add('row', 'ambiente-add');
+    //         newDiv.innerHTML = `
+    //             <div class="col-md-8">
+    //                 <select class="form-control" id="aula" name="aula"></select>
+    //             </div>
+    //             <div class="col-md-4">
+    //                 <button class="btn btn-danger agregar-nombre" type="button" name="delete">
+    //                     <i class="bi bi-x-circle-fill"></i>
+    //                 </button>
+    //             </div>
+    //         `;
+    //         div_ambientes.appendChild(newDiv);
+
+    //         // Añadir event listener al botón de eliminar
+    //         const deleteButton = newDiv.querySelector('button[name="delete"]');
+    //         deleteButton.addEventListener('click', function() {
+    //             div_ambientes.removeChild(newDiv);
+    //         });
+    //         i += 1;
+    //     }
+
+    //     // Agregar un nuevo div inicialmente para demostración
+    //     if(i < 2){
+    //         addNewDiv();
+    //     }
+    // });
 </script>

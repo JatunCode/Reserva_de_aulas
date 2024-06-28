@@ -96,15 +96,34 @@
 
         <div class="row">
             <div class="col-md-12">
-                <button type="button" class="btn btn-primary d-inline-block w-75" name="confirmar" style="background-color: green" onclick="cambiarEstado(this)" value="CANCELADO">Confirmar</button>
+                <button type="button" class="btn btn-success d-inline-block w-75" name="confirmar" onclick="cambiarEstado(this)" value="CANCELADO">Confirmar</button>
             </div>
             <div class="col-md-12">
-                <button type="button" class="btn btn-primary d-inline-block w-75" name="atras" style="background-color:red" onclick="cerrarMain()">Atras</button>
+                <button type="button" class="btn btn-danger d-inline-block w-75" name="atras" onclick="cerrarMain()">Atras</button>
             </div>
         </div>
         
     </div>
 </div>
+
+<script>
+    import Echo from "laravel-echo";
+    import Pusher from "pusher-js";
+
+    window.Pusher = Pusher;
+
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: process.env.MIX_PUSHER_APP_KEY,
+        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        encrypted: true
+    });
+
+    Echo.private('solicitud')
+        .listen('NuevaSolicitud', (e) => {
+            alert('Solicitudes pendientes: '+e.count_solis_pendientes+'\nSolicitudes urgentes'+e.count_solis_pend_urgentes);
+        });
+</script>
 
 <script>
     const regex = /[^0-9]/
@@ -141,16 +160,16 @@
     }
 
     function agregarRazon(){
-        let input_razon = document.querySelector('[name="razon"]').value
+        let input_razon = document.querySelector('[name="razon"]')
         const div_lista = document.getElementById('list-razones')
 
         if(input_razon != ''){
             const newLi = document.createElement('li')
 
-            newLi.innerHTML = `<input type="checkbox" name="razonli" value="${input_razon}"><label for="razonli" class="form-label">${input_razon}</label>`
+            newLi.innerHTML = `<input type="checkbox" name="razonli" value="${input_razon.value}" checked><label for="razonli" class="form-label">${input_razon.value}</label>`
             div_lista.appendChild(newLi)
         }
-        input_razon = ''
+        input_razon.value = ''
     }
 
     function isObject(object){
@@ -163,11 +182,10 @@
         const lista_reg = []
         const lista_no_reg = []
         lista_razones.forEach((element)=>{
-
             if(regex.test(parseInt(element.value, 10))){
                 lista_no_reg.push(element.value)
             }else if(element.checked){
-                lista_reg.push(element.value)
+                lista_reg.push(parseInt(element.value, 10))
             }
         })
         bandera = ([...lista_razones].find(element => element.checked)) ? true : false

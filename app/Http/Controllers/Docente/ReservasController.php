@@ -12,6 +12,7 @@ use App\Models\Docente\Reserva;
 use App\Models\Docente\Solicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Ramsey\Uuid\Uuid;
 
 class ReservasController extends Controller
@@ -81,6 +82,7 @@ class ReservasController extends Controller
     public function indexCancelar()
     {
         $usuario = Auth::user();
+        $fecha_actual = Date::now();
         $buscador = new EncontrarTodo();
         $materias = Materia::whereHas('materia_relacion_dm', 
                     function($query)use($usuario){
@@ -89,13 +91,15 @@ class ReservasController extends Controller
         $solicitudes = ($usuario->cargo == 'admin') ? Solicitud::with(
             'solicitud_relacion_ambiente',
             'solicitud_relacion_materia',
-            )->where('ESTADO', 'ACEPTADO')->orderBy('FECHA_RE')->get() : 
+            )->where('ESTADO', 'ACEPTADO')->orderBy('FECHAHORA_SOLI')
+            ->where('FECHA_RE', '>=', $fecha_actual)->get() : 
             Solicitud::with(
                 'solicitud_relacion_ambiente',
                 'solicitud_relacion_materia',
                 )
             ->where('ESTADO', 'ACEPTADO')
-            ->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")->orderBy('FECHA_RE')->get();
+            ->where('ID_DOCENTE_s', 'LIKE', "%$usuario->ID_DOCENTE%")
+            ->where('FECHA_RE', '>=', $fecha_actual)->orderBy('FECHAHORA_SOLI')->get();
         $solicitudes_estructuradas = [];
         $nombre_docentes = [];
         foreach($solicitudes as $solicitud){
@@ -128,55 +132,55 @@ class ReservasController extends Controller
         }
     }
    
-    public function datos(Request $request)
-    {
-        $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
+    // public function datos(Request $request)
+    // {
+    //     $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
 
-        // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
-        $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-                                    ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-                                    ->get();
-        // Construir la consulta base
-        $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)->get();
-        $materiasAsociadas = [];
-        foreach ($relaciones as $relacion) {
-        // Obtener la colección de materias asociadas a través de la relación
-            // Iterar sobre las materias para obtener sus nombres
-            $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
-            if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-                $materiasAsociadas[] = $nombreMateria;
-            }
-        }
-        // Devolver las solicitudes como respuesta en formato JSON
-        return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
-    }
+    //     // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
+    //     $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
+    //                                 ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
+    //                                 ->get();
+    //     // Construir la consulta base
+    //     $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)->get();
+    //     $materiasAsociadas = [];
+    //     foreach ($relaciones as $relacion) {
+    //     // Obtener la colección de materias asociadas a través de la relación
+    //         // Iterar sobre las materias para obtener sus nombres
+    //         $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
+    //         if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+    //             $materiasAsociadas[] = $nombreMateria;
+    //         }
+    //     }
+    //     // Devolver las solicitudes como respuesta en formato JSON
+    //     return view('docente.listar.solicitudes', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
+    // }
 
 
-    public function cancelar_solicitud(Request $request)
-    {
-        $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
+    // public function cancelar_solicitud(Request $request)
+    // {
+    //     $idDocente = '354db6b6-be0f-4aca-a9ea-3c31e412c49d'; // Este ID debe ser el del docente específico que deseas consultar
 
-        // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
-        $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
-                                    ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
-                                    ->get();
-        // Construir la consulta base
-        $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)->get();
-        $materiasAsociadas = [];
-        foreach ($relaciones as $relacion) {
-            // Iterar sobre las materias para obtener sus nombres
-            foreach ($relaciones as $relacion) {
-                // Obtener la colección de materias asociadas a través de la relación
-                $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
-                if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
-                    $materiasAsociadas[] = $nombreMateria;
-                }
-            }
-        }
+    //     // Obtener las relaciones Relacion_DAHM asociadas con el docente específico
+    //     $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
+    //                                 ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
+    //                                 ->get();
+    //     // Construir la consulta base
+    //     $solicitudes = Solicitudes::where('ID_DOCENTE', $idDocente)->get();
+    //     $materiasAsociadas = [];
+    //     foreach ($relaciones as $relacion) {
+    //         // Iterar sobre las materias para obtener sus nombres
+    //         foreach ($relaciones as $relacion) {
+    //             // Obtener la colección de materias asociadas a través de la relación
+    //             $nombreMateria = $relacion->dahm_relacion_materia->NOMBRE;
+    //             if ($nombreMateria && !in_array($nombreMateria, $materiasAsociadas, true)) {
+    //                 $materiasAsociadas[] = $nombreMateria;
+    //             }
+    //         }
+    //     }
 
-        // Devolver las solicitudes como respuesta en formato JSON
-        return view('docente.listar.cancelar', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
-    }
+    //     // Devolver las solicitudes como respuesta en formato JSON
+    //     return view('docente.listar.cancelar', ['solicitudes' => $solicitudes,'materias' => $materiasAsociadas]);
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -190,11 +194,14 @@ class ReservasController extends Controller
         $buscador = new EncontrarTodo();
         $id = Uuid::uuid4();
 
-        $razones = new Razones();
+        $razones_no_reg = [];
         $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICITUD);
         try{
-            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store(json_decode($request->ACTUALIZACIONES)->LISTA_NO_REG):[];
-            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge(isset($request->ACTUALIZACIONES['LISTA_REG']) ? $request->ACTUALIZACIONES['LISTA_REG'] : [], $razones_no_reg):'Ninguno';
+            foreach($request['ACTUALIZACIONES']['LISTA_NO_REG'] as $razon){
+                $razon_id = Razones::create(['razon' => $razon])->id_razon;
+                $razones_no_reg [] = $razon_id;
+            }
+            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge(isset($request['ACTUALIZACIONES']['LISTA_REG']) ? $request['ACTUALIZACIONES']['LISTA_REG'] : [], $razones_no_reg):'Ninguno';
             Reserva::create([
                 'ID_RESERVA' => $id,
                 'ID_SOLICITUD' => $request->ID_SOLICITUD,
@@ -234,7 +241,7 @@ class ReservasController extends Controller
      */
     public function update(Request $request)
     {
-        $razones = new Razones();
+        $razones_no_reg = [];
         try {
             $request->validate([
                 'ID_SOLICITUD' => 'required',
@@ -243,7 +250,10 @@ class ReservasController extends Controller
 
             $id_solicitud = $request->ID_SOLICITUD;
 
-            $razones_no_reg = (isset($request->ACTUALIZACIONES->LISTA_NO_REG)) ? $razones->store($request->ACTUALIZACIONES->LISTA_NO_REG):[];
+            foreach($request['ACTUALIZACIONES']['LISTA_NO_REG'] as $razon){
+                $razon_id = Razones::create(['razon' => $razon])->id_razon;
+                $razones_no_reg [] = $razon_id;
+            }
             $arreglo = array_merge($request->ACTUALIZACIONES['LISTA_REG'], $razones_no_reg);
             $reserva = Reserva::where('ID_SOLICITUD', $id_solicitud)->update(['RAZONES' => json_encode($arreglo)]);
             $solicitud = Solicitud::where('ID_SOLICITUD', $id_solicitud)->update(['ESTADO' => $request->ESTADO]);

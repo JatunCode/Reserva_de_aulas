@@ -7,13 +7,11 @@ use App\Http\Controllers\Admin\MateriaController;
 use App\Http\Controllers\Admin\NotificacionController;
 use App\Http\Controllers\Docente\CalendarioController;
 use App\Http\Controllers\Docente\ReservasController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Docente\SolicitudController;
 use App\Http\Controllers\RazonesController;
+use App\Http\Controllers\scripts\Automatizacion;
 use App\Http\Controllers\scripts\EncontrarTodo;
-use App\Models\Docente\Solicitud;
-use Twilio\TwiML\Video\Room;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,11 +53,8 @@ Route::controller(HorarioController::class)->group(
         Route::get('/horarios', 'index');
         Route::get('/fetch/horarios/libres/{ambiente}', 'indexList');
         Route::get('/fetch/horarios', 'indexFetch');
-        Route::get('/fetch/horarios/{ambiente}', 'show');
         Route::get('/fetch/horariostodos/{docente}/{dia}/{estado}', 'showTodo');
         Route::get('/fetch/horariostodossin/{docente}/{dia}/{estado}', 'showTodo');
-        Route::post('/horarios/store', 'store');
-        Route::get('/fetch/horariosupdate', 'indexMod');
         Route::put('/fetch/horarios/update', 'update');
         // Route::post('/putambiente', 'show');
     }
@@ -77,8 +72,6 @@ Route::controller(MateriaController::class)->group(
 Route::controller(NotificacionController::class)->group(
     function(){
         Route::get('/fetch/notificaciones', 'index');
-        Route::post('/fetch/notificacion/store', 'store');
-        // Route::post('/putambiente', 'show');
     }
 );
 
@@ -95,32 +88,12 @@ Route::controller(SolicitudController::class)->group(
         Route::get('/fetch/normal', 'normal');
         Route::get('/fetch/solicitudes', 'index');
         Route::post('/fetch/solicitudes/store', 'store');
-        Route::get('/fetch/solicitudeslibres/{ambiente}/{fecha}', 'solicitudes_libres');
-        Route::get('/fetch/solicitudesshow/{ambiente}', 'show');
-        Route::get('/fetch/solicitudes/{id}', 'showSolicitud');
-        Route::get('/fetch/solicitudesactualizar', 'actualizarUrgente');
-        //Route::post('/horarios/store', 'store');
-        // Route::post('/putambiente', 'show');
+        Route::get('/fetch/solicitud/count', 'counts');
     }
 );
 
 Route::controller(RazonesController::class)->group(
     function(){
         Route::get('/fetch/razones', 'indexList');
-        Route::post('/fetch/razones/store', 'store');
-    }
-);
-
-Route::controller(EncontrarTodo::class)->group(
-    function(){
-        Route::patch('/fetch/razones/nombres', 'getRazonesporID');
-        Route::get('/fetch/docente/{id}', 'getNombreDocenteporId');
-        Route::get('/fetch/docentegrupos', 'getGruposyIdsDocentes');
-    }
-);
-
-Route::controller(CalendarioController::class)->group(
-    function(){
-        Route::get('/fetch/calendario', 'index');
     }
 );

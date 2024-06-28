@@ -1,11 +1,21 @@
 <nav class="navbar navbar-light bg-body-tertiary">
     <div class="container-fluid">
-    <a href="{{ url('/') }}">
+        @auth
+            @if (Auth::user()->cargo === 'docente')
+                <a class="navbar-brand" href="{{ url('docente.inicio') }}" ></a>
+            @elseif (Auth::user()->cargo === 'admin')
+                <a class="navbar-brand" href="{{ url('admin.inicio') }}" ></a>
+            @endif
+        @endauth    
     <img src="{{ asset('image/jatuncode.ico') }}" alt="JatunCode" class="img-fluid" style="width: 40px; height: 40px;">
 </a>
-        <a class="navbar-brand" href="{{ url('/') }}">
-            JatunCODE
-        </a>
+        @auth
+            @if (Auth::user()->cargo === 'docente')
+                <a class="navbar-brand" href="{{ url('docente.inicio') }}" >JatunCODE</a>
+            @elseif (Auth::user()->cargo === 'admin')
+                <a class="navbar-brand" href="{{ url('admin.inicio') }}" >JatunCODE</a>
+            @endif
+        @endauth
         <div class="d-flex align-items-center">
             @auth
                 @if (Auth::user()->cargo === 'docente')

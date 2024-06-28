@@ -30,6 +30,7 @@
     <!-- Scripts -->
     @yield('scripts')
     <script src="{{ asset('vendor/bootstrap-5.3.3/js/bootstrap.bundle.min.js') }}"></script>
+    
 </body>
 
 </html>

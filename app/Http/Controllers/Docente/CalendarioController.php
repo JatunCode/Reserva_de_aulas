@@ -5,9 +5,8 @@ use DateTime;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\scripts\Automatizacion;
 use App\Http\Controllers\scripts\EncontrarTodo;
-use App\Models\Docente\Solicitudes;
-use App\Models\Admin\Relacion_DAHM;
 use App\Models\Docente\Solicitud;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 
 class CalendarioController extends Controller
@@ -19,8 +18,7 @@ class CalendarioController extends Controller
      */
     public function index()
     {
-        $atumatizar = new Automatizacion();
-        $atumatizar->updateAll();
+        $usuario = Auth::user()->cargo;
         // ? TODOS LOS HORARIOS Obtener todas las relaciones_dahm filtradas por el ID del docente
         // $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
         //                             ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
@@ -29,13 +27,13 @@ class CalendarioController extends Controller
         $start_month = Date::now()->startOfMonth()->format('Y-m-d');
         $end_month = Date::now()->endOfMonth()->format('Y-m-d');
         $buscador = new EncontrarTodo();
-        $solicitudes = Solicitud::where('ESTADO', 'PENDIENTE')->orWhere('ESTADO', 'ACEPTADO')->get(['ID_AMBIENTE','ID_MATERIA','FECHA_RE','MOTIVO', 'PRIORIDAD', 'ESTADO']);
+        $solicitudes = Solicitud::where('ESTADO', 'PENDIENTE')->orWhere('ESTADO', 'ACEPTADO')->get(['ID_AMBIENTE','ID_DOCENTE_s','ID_MATERIA','FECHA_RE','MOTIVO', 'PRIORIDAD', 'ESTADO']);
         $solicitudesAll = Solicitud::all();
 
         //dump($relaciones);
-        $pendientesCount = $solicitudesAll->where('ESTADO', 'CANCELADO')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
-        $urgentesCount = $solicitudesAll->where('ESTADO', 'PENDIENTE')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
+        $pendientesCount = $solicitudesAll->where('ESTADO', 'PENDIENTE')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
         $reservadasCount = $solicitudesAll->where('ESTADO', 'ACEPTADO')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
+        $urgentesCount = $solicitudesAll->where('PRIORIDAD', 'LIKE', '%URGENTE%')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
         $anoActual = date('Y');
     
         //? Convertir los horarios en el formato adecuado para FullCalendar
@@ -69,9 +67,12 @@ class CalendarioController extends Controller
             } else {
                 $backgroundColor = '#f2dede'; // Color por defecto para otros estados
             }
-            $nombres = $buscador->getNombreDocentesporID(json_encode(explode(',',$solicitud->ID_DOCENTE_s)));
+            $nombres = [];
             if(!is_object($solicitud->PRIORIDAD)){
                 $fecha_hora = explode(' ',$solicitud->FECHA_RE);
+                foreach ($buscador->getNombreDocentesporID($solicitud->ID_DOCENTE_s) as $nombre) {
+                    $nombres [] = $nombre['Nombre_docente'];
+                }
                 $eventos[] = [
                     'title' => $solicitud->MOTIVO . '-'.$buscador->getNombreAmbiente($solicitud->ID_AMBIENTE), // Nombre de la solicitud como título del evento
                     'start' => $fecha_hora[0] . 'T' . $fecha_hora[1], // Fecha y hora de inicio
@@ -80,9 +81,10 @@ class CalendarioController extends Controller
                     'modo' => (strpos($solicitud->PRIORIDAD,'URGENTE')) ? 'URGENTE' : 'NORMAL',
                     'materia' => $buscador->getNombreMateria($solicitud->ID_MATERIA),
                     'estado' => $solicitud->ESTADO,
-                    'nombres' => implode(', ',$nombres),
+                    'nombres' => implode(', ', $nombres),
                     'eventBackgroundColor'=>$backgroundColor,
                     'textColor'=>'white',
+                    'motivo' => $solicitud->MOTIVO
                 ];
             }
         }
@@ -104,8 +106,8 @@ class CalendarioController extends Controller
         // Convertir los eventos a formato JSON para pasarlo a la vista
         $eventos_json = json_encode($eventos);
     
-        return view('docente.home', compact('eventos_json', 'solicitudes','pendientesCount', 'urgentesCount', 'reservadasCount'));
-        //return $eventos;
+        return view('docente.home', compact('eventos_json', 'solicitudes','pendientesCount', 'urgentesCount', 'reservadasCount', 'usuario'));
+        //return [$eventos, $urgentesCount, $pendientesCount, $reservadasCount];
     }
     
     // Función para obtener todas las fechas de un día de la semana en un año específico
@@ -126,13 +128,13 @@ class CalendarioController extends Controller
 {
     // Array de nombres de días de la semana en español
     $diasSemana = [
-        'lunes' => 1,
-        'martes' => 2,
-        'miercoles' => 3,
-        'jueves' => 4,
-        'viernes' => 5,
-        'sabado' => 6,
-        'domingo' => 0,
+        'Lunes' => 1,
+        'Martes' => 2,
+        'Miercoles' => 3,
+        'Jueves' => 4,
+        'Viernes' => 5,
+        'Sabado' => 6,
+        'Domingo' => 0,
     ];
 
     // Convertir el nombre del día a minúsculas

@@ -113,6 +113,25 @@
 </script>
 
 <script>
+    import Echo from "laravel-echo";
+    import Pusher from "pusher-js";
+
+    window.Pusher = Pusher;
+
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: process.env.MIX_PUSHER_APP_KEY,
+        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        encrypted: true
+    });
+
+    Echo.private('solicitud')
+        .listen('NuevaSolicitud', (e) => {
+            alert('Solicitudes pendientes: '+e.count_solis_pendientes+'\nSolicitudes urgentes'+e.count_solis_pend_urgentes);
+        });
+</script>
+
+<script>
     let solicitudes = [];
     let ambientes = [];
     let docentes = [];
@@ -155,7 +174,7 @@
         const cantidad = document.getElementById('cantidad_estudiantes');
         const campoRazon = document.getElementById('campoRazon');
         const tabla = document.getElementById('tablaSolicitudes');
-
+        
         cantidad.addEventListener('keydown', function(event){
             ambiente.innerHTML = '';
             let ambientes_filtro = [];
@@ -169,6 +188,15 @@
                         console.log('Ambientes en lista: ', element);
                     }
                 );
+            }
+        });
+
+        cantidad.addEventListener('input', function(event) {
+            const button = document.getElementById('add-ambientes');
+            if(event.target.value < 1){
+                button.disabled = true;
+            }else{
+                button.disabled = false;
             }
         });
 
@@ -218,6 +246,10 @@
 
         ambiente.addEventListener('change', function() {
             actualizarTabla();
+        });
+
+        input_hora.addEventListener('input', function() {
+            this.value = this.value.replace(/[a-zA-Z]/g, '');
         });
 
         function actualizarTabla() {
@@ -490,6 +522,7 @@
             response => {
                     Swal.close();
                     window.location.reload();
+                    lipiar();
                     if (response.status == 200) {
                         return response;
                     } else {
@@ -507,9 +540,11 @@
         const message = document.getElementById('messageErrorMateria');
         if(text == 'ninguno'){
             banderaMateria = false;
+            message.textContent = '*Seleccione una materia';
             message.style.display = 'block';
         }else{
             banderaMateria = true;
+            message.textContent = '';
             message.style.display = 'none';
         }
     }
@@ -549,6 +584,10 @@
         if(new_text == ''){
             banderaGrupo = false;
             message.textContent = '*Debe completar el campo';
+            message.style.display = 'block';
+        }else if(!grupos_relacionados.find(grupo => grupo['GRUPO'] == new_text)){
+            banderaGrupo = false;
+            message.textContent = '*El grupo no es del docente';
             message.style.display = 'block';
         }else{
             banderaGrupo = true;
@@ -595,9 +634,11 @@
         const message = document.getElementById('messageErrorFecha');
         if(new_text == ''){
             banderaFecha = false;
+            message.textContent = '*Debe seleccionar una fecha.';
             message.style.display = 'block';
         }else{
             banderaFecha = true;
+            message.textContent = '';
             message.style.display = 'none';
         }
     }
@@ -608,19 +649,27 @@
         console.log('TExto del horario: ', new_text);
         console.log('Tipo de texto: ', typeof new_text);
 
-        const hora = new_text.split(' - ');
+        const hora = (new_text.includes('-')) ? new_text.split(' - '):[];
         const fecha_actual = new Date();
         const hora_actual = fecha_actual.getHours() * 60 + fecha_actual.getMinutes();
-        const hora_inicio = (new_text!='') ? parseTime(hora[0]):'';
-        const hora_fin = (new_text!='') ? parseTime(hora[1]):'';
+        const hora_inicio = (hora.length > 0 && new_text.includes(':')) ? parseTime(hora[0]):'';
+        const hora_fin = (hora.length > 0 && new_text.includes(':')) ? parseTime(hora[1]):'';
         const hora_min = parseTime('06:45');
         const hora_max = parseTime('21:45');
         
+        let horaInicioMinutos = (hora.length > 0) ? hora_inicio.getHours() * 60 + hora_inicio.getMinutes():0;
+        let horaFinMinutos =  (hora.length > 0) ? hora_fin.getHours() * 60 + hora_fin.getMinutes():0;
+
+        const duracionMinima = 1.5 * 60; 
+        const duracionMaxima = 4.5 * 60; 
+
+        let duracion = horaFinMinutos - horaInicioMinutos;
+
         if(new_text === ''){
             banderaHorario = false;
             message.textContent = '*Debe ingresar o seleccionar un horario';
             message.style.display = 'block';
-        } else if(hora_inicio >= hora_fin){
+        } else if(hora_inicio >= hora_fin || hora.length == 0 || hora_inicio == '' || hora_fin == ''){
             banderaHorario = false;
             message.textContent = '*Formato de horario incorrecto';
             message.style.display = 'block';
@@ -631,6 +680,10 @@
         } else if(hora_inicio.getHours() * 60 + hora_inicio.getMinutes() < hora_actual){
             banderaHorario = false;
             message.textContent = '*El horario que ingreso ya paso';
+            message.style.display = 'block';
+        }else if(duracion < duracionMinima || duracion > duracionMaxima){
+            banderaHorario = false;
+            message.textContent = '*El horario debe ser mayor a 1.50 horas y menor a 4.50 horas.';
             message.style.display = 'block';
         }else{
             banderaHorario = true;
@@ -646,6 +699,30 @@
             date.setHours(hours, minutes, 0, 0);
             return date;
         }
+    }
+
+    function limpiar(){
+        const inputs_nombres = document.querySelectorAll('.input-group.mb-2');
+        const inputs_ambientes = document.querySelectorAll('.row.ambiente-add');
+
+        inputs_nombres.forEach(
+            (input, index) => {
+                if (index > 0) {
+                    input.remove();
+                } else {
+                    input.querySelector('input').value = '';
+                }
+            }
+        );
+        inputs_ambientes.forEach(
+            (input, index) => {
+                if (index > 0) {
+                    input.remove();
+                } else {
+                    input.querySelector('input').value = '';
+                }
+            }
+        );
     }
 </script>
 
