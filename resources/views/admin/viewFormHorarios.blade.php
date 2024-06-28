@@ -86,24 +86,6 @@
 
 @section('js')
 <script>
-    import Echo from "laravel-echo";
-    import Pusher from "pusher-js";
-
-    window.Pusher = Pusher;
-
-    window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: process.env.MIX_PUSHER_APP_KEY,
-        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-        encrypted: true
-    });
-
-    Echo.private('solicitud')
-        .listen('NuevaSolicitud', (e) => {
-            alert('Solicitudes pendientes: '+e.count_solis_pendientes+'\nSolicitudes urgentes'+e.count_solis_pend_urgentes);
-        });
-</script>
-<script>
 
     let i = 1
     let docentes = []
@@ -176,53 +158,59 @@
 
     fetchs()
 
-    function agregarCampos(){
-        document.getElementById('ref-add').addEventListener('click', function(){
-            let container_main =  document.getElementById('container-main')
+    document.getElementById('ref-add').addEventListener('click', function(){
+        let container_main =  document.getElementById('container-main')
 
-            let container = document.createElement('div')
-            container.classList.add('row')
+        let container = document.createElement('div')
+        container.classList.add('row')
 
-            let dia = document.createElement('div')
-            dia.classList.add('col-md-10')
-            dia.innerHTML = "<label for='nombre' class='form-label'>Seleccione el dia de clases</label>"
-                +"<div class='input-group mb-2'>"+
-                    '<select class="form-select" name="dia" required>'+
-                        "<option value='Lunes' selected>Lunes</option>"+
-                        "<option value='Martes'>Martes</option>"+
-                        "<option value='Miercoles'>Miercoles</option>"+
-                        "<option value='Jueves'>Jueves</option>"+
-                        "<option value='Viernes'>Viernes</option>"+
-                        "<option value='Sabado'>Sabado</option>"+
-                    "</select>"+"</div>"
+        let dia = document.createElement('div')
+        dia.classList.add('col-md-10')
+        dia.innerHTML = "<label for='nombre' class='form-label'>Seleccione el dia de clases</label>"
+            +"<div class='input-group mb-2'>"+
+                '<select class="form-select" name="dia" required>'+
+                    "<option value='Lunes' selected>Lunes</option>"+
+                    "<option value='Martes'>Martes</option>"+
+                    "<option value='Miercoles'>Miercoles</option>"+
+                    "<option value='Jueves'>Jueves</option>"+
+                    "<option value='Viernes'>Viernes</option>"+
+                    "<option value='Sabado'>Sabado</option>"+
+                "</select>"+"</div>"
 
-            let inicio = document.createElement('div')
-            inicio.classList.add('col-md-4')
-            inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" value="08:15:00" min="06:45:00" max="20:15:00" step="5400" onchange="bloquearHoras(this)">'
+        let inicio = document.createElement('div')
+        inicio.classList.add('col-md-4')
+        inicio.innerHTML = '<label for="inicio" class="form-label">Hora de entrada</label><input type="time" class="form-control" name="inicio" value="08:15:00" min="06:45:00" max="20:15:00" step="5400" onchange="bloquearHoras(this)">'
 
-            let fin = document.createElement('div')
-            fin.classList.add('col-md-4')
-            fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" value="08:15:00" min="08:15:00" max="21:45:00" step="5400" onchange="bloquearHoras(this)">'
+        let fin = document.createElement('div')
+        fin.classList.add('col-md-4')
+        fin.innerHTML = '<label for="fin" class="form-label">Hora de salida</label><input type="time" class="form-control" name="fin" value="08:15:00" min="08:15:00" max="21:45:00" step="5400" onchange="bloquearHoras(this)">'
 
-            let ambiente = document.createElement('div')
-            ambiente.classList.add('col-md-4')
-            ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)">'
-            
-            // errordiv.innerHTML = '@error("REFERENCIAS")
-            //         <div class="text-danger">{{ $message }}</div>
-            //     @enderror'
-            if(i < 3){
-                container.appendChild(dia)
-                container.appendChild(inicio)
-                container.appendChild(fin)
-                container.appendChild(ambiente)
-                container_main.appendChild(container)
-                i++
-            }
-            console.log("Contador de inputs: ", i)
-        })
+        let ambiente = document.createElement('div')
+        ambiente.classList.add('col-md-4')
+        ambiente.innerHTML = '<label for="ambiente" class="form-label">Ambiente</label><input type="text" class="form-control" name="ambiente" onchange="findAmbiente(this)">'
         
-    }
+        const div_button = document.createElement('div')
+        div_button.classList.add('col-md-2', 'd-flex', 'align-items-end')
+        div_button.innerHTML = `
+                    <button class="btn btn-danger agregar-nombre" type="button" name="delete">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>`
+        if(i < 3){
+            container.appendChild(dia)
+            container.appendChild(div_button)
+            container.appendChild(inicio)
+            container.appendChild(fin)
+            container.appendChild(ambiente)
+            container_main.appendChild(container)
+            const deleteButton = container.querySelector('button[name="delete"]');
+            deleteButton.addEventListener('click', function() {
+                container_main.removeChild(container);
+                i -= 1
+            });
+            i++
+        }
+        console.log("Contador de inputs: ", i)
+    })
 
     function agregarHorarios(text) {
         const tabla = document.getElementById("messageErrorTabla")
@@ -496,7 +484,6 @@
         }
     }
 
-    document.getElementById('ref-add').addEventListener('click',agregarCampos)
     document.getElementById('boton-sub').addEventListener('click', obtainValues)
 </script>
 

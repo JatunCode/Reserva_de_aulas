@@ -90,6 +90,7 @@
         .catch(error => {
             console.log("Error al obtener los conteos de datos.", error)
         })
+        
     fetch('http://127.0.0.1:8000/api/fetch/docentes').then(
         response => response.json()
     ).then(

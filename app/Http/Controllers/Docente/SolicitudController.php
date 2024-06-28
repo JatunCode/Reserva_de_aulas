@@ -64,7 +64,19 @@ class SolicitudController extends Controller
         }
     }
 
-
+    public function indexSolicitudes(){
+        $horaActual = Date::now();
+        $buscador = new EncontrarTodo();
+        $solicitudes = Solicitud::where('ESTADO', 'ACEPTADO')->where('FECHA_RE', '>=', $horaActual)->get(['ID_AMBIENTE', 'HORAINI']);
+        $solicitudes_estructuradas = [];
+        foreach ($solicitudes as $solicitud) {
+            $solicitudes_estructuradas[] = [
+                'NOMBRE_AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
+                'HORA_INICIO' => date('H:i', strtotime($solicitud->HORAINI))
+            ];
+        }
+        return $solicitudes_estructuradas;
+    }
     /**
      * Muestra los horarios de las solicitudes aceptadas
      * @param String $ambiente

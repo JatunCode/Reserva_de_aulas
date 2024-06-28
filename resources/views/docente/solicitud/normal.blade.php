@@ -420,6 +420,43 @@
         });
     });
 
+    function mensaje(){
+        Swal.fire({
+            title: "<strong>¿Quiere ver sus solicitudes o reservas?</strong>",
+            icon: "info",
+            showCancelButton:true,
+            showDenyButton:true,
+            cancelButtonColor: "#ADD8E6",
+            cancelButtonText: "Crear nueva solicitud",
+            denyButtonColor: "#ffff00",
+            denyButtonText: "Ver reservas",
+            confirmButtonColor: "#7ebd5b",
+            confirmButtonText: "Ver solicitudes",
+            showClass: {
+                popup: `
+                animate__animated
+                animate__fadeInUp
+                animate__faster
+                `,
+            },
+            hideClass: {
+                popup: `
+                animate__animated
+                animate__fadeOutDown
+                animate__faster
+                `,
+            },
+        }).then((result) => {
+            if(result.isConfirmed){
+                window.location.href = "http://127.0.0.1:8000/admin/reservas/atencion"
+            }else if(result.isDenied){
+                window.location.href = "http://127.0.0.1:8000/admin/reservas/cancelar"
+            }else{
+                window.location.reload()
+            }
+        })
+    }
+
     function sendForm(formData) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const body = {
@@ -493,7 +530,7 @@
         ).then(
             response => {
                     Swal.close();
-                    window.location.reload();
+                    mensaje();
                     if (response.status == 200) {
                         return response;
                     } else {
@@ -612,6 +649,44 @@
         }
     }
 
+    function verificarDuracion(horaInicio, horaFin, duracionMinima, duracionMaxima) {
+        const duracion = horaFin - horaInicio;
+        return duracion >= duracionMinima && duracion <= duracionMaxima;
+    }
+
+    function verificarRangoHorario(horaInicio, horaFin, horaMin, horaMax) {
+        return horaInicio >= horaMin && horaFin <= horaMax;
+    }
+
+    function verificarHorarioPasado(horaInicio, horaActual) {
+        return horaInicio >= horaActual;
+    }
+
+    function showMessage(element_dom, message, estado){
+        element_dom.textContent = message;
+        element_dom.style.display = estado;
+    }
+
+    function parseTime(timeString) {
+        if(timeString != ''){
+            const [hours, minutes] = timeString.split(':').map(Number);
+            const date = new Date();
+            date.setHours(hours, minutes, 0, 0);
+            return date;
+        }
+    }
+
+    function encontrarSolicitud(hora_inicio){
+        const ambiente = document.getElementById('aula').value;
+        let bandera = true;
+        if(solicitudes_actuales.find( 
+            solicitud => solicitud['NOMBRE_AMBIENTE'] === ambiente && solicitud['HORA_INICIO'] === hora_inicio
+        )){
+            bandera = false;
+        }
+        return bandera;
+    }
+
     function verificarHorario(text){
         const message = document.getElementById('messageErrorHorario');
         const new_text = text.value;
@@ -636,37 +711,25 @@
 
         if(new_text === ''){
             banderaHorario = false;
-            message.textContent = '*Debe ingresar o seleccionar un horario';
-            message.style.display = 'block';
+            showMessage(message,'*Debe ingresar o seleccionar un horario', 'block');
         } else if(hora_inicio >= hora_fin || hora.length == 0 || hora_inicio == '' || hora_fin == ''){
             banderaHorario = false;
-            message.textContent = '*Formato de horario incorrecto';
-            message.style.display = 'block';
-        } else if(hora_inicio < hora_min || hora_max < hora_fin){
+            showMessage(message, '*Formato de horario incorrecto', 'block');
+        } else if(!verificarRangoHorario(horaInicioMinutos, horaFinMinutos, hora_min, hora_max)){
             banderaHorario = false;
-            message.textContent = '*Rango de horario: 06:45 - 21:45';
-            message.style.display = 'block';
-        } else if(hora_inicio.getHours() * 60 + hora_inicio.getMinutes() < hora_actual){
+            showMessage(message, '*Rango de horario: 06:45 - 21:45', 'block');
+        } else if(!verificarHorarioPasado(horaInicioMinutos, hora_actual)){
             banderaHorario = false;
-            message.textContent = '*El horario que ingreso ya paso';
-            message.style.display = 'block';
-        }else if(duracion < duracionMinima || duracion > duracionMaxima){
+            showMessage(message, '*El horario que ingreso ya paso', 'block');
+        }else if(!verificarDuracion(horaInicioMinutos, horaFinMinutos, duracionMinima, duracionMaxima)){
             banderaHorario = false;
-            message.textContent = '*El horario debe ser mayor a 1.50 horas y menor a 4.50 horas.';
-            message.style.display = 'block';
+            showMessage(message, '*El horario debe ser mayor a 1.50 horas y menor a 4.50 horas.', 'block');
+        }else if(!encontrarSolicitud(hora_inicio)){
+            banderaHorario = false;
+            showMessage(message, '*Existe una reserva en la misma hora.', 'block');
         }else{
             banderaHorario = true;
-            message.textContent = '';
-            message.style.display = 'none';
-        }
-    }
-
-    function parseTime(timeString) {
-        if(timeString != ''){
-            const [hours, minutes] = timeString.split(':').map(Number);
-            const date = new Date();
-            date.setHours(hours, minutes, 0, 0);
-            return date;
+            showMessage(message, '', 'none');
         }
     }
 </script>

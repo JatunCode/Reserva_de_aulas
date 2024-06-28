@@ -217,7 +217,6 @@
     function obtenerDatosSolicitud(button) {
         var id = button.getAttribute("data-id");
         const solicitud_actual = solicitudes.find(soli => soli['ID'] == id);
-        document.getElementById("solicitudId").value = id;
         if (solicitud_actual) {
             llenarFormulario(solicitud_actual);
         } else {
@@ -227,28 +226,20 @@
 
     function llenarFormulario(solicitud) {
         // Llenar los campos del formulario con los datos de la solicitud
-        const nombres = document.getElementById("nombre");
-        document.getElementById("materia").value = solicitud['MATERIA'];
-        document.getElementById("grupo").value = solicitud['GRUPOS'];
-        document.getElementById("cantidad_estudiantes").value = solicitud['CANTIDAD'];
-        document.getElementById("motivo").value = solicitud['MOTIVO'];
-        document.getElementById("modo").value = solicitud['MODO'];
-        document.getElementById("razon").value = solicitud['MODO']['URGENTE'];
-        document.getElementById("aula").value = solicitud['AMBIENTE'];
-        document.getElementById("fecha").value = solicitud['FECHA_RESERVA'];
-        document.getElementById("horario").value = solicitud['HORARIO'];
+        document.querySelector('[name="materia"]').value = solicitud['MATERIA'];
+        document.querySelector('[name="grupos"]').value = solicitud['GRUPOS'];
+        document.querySelector('[name="capacidad"]').value = solicitud['CANTIDAD'];
+        document.querySelector('[name="motivo"]').value = solicitud['MOTIVO'];
+        document.querySelector('[name="modo"]').value = solicitud['MODO'];
+        document.querySelector('[name="ambiente"]').value = solicitud['AMBIENTE'];
+        document.querySelector('[name="fechares"]').value = solicitud['FECHA_RESERVA'];
+        document.querySelector('[name="fechasoli"]').value = solicitud['FECHA_SOLICITUD']
+        document.querySelector('[name="horario"]').value = solicitud['HORARIO'];
         nombres.innerHTML = '';
         solicitud['NOMBRES_DOCENTES'].forEach((nombre) => {
             nombres.innerHTML +=
             `<input type="text" class="form-control nombre-input" name="nombre" value="${nombre['Nombre_docente']}" readonly>`
         });
-        // Mostrar el campo de comentarios si la razón no está vacía
-        if (solicitud['MODO'] !== 'NORMAL') {
-            document.querySelector('.comentarios').style.display = 'block';
-        } else {
-            document.querySelector('.comentarios').style.display = 'none';
-            console.log("Modo normal");
-        }
     }
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

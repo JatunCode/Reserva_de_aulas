@@ -42,43 +42,43 @@ Auth::routes();
 Route::prefix('admin')
 ->middleware('auth','can:admin')
 ->group(function () {
-    //*Mostrar el calendario en admin
+    //?Mostrar el calendario en admin
     Route::get('/', [CalendarioController::class, 'index'])->name('admin.inicio');
-    //*Lista de solicitudes en admin
+    //?Lista de solicitudes en admin
     Route::get('/solicitudes', [SolicitudController::class, 'index'])->name('admin.listar.solicitudes');
-    //*Pagina de creacion de solicitud en admin
+    //?Pagina de creacion de solicitud en admin
     Route::get('/solicitud', [SolicitudController::class, 'docente_datos'])->name('admin.solicitud.registrar');
-    //*Creacion de una en back solicitud
+    //?Creacion de una en back solicitud
     Route::post('/solicitud/create', [SolicitudController::class, 'store'])->name('solicitud.store');
-    //*Muestra todos los ambientes
+    //?Muestra todos los ambientes
     Route::get('/ambientes', [AmbienteController::class, 'index'])->name('admin.ambientes.list');
-    //*Muestra el formulario para los ambientes
+    //?Muestra el formulario para los ambientes
     Route::get('/ambientes/registro', [AmbienteController::class, 'store'])->name('admin.ambiente.registrar');
-    //*Guarda o registra un registro de un nuevo ambiente
+    //?Guarda o registra un registro de un nuevo ambiente
     Route::post('/ambientes/store', [AmbienteController::class, 'store'])->name('ambiente.store');
-    //*
+    //?
     Route::put('/ambientes/show/{nombre}', [AmbienteController::class, 'show'])->name('ambiente.put');
-    //*Muestra todos los horarios
+    //?Muestra todos los horarios
     Route::get('/horarios', [HorarioController::class, 'index'])->name('admin.horarios.list');
-    //*Muestra el formulario de horarios
+    //?Muestra el formulario de horarios
     Route::get('/horarios/registro', [HorarioController::class, 'store'])->name('admin.horario.registrar');
-    //*Crea un registro nuevo en el servidor de los horarios
+    //?Crea un registro nuevo en el servidor de los horarios
     Route::post('/horarios/store', [HorarioController::class, 'store'])->name('horario.store');
-    //*Muestra los horarios para modificarlos
+    //?Muestra los horarios para modificarlos
     Route::get('/horarios/update', [HorarioController::class, 'indexMod'])->name('admin.horarios.modificar');
 
-    //*Mostrar notificaciones y mensajes
+    //?Mostrar notificaciones y mensajes
     Route::get('/mailbox', [NotificacionController::class, 'index'])->name('admin.notificaciones.list');
     //?Guardar notificaciones
     Route::post('/notificacion/store', [NotificacionController::class, 'store'])->name('send.notificaciones');
     
-    //*Mostrar las solicitudes pendientes
+    //?Mostrar las solicitudes pendientes
     Route::get('/reservas/atencion', [ReservasController::class, 'index'])->name('admin.reservas.atender');
-    //*Cambiar el estado de la solicitud al ser atendida
+    //?Cambiar el estado de la solicitud al ser atendida
     Route::put('/reservas/store', [ReservasController::class, 'store'])->name('reserva.store');
-    //*Mostrar reservas para cancelar
+    //?Mostrar reservas para cancelar
     Route::get('/reservas/cancelar', [ReservasController::class, 'indexCancelar'])->name('admin.reservas.cancelar');
-    //*Cancelar una reserva
+    //?Cancelar una reserva
     Route::put('/reservas/update', [ReservasController::class, 'update'])->name('reservas.name');
 
     //Listar
