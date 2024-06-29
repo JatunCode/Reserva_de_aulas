@@ -191,17 +191,20 @@ class ReservasController extends Controller
 
     public function store(Request $request){
         // Validar los datos del formulario
+        $usuario = Auth::user();
         $buscador = new EncontrarTodo();
         $id = Uuid::uuid4();
 
         $razones_no_reg = [];
         $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICITUD);
         try{
-            foreach($request['ACTUALIZACIONES']['LISTA_NO_REG'] as $razon){
-                $razon_id = Razones::create(['razon' => $razon])->id_razon;
-                $razones_no_reg [] = $razon_id;
+            if($usuario->cargo == 'admin'){
+                foreach($request['ACTUALIZACIONES']['LISTA_NO_REG'] as $razon){
+                    $razon_id = Razones::create(['razon' => $razon])->id_razon;
+                    $razones_no_reg [] = $razon_id;
+                }
             }
-            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge(isset($request['ACTUALIZACIONES']['LISTA_REG']) ? $request['ACTUALIZACIONES']['LISTA_REG'] : [], $razones_no_reg):'Ninguno';
+            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($usuario->cargo == 'admin' ? $request['ACTUALIZACIONES']['LISTA_REG'] : [], $razones_no_reg):'Ninguno';
             Reserva::create([
                 'ID_RESERVA' => $id,
                 'ID_SOLICITUD' => $request->ID_SOLICITUD,

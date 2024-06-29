@@ -74,12 +74,12 @@ class NotificacionController extends Controller
             foreach($nombres as $nombre){
                 $docenteId = $buscador->getIdDocenteporNombre($nombre);
                 $docente = Docente::where('ID_DOCENTE',$docenteId)->first();
-                Notification::route('mail', (($docente->EMAIL != '') ? $docente->EMAIL :'nombre@universidad.edu.bo'))->notify(new Notificacion($request['TIPO'], ['NOMBRE' => $nombre, 'ESTADO' => (!isset($request['ESTADO']) ? 'PENDIENTE' : $request['ESTADO']),'FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE'], 'RAZONES' => (isset($request['RAZONES'])) ? $request['RAZONES']['LISTA_REG'] : '']));
                 AdminNotificacion::create([
                     'ID_NOTIFICACION' => Uuid::uuid4(),
-                    'CUERPO' => json_encode(['FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE'], 'ESTADO' => (!isset($request['ESTADO']) ? 'PENDIENTE' : $request['ESTADO']), 'TIPO' => $request['TIPO'], 'MODO' => ($request['FECHA'] < $fecha_actual) ? 'URGENTE':'NORMAL']),
+                    'CUERPO' => json_encode(['FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE'], 'ESTADO' => (!isset($request['ESTADO']) ? 'PENDIENTE' : $request['ESTADO']), 'TIPO' => $request['TIPO'], 'MODO' => (strtotime($request['FECHA']) < strtotime($fecha_actual)) ? 'URGENTE':'NORMAL']),
                     'ID_DOCENTE' => $docenteId
                 ]);
+                Notification::route('mail', (($docente->EMAIL != '') ? $docente->EMAIL :'nombre@universidad.edu.bo'))->notify(new Notificacion($request['TIPO'], ['NOMBRE' => $nombre, 'ESTADO' => (!isset($request['ESTADO']) ? 'PENDIENTE' : $request['ESTADO']),'FECHA' => $request['FECHA'], 'MATERIA' => $request['MATERIA'], 'AMBIENTE' => $request['AMBIENTE'], 'RAZONES' => (isset($request['RAZONES'])) ? $request['RAZONES']['LISTA_REG'] : '']));
             }
     
             return response()->json(['message' => 'Notificacion creada exitosamente.'], 200);
