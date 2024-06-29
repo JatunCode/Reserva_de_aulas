@@ -25,6 +25,23 @@
             <div class="card h-100">
                 <div class="card-header">
                     <h3 class="card-title">Horarios disponibles</h3>
+                    <span class="text-primary">
+                        <i class="bi bi-info-circle"></i>
+                    </span>
+                    <div id="reglas" style="display: none">
+                        <strong>*Debe seleccionar una materia antes de seleccionar el docente</strong>
+                        <br>
+                        <strong>*Presione cualquier vocal para ver la lista de docentes</strong>
+                        <br>
+                        <strong>*Solo se podra realizar reservas dos horas antes de la hora actual</strong>
+                        <br>
+                        <strong>*Las solicitudes que se realicen los Sabados luego de las 12:45 seran canceladas de inmediato</strong>
+                        <br>
+                        <strong>*Las solicitudes que sean menores de 5 horas seran atedidas por el administrador</strong>
+                        <br>
+                        <strong>*Las solicitudes que sean menores a un minuto de la hora actual y sigan pendientes se cancelaran</strong>
+                        <br>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -39,20 +56,6 @@
                         <tbody id="tablaSolicitudes">
                         </tbody>
                     </table>
-                    <div id="reglas">
-                        <strong style="color: red">*Debe seleccionar una materia antes de seleccionar el docente</strong>
-                        <br>
-                        <strong style="color: blue">*Presione cualquier vocal para ver la lista de docentes</strong>
-                        <br>
-                        <strong style="color: red">*Solo se podra realizar reservas dos horas antes de la hora actual</strong>
-                        <br>
-                        <strong style="color: red">*Las solicitudes que se realicen los Sabados luego de las 12:45 seran canceladas de inmediato</strong>
-                        <br>
-                        <strong style="color: blue">*Las solicitudes que sean menores de 5 horas seran atedidas por el administrador</strong>
-                        <br>
-                        <strong style="color: red">*Las solicitudes que sean menores a un minuto de la hora actual y sigan pendientes se cancelaran</strong>
-                        <br>
-                    </div>
                 </div>
 
                 <!-- <div class="card-footer clearfix">
@@ -104,6 +107,10 @@
     .list-group-item:hover {
         background-color: #f0f0f0;
     }
+    .reglas {
+        max-width: 200px;
+        white-space: pre-wrap;
+    }
 </style>
 @stop
 
@@ -116,7 +123,24 @@
     let solicitudes = [];
     let ambientes = [];
     let docentes = [];
+    let solicitudes_actuales = [];
     let bandera = false;
+    let fechaSeleccionada = null;
+    let banderaMateria = false;
+    let banderaDocente = false;
+    let banderaGrupo = false;
+    let banderaCant = false;
+    let banderaMotivo = false;
+    let banderaFecha = false;
+    let banderaHorario = false;
+    const messageMateria = document.getElementById('messageErrorMateria');
+    const messageGrupo = document.getElementById('messageErrorGrupo');
+    const messageDocente = document.getElementById('messageErrorDocente');
+    const messageCantidad = document.getElementById('messageErrorCantidad');
+    const messageMotivo = document.getElementById('messageErrorMotivo');
+    const messageFecha = document.getElementById('messageErrorFecha');
+    const messageHorario = document.getElementById('messageErrorHorario');
+
     fetch(
         'http://127.0.0.1:8000/api/fetch/ambientes'
     ).then(
@@ -146,6 +170,21 @@
             console.log('Error encontrado: ', error);
         }
     )
+
+    fetch(
+        'http://127.0.0.1:8000/api/fetch/solicitudes'
+    ).then(
+        response => response.json()
+    ).then(
+        data => {
+            solicitudes_actuales = data;
+        }
+    ).catch(
+        error => {
+            console.log('Error encontrado: ', error);
+        }
+    )
+
     const input_hora = document.getElementById('horario');
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -155,6 +194,8 @@
         const cantidad = document.getElementById('cantidad_estudiantes');
         const campoRazon = document.getElementById('campoRazon');
         const tabla = document.getElementById('tablaSolicitudes');
+        const info = document.querySelector('span.text-primary > i.bi.bi-info-circle');
+        const reglas = document.getElementById('reglas');
 
         cantidad.addEventListener('keydown', function(event){
             ambiente.innerHTML = '';
@@ -173,7 +214,7 @@
         });
 
         filtroFechaInput.addEventListener('change', function() {
-            let fechaSeleccionada = new Date(this.value);
+            fechaSeleccionada = new Date(this.value);
             const fechaActual = new Date();
             
             const hora_actual = new Date(fechaActual.getTime());
@@ -286,21 +327,23 @@
             const year = date.getFullYear();
             return `${year}-${month}-${day}`;
         }
+
+        info.addEventListener('click', function(event){
+            if (reglas.style.display === 'block') {
+                reglas.style.display = 'none';
+            } else {
+                reglas.style.display = 'block';
+            }
+        });
     });
     function agregarHorario(horario) {
         input_hora.value = horario;
+        messageHorario.style.display = 'none';
+        banderaHorario = true;
     }
 </script>
 
 <script>
-    let banderaMateria = false;
-    let banderaDocente = false;
-    let banderaGrupo = false;
-    let banderaCant = false;
-    let banderaMotivo = false;
-    let banderaFecha = false;
-    let banderaHorario = false;
-
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('solicitudForm').addEventListener('submit', function(event) {
             // Evitar que el formulario se envíe automáticamente
@@ -448,9 +491,9 @@
             },
         }).then((result) => {
             if(result.isConfirmed){
-                window.location.href = "http://127.0.0.1:8000/admin/reservas/atencion"
+                window.location.href = "http://127.0.0.1:8000/docente/solicitudes/cancelar"
             }else if(result.isDenied){
-                window.location.href = "http://127.0.0.1:8000/admin/reservas/cancelar"
+                window.location.href = "http://127.0.0.1:8000/docente/reservas"
             }else{
                 window.location.reload()
             }
@@ -516,7 +559,7 @@
                 Swal.showLoading();
             }
         });
-        fetch(document.getElementById('solicitudForm').action,
+        fetch('http://127.0.0.1:8000/api/fetch/notificacion/store',
             {
                 method:'POST', 
                 headers:{
@@ -545,20 +588,18 @@
     }
 
     function verificarMateria(text){
-        const message = document.getElementById('messageErrorMateria');
         if(text == 'ninguno'){
             banderaMateria = false;
-            message.textContent = '*Seleccione una materia';
-            message.style.display = 'block';
+            messageMateria.textContent = '*Seleccione una materia';
+            messageMateria.style.display = 'block';
         }else{
             banderaMateria = true;
-            message.textContent = '';
-            message.style.display = 'none';
+            messageMateria.textContent = '';
+            messageMateria.style.display = 'none';
         }
     }
 
     function verificarDocente(inputsDocentes){
-        const message = document.getElementById('messageErrorDocente');
         let allFill = true;
         let encontrado = true;
         inputsDocentes.forEach(input => {
@@ -573,79 +614,75 @@
         console.log('Bandera encontrado: ', encontrado);
         if(allFill == false){
             banderaDocente = false;
-            message.textContent = '*Debe completar los campos vacios o eliminarlos';
-            message.style.display = 'block';
+            messageDocente.textContent = '*Debe completar los campos vacios o eliminarlos';
+            messageDocente.style.display = 'block';
         }else if(encontrado == false){
             banderaDocente = false;
-            message.textContent = '*El docente no es de la materia';
-            message.style.display = 'block';
+            messageDocente.textContent = '*El docente no es de la materia';
+            messageDocente.style.display = 'block';
         }else{
             banderaDocente = true;
-            message.textContent = '';
-            message.style.display = 'none';
+            messageDocente.textContent = '';
+            messageDocente.style.display = 'none';
         }
     }
 
     function verificarGrupo(text){
         const new_text = text.value;
-        const message = document.getElementById('messageErrorGrupo');
         if(new_text == ''){
             banderaGrupo = false;
-            message.textContent = '*Debe completar el campo';
-            message.style.display = 'block';
+            messageGrupo.textContent = '*Debe completar el campo';
+            messageGrupo.style.display = 'block';
         }else if(!grupos_relacionados.find(grupo => grupo['GRUPO'] == new_text)){
             banderaGrupo = false;
-            message.textContent = '*El grupo no es del docente';
-            message.style.display = 'block';
+            messageGrupo.textContent = '*El grupo no es del docente';
+            messageGrupo.style.display = 'block';
         }else{
             banderaGrupo = true;
-            message.textContent = '';
-            message.style.display = 'none';
+            messageGrupo.textContent = '';
+            messageGrupo.style.display = 'none';
         }
     }
 
     function verificarCantidad(text){
         const new_text = text.value;
-        const message = document.getElementById('messageErrorCantidad');
         if(new_text == ''){
             banderaCant = false;
-            message.textContent = '*Debe completar el campo';
-            message.style.display = 'block';
+            messageCantidad.textContent = '*Debe completar el campo';
+            messageCantidad.style.display = 'block';
         }else if(parseInt(new_text, 10) <= 0){
             banderaCant = false;
-            message.textContent = '*La cantidad debe ser mayor a 0';
-            message.style.display = 'block';
+            messageCantidad.textContent = '*La cantidad debe ser mayor a 0';
+            messageCantidad.style.display = 'block';
         }else if(parseInt(new_text, 10) < 1 || parseInt(new_text, 10) > 250){
             banderaCant = false;
-            message.textContent = '*La cantidad debe ser entre 1 y 250';
-            message.style.display = 'block';
+            messageCantidad.textContent = '*La cantidad debe ser entre 1 y 250';
+            messageCantidad.style.display = 'block';
         }else{
             banderaCant = true;
-            message.textContent = '';
-            message.style.display = 'none';
+            messageCantidad.textContent = '';
+            messageCantidad.style.display = 'none';
         }
     }
 
     function verificarMotivo(text){
-        const message = document.getElementById('messageErrorMotivo');
         if(text == 'ninguno'){
             banderaMotivo = false;
-            message.style.display = 'block';
+            messageMotivo.style.display = 'block';
         }else{
             banderaMotivo = true;
-            message.style.display = 'none';
+            messageMotivo.style.display = 'none';
         }
     }
 
     function verificarFecha(text){
         const new_text = text.value;
-        const message = document.getElementById('messageErrorFecha');
         if(new_text == ''){
             banderaFecha = false;
-            message.style.display = 'block';
+            messageFecha.style.display = 'block';
         }else{
             banderaFecha = true;
-            message.style.display = 'none';
+            messageFecha.style.display = 'none';
         }
     }
 
@@ -658,8 +695,12 @@
         return horaInicio >= horaMin && horaFin <= horaMax;
     }
 
-    function verificarHorarioPasado(horaInicio, horaActual) {
-        return horaInicio >= horaActual;
+    function verificarHorarioPasado(horaInicio, horaActual, fecha_seleccionada) {
+        const actual = new Date();
+        const fecha_actual = actual.getDate();
+        console.log('Fecha actual: ', fecha_actual);
+        console.log('Fecha seleccionada: ', fecha_seleccionada);
+        return horaInicio >= horaActual || fecha_actual !== fecha_seleccionada+1;
     }
 
     function showMessage(element_dom, message, estado){
@@ -688,7 +729,7 @@
     }
 
     function verificarHorario(text){
-        const message = document.getElementById('messageErrorHorario');
+        fechaSeleccionada = new Date(document.getElementById('filtroFecha').value)
         const new_text = text.value;
         console.log('TExto del horario: ', new_text);
         console.log('Tipo de texto: ', typeof new_text);
@@ -711,25 +752,25 @@
 
         if(new_text === ''){
             banderaHorario = false;
-            showMessage(message,'*Debe ingresar o seleccionar un horario', 'block');
+            showMessage(messageHorario,'*Debe ingresar o seleccionar un horario', 'block');
         } else if(hora_inicio >= hora_fin || hora.length == 0 || hora_inicio == '' || hora_fin == ''){
             banderaHorario = false;
-            showMessage(message, '*Formato de horario incorrecto', 'block');
-        } else if(!verificarRangoHorario(horaInicioMinutos, horaFinMinutos, hora_min, hora_max)){
+            showMessage(messageHorario, '*Formato de horario incorrecto', 'block');
+        } else if(verificarRangoHorario(horaInicioMinutos, horaFinMinutos, hora_min, hora_max)){
             banderaHorario = false;
-            showMessage(message, '*Rango de horario: 06:45 - 21:45', 'block');
-        } else if(!verificarHorarioPasado(horaInicioMinutos, hora_actual)){
+            showMessage(messageHorario, '*Rango de horario: 06:45 - 21:45', 'block');
+        } else if(!verificarHorarioPasado(horaInicioMinutos, hora_actual, fechaSeleccionada.getDate())){
             banderaHorario = false;
-            showMessage(message, '*El horario que ingreso ya paso', 'block');
+            showMessage(messageHorario, '*El horario que ingreso ya paso', 'block');
         }else if(!verificarDuracion(horaInicioMinutos, horaFinMinutos, duracionMinima, duracionMaxima)){
             banderaHorario = false;
-            showMessage(message, '*El horario debe ser mayor a 1.50 horas y menor a 4.50 horas.', 'block');
+            showMessage(messageHorario, '*El horario debe ser mayor a 1.50 horas y menor a 4.50 horas.', 'block');
         }else if(!encontrarSolicitud(hora_inicio)){
             banderaHorario = false;
-            showMessage(message, '*Existe una reserva en la misma hora.', 'block');
+            showMessage(messageHorario, '*Existe una reserva en la misma hora.', 'block');
         }else{
             banderaHorario = true;
-            showMessage(message, '', 'none');
+            showMessage(messageHorario, '', 'none');
         }
     }
 </script>
@@ -779,13 +820,6 @@
     function insertAfter(newNode, referenceNode) {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
-
-    $(document).ready(function() {
-        window.Echo.channel('admin-channel')
-            .listen('SolicitudCreada', (e) => {
-                alert('Nueva solicitud creada por: ' + e.solicitud.nombre_docente);
-            });
-    });
 </script>
 
 @stop

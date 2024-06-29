@@ -186,12 +186,16 @@
             item.className = 'list-group-item list-group-item-action';
             item.textContent = grupo['GRUPO'];
             item.addEventListener('click', () => {
-                if(inputGrupo.value.length <= 1){
+                if(inputGrupo.value.length <= 1 || grupos_relacionados.find(grupo => grupo == inputGrupo.value)){
                     inputGrupo.value = grupo['GRUPO'];
                     lista_grupos.style.display = 'none'; 
+                    messageGrupo.style.display = 'none';
+                    banderaGrupo = true;
                 }else{
                     inputGrupo.value += ','+grupo['GRUPO'];
-                    lista_grupos.style.display = 'none'; 
+                    lista_grupos.style.display = 'none';
+                    messageGrupo.style.display = 'none'; 
+                    banderaGrupo = true;
                 }
             });
             lista_grupos.appendChild(item);

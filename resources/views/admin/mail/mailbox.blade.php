@@ -28,26 +28,37 @@
                                 }
 
                                 $tipo = '';
+                                $modo = '';
                                 $buttonClass = '';
+                                $buttonClassMode = '';
                                 if (strpos($notification['CUERPO'], 'reserva') !== false) {
                                     $tipo = 'Reserva';
                                     $buttonClass = 'btn-primary';
                                 } elseif (strpos($notification['CUERPO'], 'ACEPTADO') !== false) {
-                                    $tipo = 'Solicitud';
+                                    $tipo = 'SOLICITUD';
                                     $buttonClass = 'btn-success';
                                 } elseif (strpos($notification['CUERPO'], 'CANCELADO') !== false) {
-                                    $tipo = 'Solicitud';
+                                    $tipo = 'SOLICITUD';
                                     $buttonClass = 'btn-danger';
                                 } else {
-                                    $tipo = 'Solicitud';
+                                    $tipo = 'SOLICITUD';
                                     $buttonClass = 'btn-warning';
+                                }
+
+                                if(strpos($notification['CUERPO'], 'URGENTE')){
+                                    $modo = 'URGENTE';
+                                    $buttonClassMode = 'btn-danger';
+                                }else{
+                                    $modo= 'NORMAL';
+                                    $buttonClassMode = 'btn-success';
                                 }
                             @endphp
                             <li class="list-group-item notification-item" data-id="{{ $notification['ID'] }}">
                                 <strong>{{ $notification['NOMBRE_DOCENTE'] }}</strong>
                                 <p>{{ Str::limit($notification['CUERPO'], 50) }}</p>
-                                <div class="notification-type">
+                                <div class="notification-type row">
                                     <button class="btn {{ $buttonClass }} btn-sm">{{ $tipo }}</button>
+                                    <button class="btn {{ $buttonClassMode }} btn-sm">{{ $modo }}</button>
                                 </div>
                             </li>
                         @endforeach
@@ -131,7 +142,10 @@
                 const notify_found = notificaciones.find(notify => notify['ID'] === id)
                 const message_parts = descMessage(notify_found['CUERPO'])
                 let buttonClass = ''
-                const tipo = notify_found.CUERPO.toLowerCase().includes('reserva') ? 'Reserva' : 'Solicitud'
+                let buttonClassMode = ''
+                const tipo = notify_found.CUERPO.toLowerCase().includes('reserva') ? 'Reserva' : 'SOLICITUD'
+                const estado = !notify_found.CUERPO.toLowerCase().includes('PENDIENTE') ? 'PENDIENTE' : 'ACEPTADO'
+                const modo = notify_found.CUERPO.toLowerCase().includes('URGENTE') ? 'URGENTE' : 'NORMAL'
                 let color = ''
 
                 if (notify_found.CUERPO.includes('ACEPTADO')) {
@@ -145,6 +159,12 @@
                     color = '#fff2cc'
                 }
 
+                if(notify_found.CUERPO.includes('URGENTE')){
+                    buttonClassMode = 'btn-danger'
+                }else{
+                    buttonClassMode = 'btn-success'
+                }
+
                 if (notify_found) {
                     document.getElementById('notification-content').innerHTML = `
                         <div class="card">
@@ -153,13 +173,21 @@
                                 <br>
                                 <strong>${notify_found['EMAIL']}</strong>
                                 <br>
-                                <button class="btn ${buttonClass} btn-sm">${tipo}</button>
+                                <button class="btn ${buttonClass} btn-sm">${estado}</button>
+                                <button class="btn btn-success btn-sm">${tipo}</button>
+                                <button class="btn ${buttonClassMode} btn-sm">${modo}</button>
+                                <button class="btn btn-sm btn-success" type="button">
+                                    <a href="http://127.0.0.1:8000/admin/reservas/atencion" style="color: white;display: block;">
+                                        ATENDER SOLICITUD
+                                    </a>
+                                </button>
                             </div>
                             <div class="card-body">
                                 ${message_parts.map( 
                                         message => `<p>${message}</p>`
                                     ).join('')}
                             </div>
+                            
                         </div>
                     `
                 }
@@ -200,10 +228,14 @@
         document.querySelectorAll('.notification-item').forEach(item => {
             item.addEventListener('click', function () {
                 const id = this.getAttribute('data-id')
-                const notify_found = notificaciones.find(notify => notify.ID == id)
+                
+                const notify_found = notificaciones.find(notify => notify['ID'] === id)
                 const message_parts = descMessage(notify_found['CUERPO'])
                 let buttonClass = ''
-                const tipo = notify_found.CUERPO.toLowerCase().includes('reserva') ? 'Reserva' : 'Solicitud'
+                let buttonClassMode = ''
+                const tipo = notify_found.CUERPO.toLowerCase().includes('reserva') ? 'Reserva' : 'SOLICITUD'
+                const estado = notify_found.CUERPO.toLowerCase().includes('PENDIENTE') ? 'PENDIENTE' : 'ACEPTADO'
+                const modo = notify_found.CUERPO.toLowerCase().includes('URGENTE') ? 'URGENTE' : 'NORMAL'
                 let color = ''
 
                 if (notify_found.CUERPO.includes('ACEPTADO')) {
@@ -217,6 +249,14 @@
                     color = '#fff2cc'
                 }
 
+                if(notify_found.CUERPO.includes('URGENTE')){
+                    buttonClassMode = 'btn-danger'
+                    color = '#f2dede'
+                }else{
+                    buttonClassMode = 'btn-success'
+                    color = '#d9ead3'
+                }
+
                 if (notify_found) {
                     document.getElementById('notification-content').innerHTML = `
                         <div class="card">
@@ -225,13 +265,21 @@
                                 <br>
                                 <strong>${notify_found['EMAIL']}</strong>
                                 <br>
-                                <button class="btn ${buttonClass} btn-sm">${tipo}</button>
+                                <button class="btn ${buttonClass} btn-sm">${estado}</button>
+                                <button class="btn btn-success btn-sm">${tipo}</button>
+                                <button class="btn ${buttonClassMode} btn-sm">${modo}</button>
+                                <button class="btn btn-sm btn-success" type="button">
+                                    <a href="http://127.0.0.1:8000/admin/reservas/atencion" style="color: white;display: block;">
+                                        ATENDER SOLICITUD
+                                    </a>
+                                </button>
                             </div>
                             <div class="card-body">
                                 ${message_parts.map( 
                                         message => `<p>${message}</p>`
                                     ).join('')}
                             </div>
+                            
                         </div>
                     `
                 }

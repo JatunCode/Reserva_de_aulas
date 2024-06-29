@@ -72,6 +72,7 @@ Route::controller(MateriaController::class)->group(
 Route::controller(NotificacionController::class)->group(
     function(){
         Route::get('/fetch/notificaciones', 'index');
+        Route::post('/fetch/notificacion/store', 'store');
     }
 );
 
@@ -89,6 +90,7 @@ Route::controller(SolicitudController::class)->group(
         Route::get('/fetch/solicitudes', 'indexSolicitudes');
         Route::post('/fetch/solicitudes/store', 'store');
         Route::get('/fetch/solicitud/count', 'counts');
+        Route::get('/fetch/solicitudeslibres/{ambiente}/{fecha}', 'solicitudes_libres');
     }
 );
 

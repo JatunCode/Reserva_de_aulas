@@ -19,9 +19,9 @@ class Automatizacion extends Controller
         $solicitudes_de_esta_semana = [];
         $fecha_actual = strtotime(Date::now());
         if(Date::now()->format('H:i:s') == '06:00:00' || Date::now()->format('H:i:s') == '18:00:00'){
-            $this->actualizarPorHora($ambientes, $fecha_actual);
-        }else{
             $this->updateAntiguos();
+        }else{
+            $this->actualizarPorHora($ambientes, $fecha_actual);
             $this->actualizarUrgente();
         }
         
