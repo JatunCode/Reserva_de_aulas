@@ -675,13 +675,34 @@
         }
     }
 
+    function verificarDomingos(fecha){
+        fechaSelecc = fecha.getDay();
+        console.log('Fecha seleccionada: ', fechaSelecc);
+        return fechaSelecc === 6;
+    }
+
+    function verificarSabados(fecha, hora){
+        fechaSelecc = fecha.getDay();
+        hora_de_horario = parseInt(hora.split(':')[0], 10) - 2;
+        console.log('Fechas seleccionada: ', fechaSelecc);
+        console.log('Hora inicio');
+        return fechaSelecc === 5 && hora_de_horario <= 12;
+    }
+
     function verificarFecha(text){
         const new_text = text.value;
+        fechaSeleccionada = new Date(document.getElementById('filtroFecha').value);
         if(new_text == ''){
             banderaFecha = false;
+            messageFecha.textContent = '*Debe seleccionar una fecha.';
+            messageFecha.style.display = 'block';
+        }else if (verificarDomingos(fechaSeleccionada)) {
+            banderaFecha = false;
+            messageFecha.textContent = '*No puede ser Domingo.';
             messageFecha.style.display = 'block';
         }else{
             banderaFecha = true;
+            messageFecha.textContent = '';
             messageFecha.style.display = 'none';
         }
     }
@@ -768,6 +789,9 @@
         }else if(!encontrarSolicitud(hora_inicio)){
             banderaHorario = false;
             showMessage(messageHorario, '*Existe una reserva en la misma hora.', 'block');
+        }else if(verificarSabados(fechaSeleccionada, hora[0])){
+            banderaHorario = false;
+            showMessage(messageHorario, '*Horario maximo permitido en Sabados 12:45', 'block');
         }else{
             banderaHorario = true;
             showMessage(messageHorario, '', 'none');

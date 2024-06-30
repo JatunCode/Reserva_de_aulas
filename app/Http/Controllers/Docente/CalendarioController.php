@@ -19,6 +19,8 @@ class CalendarioController extends Controller
     public function index()
     {
         $usuario = Auth::user()->cargo;
+        $automatizacion = new Automatizacion();
+        $automatizacion->updateAll();
         // ? TODOS LOS HORARIOS Obtener todas las relaciones_dahm filtradas por el ID del docente
         // $relaciones = Relacion_DAHM::with('dahm_relacion_horario', 'dahm_relacion_ambiente', 'dahm_relacion_materia')
         //                             ->where('ID_DOCENTE', '354db6b6-be0f-4aca-a9ea-3c31e412c49d')
@@ -33,7 +35,7 @@ class CalendarioController extends Controller
         //dump($relaciones);
         $pendientesCount = $solicitudesAll->where('ESTADO', 'PENDIENTE')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
         $reservadasCount = $solicitudesAll->where('ESTADO', 'ACEPTADO')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
-        $urgentesCount = $solicitudesAll->where('PRIORIDAD', 'LIKE', '%URGENTE%')->whereBetween('FECHA_RE', [$start_month, $end_month])->count();
+        $urgentesCount = $solicitudesAll->where('PRIORIDAD', 'LIKE', '%URGENTE%')->where('FECHA_RE', '>=', $start_month)->where('FECHA_RE', '<=',$end_month)->count();
         $anoActual = date('Y');
     
         //? Convertir los horarios en el formato adecuado para FullCalendar
