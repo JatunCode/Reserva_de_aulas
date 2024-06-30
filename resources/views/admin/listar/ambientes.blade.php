@@ -9,23 +9,23 @@
 @section('content')
 
 <!-- Contenido de la página -->
-
 <div class="card">
-    <div class="card-header row">
-        <div class="col-md-2" id="containerAmbiente">
+    <div class="card-header row d-flex align-items-center">
+        <div class="col-md-3" id="containerAmbiente">
             <label class="form-label" for="ambiente">Ambiente</label>
             <input class="form-control" type="text" name="ambiente" placeholder="Buscar ambiente">
-            <p id="messageErrorAmbiente" style="display: none; color: red">*No se encontro el ambiente</p>
+            <p id="messageErrorAmbiente" style="display: none; color: red">*No se encontró el ambiente</p>
         </div>
         <div class="col-md-3">
+            <label class="form-label" for="blockfree">Filtrar por estado</label>
             <select class="form-select" name="blockfree">
                 <option value="Todos">Todos los ambientes</option>
                 <option value="NO HABILITADO">Ambientes bloqueados</option>
                 <option value="HABILITADO" selected>Ambientes libres</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary d-inline-block w-7" style="background-color:green" onclick="findAmbiente()">Buscar</button>
+        <div class="col-md-2 mt-4">
+            <button class="btn btn-primary d-inline-block w-100" style="background-color:green" onclick="findAmbiente()">Buscar</button>
         </div>
     </div>
 
@@ -33,32 +33,47 @@
         <h3 class="card-title">Ambientes registrados</h3>
     </div>
     <div class="card-body table-responsive">
-        <table class="table table-bordered">
-            <thead>
+        <table class="table table-bordered table-modern">
+        <thead style="background-color: #00455c; color: white; text-align: center; vertical-align: middle;">
+
                 <tr>
-                    <th style="width: 35px">Nombre de ambiente</th>
-                    <th style="width: 35px">Tipo de ambiente</th>
-                    <th style="width: 30px">Referencias</th>
-                    <th style="width: 20px">Capacidad</th>
-                    <th style="width: 20px">Data</th>
-                    <th style="width: 40px">Estado</th>
+                    <th>#</th>
+                    <th>Nombre de ambiente</th>
+                    <th>Tipo de ambiente</th>
+                    <th>Referencias</th>
+                    <th>Capacidad</th>
+                    <th>Data</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody id="tableAmbientes">
-                @foreach($ambientes as $ambiente)
+            @foreach($ambientes as $index => $ambiente)
                     <tr>
-                        <td style="width: 35px">{{ $ambiente['NOMBRE'] }}</td>
-                        <td style="width: 35px">{{ $ambiente['TIPO'] }}</td>
-                        <td style="width: 30px">{{ $ambiente['REFERENCIAS'] }}</td>
-                        <td style="width: 20px">{{ $ambiente['CAPACIDAD'] }}</td>
-                        <td style="width: 20px">{{ $ambiente['DATA'] }}</td>
-                        <td style="width: 40px">{{ $ambiente['ESTADO'] }}</td>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $ambiente['NOMBRE'] }}</td>
+                        <td>{{ $ambiente['TIPO'] }}</td>
+                        <td>{{ $ambiente['REFERENCIAS'] }}</td>
+                        <td>{{ $ambiente['CAPACIDAD'] }}</td>
+                        <td>{{ $ambiente['DATA'] }}</td>
+                        <td><span class="btn btn-sm btn-block
+                                    @if($ambiente['ESTADO'] == 'CANCELADO')
+                                        background-color: #FFC0B7; btn btn-outline-secondary
+                                    @elseif($ambiente['ESTADO'] == 'HABILITADO')
+                                        btn-success
+                                    @elseif($ambiente['ESTADO'] == 'PENDIENTE')
+                                        btn-warning
+                                    @else
+                                        btn-danger
+                                    @endif
+                                    " aria-controls="offcanvasRight">
+                                <span class="text-truncate">{{ $ambiente['ESTADO'] }}</span>
+                            </span></td>
+                        
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    
 </div>
 
 @stop
@@ -70,6 +85,28 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
+
+<style>
+    .table-modern {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .thead-modern {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .table-modern tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+    .table-modern tbody tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+    .table-modern th, .table-modern td {
+        padding: 12px;
+        text-align: left;
+    }
+</style>
+
 @stop
 
 @section('js')
@@ -112,20 +149,33 @@
     )
 
     function agregarTabla(lista, tabla){
-        tabla.innerHTML = ''
-        lista.forEach(elemento => {
-            tabla.innerHTML += 
-            `<tr>
-                <td style="width: 35px">${elemento['NOMBRE']}</td>
-                <td style="width: 35px">${elemento['TIPO']}</td>
-                <td style="width: 30px">${elemento['REFERENCIAS']}</td>
-                <td style="width: 20px">${elemento['CAPACIDAD']}</td>
-                <td style="width: 20px">${elemento['DATA']}</td>
-                <td style="width: 40px">${elemento['ESTADO']}</td>
-            </tr>`
-            console.log('Ingresando al inner')
-        })
-    }
+    tabla.innerHTML = ''
+    lista.forEach((elemento, index) => {
+        tabla.innerHTML += 
+        `<tr style="background-color: ${index % 2 === 0 ? '#f2f2f2' : '#ffffff'};">
+            <td>${index + 1}</td>
+            <td>${elemento['NOMBRE']}</td>
+            <td>${elemento['TIPO']}</td>
+            <td>${elemento['REFERENCIAS']}</td>
+            <td>${elemento['CAPACIDAD']}</td>
+            <td>${elemento['DATA']}</td>
+            <td><span class="btn btn-sm btn-block
+                                    @if($ambiente['ESTADO'] == 'CANCELADO')
+                                        background-color: #FFC0B7; btn btn-outline-secondary
+                                    @elseif($ambiente['ESTADO'] == 'HABILITADO')
+                                        btn-success
+                                    @elseif($ambiente['ESTADO'] == 'PENDIENTE')
+                                        btn-warning
+                                    @else
+                                        btn-danger
+                                    @endif
+                                    " aria-controls="offcanvasRight">
+                                <span class="text-truncate">{{ $ambiente['ESTADO'] }}</span>
+                            </span></td>
+        </tr>`
+        console.log('Ingresando al inner')
+    })
+}
 
     function findAmbiente(){
         tabla  =  document.getElementById('tableAmbientes')
@@ -153,5 +203,3 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js">
 </script>
 @stop
-
-
