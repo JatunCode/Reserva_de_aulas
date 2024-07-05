@@ -99,3 +99,9 @@ Route::controller(RazonesController::class)->group(
         Route::get('/fetch/razones', 'indexList');
     }
 );
+
+Route::controller(Automatizacion::class)->group(
+    function(){
+        Route::get('/fetch/autoupdate', 'updateAll');
+    }
+);

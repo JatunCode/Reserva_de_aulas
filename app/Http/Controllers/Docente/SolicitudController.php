@@ -65,14 +65,15 @@ class SolicitudController extends Controller
     }
 
     public function indexSolicitudes(){
-        $horaActual = Date::now();
+        $horaActual = Date::now()->format('Y-m-d H:i');
         $buscador = new EncontrarTodo();
-        $solicitudes = Solicitud::where('ESTADO', 'ACEPTADO')->where('FECHA_RE', '>=', $horaActual)->get(['ID_AMBIENTE', 'HORAINI']);
+        $solicitudes = Solicitud::where('ESTADO', 'ACEPTADO')->where('FECHA_RE', '>=', $horaActual)->get(['ID_AMBIENTE', 'HORAINI', 'FECHA_RE']);
         $solicitudes_estructuradas = [];
         foreach ($solicitudes as $solicitud) {
             $solicitudes_estructuradas[] = [
                 'NOMBRE_AMBIENTE' => $buscador->getNombreAmbiente($solicitud->ID_AMBIENTE),
-                'HORA_INICIO' => date('H:i', strtotime($solicitud->HORAINI))
+                'HORA_INICIO' => date('H:i', strtotime($solicitud->HORAINI)),
+                'FECHA_RESERVA' => explode(' ', $solicitud->FECHA_RE)[0]
             ];
         }
         return $solicitudes_estructuradas;
@@ -203,7 +204,7 @@ class SolicitudController extends Controller
             function ($query) use ($usuario){
                 $query->where('ID_DOCENTE', $usuario->ID_DOCENTE);
             })->get();
-
+        
         $materias_estreucturadas = [];
         foreach ($materias as $materia) {
             $grupos = [];

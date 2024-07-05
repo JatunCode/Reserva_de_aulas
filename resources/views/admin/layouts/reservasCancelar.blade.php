@@ -113,7 +113,7 @@
     let razones = []
     let razonesfiltro = []
     let soli_aten = null
-    soli_pend = @json($solis_no_reser)
+    soli_pend = @json($solis_no_reser);
     let countPendientes = 0
     let countUrgentes = 0
     fetch("http://127.0.0.1:8000/api/fetch/solicitud/count")

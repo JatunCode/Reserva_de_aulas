@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\scripts\EncontrarTodo;
 use App\Models\Admin\Materia;
 use App\Models\Docente\Solicitudes;
-use App\Models\Admin\Relacion_DAHM;
 use App\Models\Docente\Razones;
 use App\Models\Docente\Reserva;
 use App\Models\Docente\Solicitud;
@@ -27,6 +26,12 @@ class ReservasController extends Controller
         $usuario = Auth::user();
         $buscador =  new EncontrarTodo();
         $solicitudes = collect();
+        $solicitudes_aceptadas = Solicitud::with(
+            'solicitud_relacion_ambiente',
+            'solicitud_relacion_materia',
+        )->where('ESTADO', 'ACEPTADO')
+        ->where('FECHA_RE', '>=', Date::now()->format('Y-m-d H:i'))->get(['FECHA_RE', 'ID_AMBIENTE']);
+        
         if($usuario->cargo == 'admin'){
             $solicitudes_urgentes = Solicitud::with(
                 'solicitud_relacion_ambiente',
@@ -70,11 +75,17 @@ class ReservasController extends Controller
                 'ESTADO' => $solicitud->ESTADO
             ];
         }
+        foreach ($solicitudes_aceptadas as $solicitud) {
+            $solicitudes_aceptadas_estructuradas [] = [
+                'FECHA_RESERVA' => $solicitud['FECHA_RE'],
+                'AMBIENTE' => $buscador->getNombreAmbiente($solicitud['ID_AMBIENTE'])
+            ];
+        }
         $razones = Razones::all();
         if($usuario->cargo == 'admin'){
-            return view('admin.layouts.reservas', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones]); 
+            return view('admin.layouts.reservas', ['solis_no_reser' => $solicitudes_estructuradas, 'razones' => $razones, 'solicitudes_aceptadas' => $solicitudes_aceptadas_estructuradas]); 
         }else{
-            return view('docente.listar.cancelar', ['solis_no_reser' => $solicitudes_estructuradas, 'materias' => $materias]);
+            return view('docente.listar.cancelar', ['solis_no_reser' => $solicitudes_estructuradas, 'materias' => $materias, 'solicitudes_aceptadas' => []]);
         }
     }
 
@@ -198,13 +209,14 @@ class ReservasController extends Controller
         $razones_no_reg = [];
         $solicitud = Solicitud::where('ID_SOLICITUD', $request->ID_SOLICITUD);
         try{
+            
             if($usuario->cargo == 'admin'){
                 foreach($request['ACTUALIZACIONES']['LISTA_NO_REG'] as $razon){
-                    $razon_id = Razones::create(['razon' => $razon])->id_razon;
+                    $razon_id = Razones::create(['razon' => $razon])->id_razones;
                     $razones_no_reg [] = $razon_id;
                 }
             }
-            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($usuario->cargo == 'admin' ? $request['ACTUALIZACIONES']['LISTA_REG'] : [], $razones_no_reg):'Ninguno';
+            $arreglo = ($request->ESTADO != 'ACEPTADO') ? array_merge($request['ACTUALIZACIONES']['LISTA_REG'] ? $request['ACTUALIZACIONES']['LISTA_REG'] : [], $razones_no_reg):'Ninguno';
             Reserva::create([
                 'ID_RESERVA' => $id,
                 'ID_SOLICITUD' => $request->ID_SOLICITUD,
@@ -217,8 +229,6 @@ class ReservasController extends Controller
             return response()->json(['objeto_soli'=>$solicitud,'message'=>'Error del servidor.'.$error], 500);
         }
     }
-
-
 
     /**
      * Display the specified resource.

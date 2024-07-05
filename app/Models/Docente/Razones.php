@@ -10,6 +10,7 @@ class Razones extends Model
     use HasFactory;
 
     protected $table = 'razones';
+    protected $primaryKey = 'id_razones';
 
     protected $fillable = [
         'id_razones',

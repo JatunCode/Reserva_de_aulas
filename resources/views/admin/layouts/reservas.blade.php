@@ -126,17 +126,18 @@
 </script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 <script>
-    let razones = []
-    let razonesfiltro = []
-    let soli_aten = null
-    let ambientes = []
-    soli_pend = @json($solis_no_reser)
+    let razones = [];
+    let razonesfiltro = [];
+    let soli_aten = null;
+    let ambientes = [];
+    const soli_pend = @json($solis_no_reser);
+    const solicitudes_aceptadas = @json($solicitudes_aceptadas);
     
-    let array_busqueda = soli_pend.map(solicitud => {return {'UNION_SOLI':solicitud['AMBIENTE']+' '+solicitud['MATERIA']}})
+    let array_busqueda = soli_pend.map(solicitud => {return {'UNION_SOLI':solicitud['AMBIENTE']+' '+solicitud['MATERIA']}});
     console.log('Arreglo de union: ', array_busqueda)
 
     fetch(
-        'http://127.0.0.1:8000/api/fetch/ambientes'
+        'http://jatuncode.tis.cs.umss.edu.bo/api/fetch/ambientes'
     ).then(
         response => response.json()
     ).then(
@@ -159,7 +160,7 @@
     }
 
     function razonesfetch(){
-        fetch('http://127.0.0.1:8000/api/fetch/razones').then(
+        fetch('http://jatuncode.tis.cs.umss.edu.bo/api/fetch/razones').then(
             response => response.json()
         ).then(
             data => {

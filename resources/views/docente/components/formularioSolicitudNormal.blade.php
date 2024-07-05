@@ -84,7 +84,7 @@
 
     <div class="col-6">
         <label for="horario" class="form-label">Horario:</label>
-        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ingrese el horario" onchange="verificarHorario(this)">
+        <input type="text" class="form-control" id="horario" name="horario" placeholder="Ej: 06:45 - 08:15" onchange="verificarHorario(this)">
         <p id="messageErrorHorario" style="color: red; display: none">*Debe seleccionar la materia</p>
     </div>
 

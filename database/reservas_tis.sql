@@ -16,8 +16,8 @@
 
 
 -- Volcando estructura de base de datos para reservas_tis
-CREATE DATABASE IF NOT EXISTS `reservas_tis` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `reservas_tis`;
+CREATE DATABASE IF NOT EXISTS `jatuncode_db`;
+USE `jatuncode_db`;
 
 -- Volcando estructura para tabla reservas_tis.ambiente
 CREATE TABLE IF NOT EXISTS `ambiente` (
