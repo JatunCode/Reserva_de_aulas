@@ -142,7 +142,7 @@
     const messageHorario = document.getElementById('messageErrorHorario');
 
     fetch(
-        'http://127.0.0.1:8000/api/fetch/ambientes'
+        'http://jatuncode.tis.cs.umss.edu.bo/api/fetch/ambientes'
     ).then(
         response => response.json()
     ).then(
@@ -157,7 +157,7 @@
     )
 
     fetch(
-        'http://127.0.0.1:8000/api/fetch/docente/materias/grupos'
+        'http://jatuncode.tis.cs.umss.edu.bo/api/fetch/docente/materias/grupos'
     ).then(
         response => response.json()
     ).then(
@@ -172,7 +172,7 @@
     )
 
     fetch(
-        'http://127.0.0.1:8000/api/fetch/solicitudes'
+        'http://jatuncode.tis.cs.umss.edu.bo/api/fetch/solicitudes'
     ).then(
         response => response.json()
     ).then(
@@ -197,7 +197,7 @@
         const info = document.querySelector('span.text-primary > i.bi.bi-info-circle');
         const reglas = document.getElementById('reglas');
 
-        cantidad.addEventListener('keydown', function(event){
+        cantidad.addEventListener('keyup', function(event){
             ambiente.innerHTML = '';
             let ambientes_filtro = [];
             ambientes_filtro = obtenerAmbientes(parseInt(event.target.value));
@@ -272,13 +272,13 @@
             if(div_eliminar){
                 div_eliminar.remove();
             }
-            const cadena = 'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
+            const cadena = 'http://jatuncode.tis.cs.umss.edu.bo/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
             console.log('Cadena fetch: ', cadena);
             if (fecha !== '' && aulaSeleccionada !== '') {
                 console.log("Fecha de reserva: ", fecha);
                 if(fecha != ''){
                     fetch(
-                        'http://127.0.0.1:8000/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
+                        'http://jatuncode.tis.cs.umss.edu.bo/api/fetch/solicitudeslibres/'+ambiente.value+'/'+fecha
                     ).then(
                         response => response.json()
                     ).then(
@@ -309,10 +309,10 @@
         }
 
         function obtenerAmbientes(cant){
+            cant = parseInt(cant, 10);
             return ambientes.filter(
                 ambiente => {
-                    let num_div = cant/10
-                    return (ambiente['CAPACIDAD'] <= num_div*10+10 && ambiente['CAPACIDAD'] >= num_div*10-10)
+                    return (ambiente['CAPACIDAD'] > cant/2 && ambiente['CAPACIDAD'] <= cant);
                 }
             )
         }
@@ -491,9 +491,9 @@
             },
         }).then((result) => {
             if(result.isConfirmed){
-                window.location.href = "http://127.0.0.1:8000/docente/solicitudes/cancelar"
+                window.location.href = "http://jatuncode.tis.cs.umss.edu.bo/docente/solicitudes/cancelar"
             }else if(result.isDenied){
-                window.location.href = "http://127.0.0.1:8000/docente/reservas"
+                window.location.href = "http://jatuncode.tis.cs.umss.edu.bo/docente/reservas"
             }else{
                 window.location.reload()
             }
@@ -511,7 +511,7 @@
         }
         const json_send = JSON.stringify(formData)
         console.log('Datos: ', json_send);
-        fetch('http://127.0.0.1:8000/docente/solicitud/create', {
+        fetch('http://jatuncode.tis.cs.umss.edu.bo/docente/solicitud/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -559,7 +559,7 @@
                 Swal.showLoading();
             }
         });
-        fetch('http://127.0.0.1:8000/api/fetch/notificacion/store',
+        fetch('http://jatuncode.tis.cs.umss.edu.bo/api/fetch/notificacion/store',
             {
                 method:'POST', 
                 headers:{
@@ -650,13 +650,13 @@
             banderaCant = false;
             messageCantidad.textContent = '*Debe completar el campo';
             messageCantidad.style.display = 'block';
-        }else if(parseInt(new_text, 10) <= 0){
+        }else if(parseInt(new_text, 10) < 20){
             banderaCant = false;
-            messageCantidad.textContent = '*La cantidad debe ser mayor a 0';
+            messageCantidad.textContent = '*La cantidad debe ser mayor a 20';
             messageCantidad.style.display = 'block';
-        }else if(parseInt(new_text, 10) < 1 || parseInt(new_text, 10) > 250){
+        }else if(parseInt(new_text, 10) < 20 || parseInt(new_text, 10) > 250){
             banderaCant = false;
-            messageCantidad.textContent = '*La cantidad debe ser entre 1 y 250';
+            messageCantidad.textContent = '*La cantidad debe ser entre 20 y 250';
             messageCantidad.style.display = 'block';
         }else{
             banderaCant = true;
@@ -683,10 +683,10 @@
 
     function verificarSabados(fecha, hora){
         fechaSelecc = fecha.getDay();
-        hora_de_horario = parseInt(hora.split(':')[0], 10) - 2;
+        hora_de_horario = parseInt(hora.split(':')[0], 10);
         console.log('Fechas seleccionada: ', fechaSelecc);
-        console.log('Hora inicio');
-        return fechaSelecc === 5 && hora_de_horario <= 12;
+        console.log('Hora inicio: ', hora_de_horario);
+        return fechaSelecc === 5 && hora_de_horario > 12;
     }
 
     function verificarFecha(text){
@@ -738,13 +738,25 @@
         }
     }
 
-    function encontrarSolicitud(hora_inicio){
+    function formatFecha(fecha) {
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(fecha.getDate()+1).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function encontrarSolicitud(hora_inicio, fechaSelecc){
         const ambiente = document.getElementById('aula').value;
-        let bandera = true;
-        if(solicitudes_actuales.find( 
-            solicitud => solicitud['NOMBRE_AMBIENTE'] === ambiente && solicitud['HORA_INICIO'] === hora_inicio
-        )){
-            bandera = false;
+        let bandera = false;
+        const fechaFormateada = formatFecha(fechaSelecc);
+        const solicitud_encontrada = solicitudes_actuales.find( 
+            solicitud => solicitud['FECHA_RESERVA'] === fechaFormateada && solicitud['NOMBRE_AMBIENTE'] === ambiente && solicitud['HORA_INICIO'] === hora_inicio
+        )
+        console.log('Solicitudes aceptadas: ', solicitudes_actuales);
+        console.log('Solicitud encontrada: ', solicitud_encontrada);
+        console.log('Solicitud buscar => ', 'Hora de inicio: ', hora_inicio, ', Fecha: ', fechaFormateada, ', Ambiente: ', ambiente);
+        if(solicitud_encontrada){
+            bandera = true;
         }
         return bandera;
     }
@@ -786,7 +798,7 @@
         }else if(!verificarDuracion(horaInicioMinutos, horaFinMinutos, duracionMinima, duracionMaxima)){
             banderaHorario = false;
             showMessage(messageHorario, '*El horario debe ser mayor a 1.50 horas y menor a 4.50 horas.', 'block');
-        }else if(!encontrarSolicitud(hora_inicio)){
+        }else if(encontrarSolicitud(hora_inicio, fechaSeleccionada)){
             banderaHorario = false;
             showMessage(messageHorario, '*Existe una reserva en la misma hora.', 'block');
         }else if(verificarSabados(fechaSeleccionada, hora[0])){

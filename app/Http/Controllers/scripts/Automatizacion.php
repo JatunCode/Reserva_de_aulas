@@ -11,7 +11,7 @@ class Automatizacion extends Controller
 {
     /**
      * Actualiza todas las solicitudes al tener un horario pasado de la hora actual
-     * @return 
+     * @return
      */
     public function updateAll(){
 
@@ -24,10 +24,10 @@ class Automatizacion extends Controller
             $this->updateAntiguos();
             $this->actualizarUrgente();
         }
-        
+
         return $solicitudes_de_esta_semana;
     }
-    
+
     private function actualizarSolicitudes(){
         return Solicitud::where('ESTADO', 'PENDIENTE')->orderBy('FECHAHORA_SOLI', 'asc')->get();
     }
@@ -39,8 +39,8 @@ class Automatizacion extends Controller
             $solicitudes_de_esta_semana = [];
             foreach($solicitudes as $solicitud){
                 $hora_reserva = $solicitud['FECHA_RE'];
-                if( strtotime($hora_reserva) >= $fecha_actual-864000 && 
-                    strtotime($hora_reserva) <= $fecha_actual && 
+                if( strtotime($hora_reserva) >= $fecha_actual-864000 &&
+                    strtotime($hora_reserva) <= $fecha_actual &&
                     $solicitud['ID_AMBIENTE'] == $ambiente &&
                     $solicitud_first['ID_MATERIA'] == $solicitud['ID_MATERIA'] &&
                     $solicitud_first['HORAINI'] == $solicitud['HORAINI']
@@ -48,10 +48,11 @@ class Automatizacion extends Controller
                     $solicitudes_de_esta_semana[] = $solicitud;
                 }
             }
-    
+
             $i = 0;
             foreach ($solicitudes_de_esta_semana as $solicitud) {
-                if($i > 0){
+                $bandera = $this->verificarSolicitudAceptada($solicitud);
+                if($i > 0 || $bandera){
                     $solicitud->update(['ESTADO' => 'CANCELADO']);
                 }else{
                     $solicitud->update(['ESTADO' => 'ACEPTADO']);
@@ -74,12 +75,20 @@ class Automatizacion extends Controller
         $solicitudes = Solicitud::where('PRIORIDAD', 'LIKE', "%NORMAL%")
                                   ->where('FECHA_RE', '<=', Date::now()->addDays(1)->format('Y-m-d'))
                                   ->where('FECHA_RE', '>=', Date::now()->format('Y-m-d'))->get();
-        
+
         foreach ($solicitudes as $solicitud) {
             $objeto_urgente = json_encode([
                 'URGENTE' => $solicitud['MOTIVO']
             ]);
             $solicitud->update(['PRIORIDAD' => $objeto_urgente]);
         }
+    }
+
+    private function verificarSolicitudAceptada($solicitud){
+        $fecha_actual = Date::now()->format('Y-m-d H:i');
+        return Solicitud::where('ESTADO', 'ACEPTADO')
+        ->where('FECHA_RE', $solicitud->FECHA_RE)
+        ->where('FECHA_RE', '>=', $fecha_actual)
+        ->where('ID_AMBIENTE', $solicitud->ID_AMBIENTE)->get() ? true : false;
     }
 }

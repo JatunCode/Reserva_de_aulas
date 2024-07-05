@@ -107,25 +107,6 @@
 </div>
 
 <script>
-    import Echo from "laravel-echo";
-    import Pusher from "pusher-js";
-
-    window.Pusher = Pusher;
-
-    window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: process.env.MIX_PUSHER_APP_KEY,
-        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-        encrypted: true
-    });
-
-    Echo.private('solicitud')
-        .listen('NuevaSolicitud', (e) => {
-            alert('Solicitudes pendientes: '+e.count_solis_pendientes+'\nSolicitudes urgentes'+e.count_solis_pend_urgentes);
-        });
-</script>
-
-<script>
     const regex = /[^0-9]/
     let bandera = false
     const message_razon = document.getElementById('messageErrorRazon')
@@ -306,6 +287,13 @@
     function sendNotificacion(data){
         const cuerpo = JSON.stringify(data['BODY'])
         console.log('Datos de la notificacion: ', cuerpo)
+        Swal.fire({
+            title: 'Enviando notificacion al o los docentes.',
+            text: 'Por favor, espera.',
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
         fetch('http://127.0.0.1:8000/admin/notificacion/store',
             {
                 method:'POST', 
@@ -319,7 +307,8 @@
             response => response.json().then(data => JSON.stringify({status: response.status, body: data}))
         ).then(
             data => {
-                window.location.reload();
+                Swal.close();
+                mensaje();
                 if (response.status == 200) {
                     return response;
                 } else {

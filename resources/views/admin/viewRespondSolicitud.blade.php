@@ -124,7 +124,7 @@
                 console.log('Nombre: ', nombre['Nombre_docente'])
             }
         )
-
+        banderaSolicitud = encontrarSolicitud(soli_aten['FECHA_RESERVA'], soli_aten['AMBIENTE']);
         if(bandera == true || text == 'ACEPTADO'){
             const modalContent = content+Object.entries(soli_aten).map(([key, value]) => {
                 return `<div>
@@ -132,20 +132,28 @@
                 </div>`
             }).join('')
             console.log('Datos que se tratan de enviar: ', ob_json)
-            Swal.fire({
+            if(banderaSolicitud && text == 'ACEPTADO'){
+                Swal.fire({
+                    icon: 'error',
+                    title: `Ya existe una reserva en el mismo horario`,
+                    cancelButtonText: 'Ok',
+                })
+            }else{
+                Swal.fire({
                 icon: 'info',
                 title: `Confirmación de ${(text == 'ACEPTADO') ? 'aceptacion.' : 'cancelacion.'}`,
                 html: modalContent,
                 showCancelButton: true,
                 confirmButtonText: 'Confirmar',
                 cancelButtonText: 'Cancelar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Enviar el formulario si se confirma la acción
-                    console.log("Formato del json: ", ob_json)
-                    sendForm(ob_json, body)
-                }
-            })
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Enviar el formulario si se confirma la acción
+                        console.log("Formato del json: ", ob_json)
+                        sendForm(ob_json, body)
+                    }
+                })
+            }
         }else{
             message_razon.style.display = 'block'
         }
@@ -155,7 +163,7 @@
         let token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Obtener el token CSRF
         console.log('Datos que se tratan de enviar: ', ob_json)
         fetch(
-            'store',
+            'http://jatuncode.tis.cs.umss.edu.bo/admin/reservas/store',
             {
                 method: 'PUT',
                 headers: {
@@ -206,7 +214,7 @@
                 Swal.showLoading()
             }
         })
-        fetch('http://127.0.0.1:8000/admin/notificacion/store',
+        fetch('http://jatuncode.tis.cs.umss.edu.bo/admin/notificacion/store',
             {
                 method:'POST', 
                 headers:{
@@ -234,6 +242,20 @@
         )
     }
 
+    function encontrarSolicitud(fecha_hora_solicitud, ambiente_solicitud) {
+        const solicitud_encontrada = solicitudes_aceptadas.find(solicitud => solicitud['FECHA_RESERVA'] === fecha_hora_solicitud && solicitud['AMBIENTE'] === ambiente_solicitud)
+        if(solicitud_encontrada){
+            console.log('Solicitudes: ', solicitudes_aceptadas)
+            console.log('Solicitud encontrada: ', solicitud_encontrada)
+            console.log('Solicitud buscar: ', 'Fecha y hora: ', fecha_hora_solicitud, 'Ambiente: ', ambiente_solicitud)
+            return true;
+        }else{
+            console.log('Solicitudes: ', solicitudes_aceptadas)
+            console.log('Solicitud encontrada: ', solicitud_encontrada)
+            console.log('Solicitud buscar: ', 'Fecha y hora: ', fecha_hora_solicitud, 'Ambiente: ', ambiente_solicitud)
+            return false;
+        }
+    }
     function cerrarMain(){
         const canvas_main = document.getElementById('offcanvasRight')
         const canvas_main_instance = bootstrap.Offcanvas.getInstance(canvas_main)
